@@ -20,14 +20,14 @@ public class Block extends GameObject{
 
 	public void tick() {
 		// TODO Auto-generated method stub
-		x +=1;
+		//x +=1;
 	}
 
 
 	public void render(Graphics g) {
 		
 		g.setColor(Color.red);
-		g.fillRect((int) x,(int) y, 32, 32);
+		g.drawRect((int) x,(int) y, 32, 32);
 	}
 
 

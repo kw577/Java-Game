@@ -10,6 +10,9 @@ public abstract class GameObject {
 	protected ObjectId id;
 	protected float velX = 0, velY = 0; // ruch
 	
+	protected boolean falling = true;  // do symulacji dzialania grawitacji
+	protected boolean jumping = false;  // do symulacji dzialania grawitacji
+	
 	// konstruktor
 	public GameObject(float x, float y, ObjectId id) {
 		
@@ -65,4 +68,26 @@ public abstract class GameObject {
 	public void setVelY(float velY) {
 		this.velY = velY;
 	}
+
+
+	public boolean isFalling() {
+		return falling;
+	}
+
+
+	public void setFalling(boolean falling) {
+		this.falling = falling;
+	}
+
+
+	public boolean isJumping() {
+		return jumping;
+	}
+
+
+	public void setJumping(boolean jumping) {
+		this.jumping = jumping;
+	}
+	
+	
 }
