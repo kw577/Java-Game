@@ -6,7 +6,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 
 import com.kw.owls.framework.ObjectId;
-import com.kw.owls.objects.Test;
+import com.kw.owls.objects.Block;
 
 
 public class Game extends Canvas implements Runnable{
@@ -28,8 +28,9 @@ public class Game extends Canvas implements Runnable{
 		start();
 		
 		handler = new Handler();
-			
-		handler.addObject(new Test(100, 100, ObjectId.Player));
+		
+		// Do celow testowych - generowanie rund, gry - docelowo bedzie w osobnej klasie Spawner.java
+		handler.addObject(new Block(100, 100, ObjectId.Block));
 	}
 	
 	

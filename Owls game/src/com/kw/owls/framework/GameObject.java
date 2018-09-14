@@ -1,6 +1,7 @@
 package com.kw.owls.framework;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.util.LinkedList;
 
 public abstract class GameObject {
@@ -20,6 +21,10 @@ public abstract class GameObject {
 	
 	public abstract void tick();
 	public abstract void render(Graphics g);
+	
+	// collision detection
+	public abstract Rectangle getBounds();
+	
 	
 	public ObjectId getId() {
 		return id;

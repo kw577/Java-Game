@@ -5,7 +5,8 @@ package com.kw.owls.framework;
 public enum ObjectId {
 
 	
-	Player();
+	Player(),
+	Block();
 	
 	
 	

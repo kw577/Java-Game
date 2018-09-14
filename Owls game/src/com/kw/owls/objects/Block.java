@@ -7,19 +7,20 @@ import java.awt.Rectangle;
 import com.kw.owls.framework.GameObject;
 import com.kw.owls.framework.ObjectId;
 
-// klasa testowa !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
 
-public class Test extends GameObject{
+public class Block extends GameObject{
 
-	public Test(float x, float y, ObjectId id) {
+	public Block(float x, float y, ObjectId id) {
 		super(x, y, id);
 
 	}
 
+	
+	
 
 	public void tick() {
 		// TODO Auto-generated method stub
-		
+		x +=1;
 	}
 
 
@@ -31,8 +32,8 @@ public class Test extends GameObject{
 
 
 	public Rectangle getBounds() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return new Rectangle((int) x, (int) y, 32, 32);
 	}
 
 
