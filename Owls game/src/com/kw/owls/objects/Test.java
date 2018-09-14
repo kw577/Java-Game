@@ -1,7 +1,7 @@
 package com.kw.owls.objects;
 
+import java.awt.Color;
 import java.awt.Graphics;
-import java.util.LinkedList;
 
 import com.kw.owls.framework.GameObject;
 import com.kw.owls.framework.ObjectId;
@@ -16,15 +16,16 @@ public class Test extends GameObject{
 	}
 
 
-	public void tick(LinkedList<GameObject> object) {
+	public void tick() {
 		// TODO Auto-generated method stub
 		
 	}
 
 
 	public void render(Graphics g) {
-		// TODO Auto-generated method stub
 		
+		g.setColor(Color.red);
+		g.fillRect((int) x,(int) y, 32, 32);
 	}
 
 

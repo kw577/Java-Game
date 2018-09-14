@@ -2,10 +2,12 @@ package com.kw.owls.window;
 
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
+
+import com.kw.owls.framework.ObjectId;
+import com.kw.owls.objects.Test;
+
 
 public class Game extends Canvas implements Runnable{
 
@@ -18,6 +20,18 @@ public class Game extends Canvas implements Runnable{
 	private boolean running = false;
 	private Thread thread;
 	
+	Handler handler;
+	
+	// konstruktor
+	public Game() {
+		new Window(800, 600, "Building game", this);
+		start();
+		
+		handler = new Handler();
+			
+		handler.addObject(new Test(100, 100, ObjectId.Player));
+	}
+	
 	
 	public synchronized void start() {
 		if(running)
@@ -28,9 +42,25 @@ public class Game extends Canvas implements Runnable{
 		thread.start();
 	}
 	
+	
+	
+	private void stop() {
+		// TODO Auto-generated method stub
+		running = false;
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
 	// petla gry !!!! - odswiezanie ekranu
 	// funkcja run() jest w wiekszosci przypadkow zbudowana w taki sposob i mozna ja po prostu skopiowac
 	public void run() {
+		
 		this.requestFocus(); // dzieki temu po wlaczeniu gry klawiatura okno gry jest aktywne od razu - nie trzeba w nie najpierw kliknac aby moc sterowac gra
 		long lastTime = System.nanoTime(); // Returns the current value of the running Java Virtual Machine's high-resolution time source, in nanoseconds. 
 		double amountOfTicks = 60.0; // zmieniajac ta wartosc mozna spowodowac opoznienie lub przyspieszenie animacji
@@ -60,14 +90,15 @@ public class Game extends Canvas implements Runnable{
 				updates = 0;
 			}
 		}
-		//stop();
+		stop();
 		}
 	
 	
 
 	// updatowanie danych gry
 	private void tick() {
-		// TODO Auto-generated method stub
+		
+		handler.tick();
 		
 	}
 
@@ -87,6 +118,7 @@ public class Game extends Canvas implements Runnable{
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
+		handler.render(g);
 		
 		/////////////////////////////
 		g.dispose();
@@ -95,7 +127,7 @@ public class Game extends Canvas implements Runnable{
 	}
 	
 	public static void main(String args[]) {
-		new Window(800, 600, "Building game", new Game());
+		new Game();
 	}
 	
 }
