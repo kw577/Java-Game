@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 
 import com.kw.owls.framework.KeyInput;
 import com.kw.owls.framework.ObjectId;
@@ -14,6 +15,8 @@ import com.kw.owls.objects.Player;
 
 public class Game extends Canvas implements Runnable{
 
+	// nalezy utworzyc folder w ktorym beda przechowywane grafiki gry - folder res  ->
+	// nastepnie:    project explorer -> prawy przycisk myszy na projekcie -> Properties -> Java Build Path -> Add class folder -> zaznaczyc utworzony przed chwila folder res -> OK
 	
 	/**
 	 *  Wygenerowany numer seryjny (nieobowiazkowe)
@@ -22,32 +25,43 @@ public class Game extends Canvas implements Runnable{
 
 	private boolean running = false;
 	private Thread thread;
+	private BufferedImage level = null; // do celow testowych - docelowo wczytywanie rund w osobnej klasie spawner
 	
-	Handler handler;
-	Camera camera;
+	
+	private Handler handler;
+	private Camera camera;
+	
 	
 	
 	// konstruktor
 	public Game() {
 		new Window(800, 600, "Building game", this);
-		start();
 		
+		BufferedImageLoader loader = new BufferedImageLoader();
+		level = loader.loadImage("/Level_1.png"); // load the level - for testing
+		
+		
+		start();
+				
 		handler = new Handler();
 		camera = new Camera(0, 0); // poczatkowe polozenie kamery sledzacej gracza 
+		
+		loadLevel(level);
+		
 		this.addKeyListener(new KeyInput(handler));
 		
 		// Do celow testowych - generowanie rund, gry - docelowo bedzie w osobnej klasie Spawner.java
 		handler.addObject(new Block(100, 100, ObjectId.Block));
 		
 		// teren
-		for(int i = 0; i < 50; i++)
-			handler.addObject(new Block(0 + i*32, 500, ObjectId.Block));
+		//for(int i = 0; i < 50; i++)
+		//	handler.addObject(new Block(0 + i*32, 500, ObjectId.Block));
 			
-		handler.addObject(new Block(500, 400, ObjectId.Block));
+		//handler.addObject(new Block(500, 400, ObjectId.Block));
 		
-		handler.addObject(new Block(400, 350, ObjectId.Block));
+		//handler.addObject(new Block(400, 350, ObjectId.Block));
 			
-		handler.addObject(new Player(300, 300, ObjectId.Player, handler));
+		//handler.addObject(new Player(300, 300, ObjectId.Player, handler));
 		
 		
 		
@@ -160,6 +174,35 @@ public class Game extends Canvas implements Runnable{
 		bs.show();
 		
 	}
+	
+	
+	
+	// loading the level map - funkcja do celow testowych - docelowo wczytywaniem rund bedzie kontrolowane przez osobna klase Spawner
+			private void loadLevel(BufferedImage image) {
+				int w = image.getWidth();
+				int h = image.getHeight();
+				
+				// na podstawie wczytanej mapki laduje sie obszar gry 
+				for(int xx = 0; xx < w; xx++) {
+					for(int yy = 0; yy < h; yy++) {
+						int pixel = image.getRGB(xx, yy);
+						int red = (pixel >> 16) & 0xff;
+						int green = (pixel >> 8) & 0xff;
+						int blue = (pixel) & 0xff;
+						//System.out.println("Red " + red + " green: " + green + " blue " + blue + "\n");
+						if(red == 0 && green == 0 && blue == 0)
+							handler.addObject(new Block(xx*32, yy*32, ObjectId.Block));
+						
+						if(green == 0 && red == 0 && blue == 255)
+							handler.addObject(new Player(xx*32, yy*32, ObjectId.Player, handler));
+						
+						
+					}
+				}
+				
+			//	handler.addObject(new HomingMissile(100, 100, 4, 0, ID.EnemyBullet, handler));
+				
+			}
 	
 	public static void main(String args[]) {
 		new Game();
