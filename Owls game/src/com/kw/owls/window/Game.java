@@ -3,6 +3,7 @@ package com.kw.owls.window;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 
 import com.kw.owls.framework.KeyInput;
@@ -23,6 +24,8 @@ public class Game extends Canvas implements Runnable{
 	private Thread thread;
 	
 	Handler handler;
+	Camera camera;
+	
 	
 	// konstruktor
 	public Game() {
@@ -30,14 +33,14 @@ public class Game extends Canvas implements Runnable{
 		start();
 		
 		handler = new Handler();
-		
+		camera = new Camera(0, 0); // poczatkowe polozenie kamery sledzacej gracza 
 		this.addKeyListener(new KeyInput(handler));
 		
 		// Do celow testowych - generowanie rund, gry - docelowo bedzie w osobnej klasie Spawner.java
 		handler.addObject(new Block(100, 100, ObjectId.Block));
 		
 		// teren
-		for(int i = 0; i < 20; i++)
+		for(int i = 0; i < 50; i++)
 			handler.addObject(new Block(0 + i*32, 500, ObjectId.Block));
 			
 		handler.addObject(new Block(500, 400, ObjectId.Block));
@@ -118,6 +121,13 @@ public class Game extends Canvas implements Runnable{
 		
 		handler.tick();
 		
+		// Kamera sledzi ruchy gracza
+		for(int i = 0; i<handler.object.size(); i++) {
+			if(handler.object.get(i).getId() == ObjectId.Player) {
+				camera.tick(handler.object.get(i));
+			}
+		}
+	
 	}
 
 	// updatowanie widoku ekranu
@@ -131,12 +141,19 @@ public class Game extends Canvas implements Runnable{
 		
 		Graphics g = bs.getDrawGraphics();
 		
+		
+		Graphics2D g2d = (Graphics2D) g;
 		/////////////////////////////
-		// renderowanie grafiki gry
+		// renderowanie grafiki gry w tym bloku
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
+		g2d.translate(camera.getX(), camera.getY()); // sledzenie ruchu gracza  
+		
 		handler.render(g);
+		
+		
+		g2d.translate(-camera.getX(), -camera.getY()); // sledzenie ruchu gracza
 		
 		/////////////////////////////
 		g.dispose();
