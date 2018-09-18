@@ -2,32 +2,31 @@ package com.kw.owls.objects;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 import com.kw.owls.framework.GameObject;
 import com.kw.owls.framework.ObjectId;
+import com.kw.owls.window.Handler;
 
 public class Player extends GameObject{
 
-	private float width = 32, height = 64;
+	private float width = 48, height = 96;
 	
-	
-	private float gravity = 0.25f;
+	private boolean supported = false; //zmienna oznaczajaca czy player stoi na jakims bloku
+	private float gravity = 0.2f;
 	private final float MAX_SPEED = 10;  // maksymalna przyjeta szybkosc spadania
+	Handler handler;
 	
-	
-	public Player(float x, float y, ObjectId id) {
+	public Player(float x, float y, ObjectId id, Handler handler) {
 		super(x, y, id);
-		
+		this.handler = handler;
 	}
 
 	
-	public void tick() {
-		x += velX;
-		y += velY;
+	public void tick() {	
 		
-		// symulacja oddzialywania grawitacji
-		if(falling || jumping) {
+		if(jumping || falling) {
 			
 			velY += gravity; // bo   v = g*t    - rownianie spadku swobodnego
 			
@@ -37,19 +36,103 @@ public class Player extends GameObject{
 			
 		}
 		
+		// ruch gracza
+		if (handler.isRight()) velX = 5;
+		else if (!handler.isLeft()) velX = 0;
+		
+		if (handler.isLeft()) velX = -5;
+		else if (!handler.isRight()) velX = 0;
+		
+		
+		// skok
+		if (handler.isUp() && jumping == false) {
+			velY = -5;
+			jumping = true;
+		}
+		
+		
+		x += velX;
+		y += velY; 
+		
+		//////////////////
+		
+		collision();
+		
 	}
 
 	
+	private void collision() {
+		// TODO Auto-generated method stub
+		supported = false;
+		
+		for(int i = 0; i < handler.object.size(); i++) {
+			GameObject tempObject = handler.object.get(i);
+			
+			
+			
+			if(tempObject.getId() == ObjectId.Block) {		
+			
+								
+				if(getBounds().intersects(tempObject.getBounds())) { // jesli gracz stoi na jakims bloku
+					
+					y = tempObject.getY() - height;
+					
+					supported = true; // jesli gracz znajduje sie chociaz na jednym bloku  
+					velY = 0;
+					jumping = false;
+					falling = false;
+
+				} 
+				
+			}
+		} 
+		if(supported == false)
+			falling = true;
+		
+		System.out.println("\nvelY: " + velY);
+		System.out.println("\nfalling: " + falling);
+		System.out.println("\njumping: " + jumping);
+		
+	}
+
 	public void render(Graphics g) {
 		
 		g.setColor(Color.blue);
 		g.fillRect((int) x, (int) y, (int) width, (int) height);
-	}
-
-	// do wykrywania kolizji z innymi obiektami
-	public Rectangle getBounds() {
 		
-		return new Rectangle((int) x, (int) y, (int) width, (int) height);
+		Graphics2D g2d = (Graphics2D) g;
+		g.setColor(Color.RED);
+		
+		g2d.draw(getBounds());
+		g2d.draw(getBoundsRight());
+		g2d.draw(getBoundsLeft());
+		g2d.draw(getBoundsTop());
+		
 	}
 
+	// do wykrywania kolizji z innymi obiektami od dolu
+	public Rectangle getBounds() {
+		// generowany prostokat do okreslaania kolizji od daolu (okreslania czy Player stoi na jakims obiekcie jest powiekszony od dolu o 1 px dla lepszego dzialania wykrywania kolizji
+		return new Rectangle((int) x+(int)((width/2)-((width/2)/2)), (int) y + ((int)(height/2)), (int) width/2, (int) height/2 + 1);
+	}
+	
+	// do wykrywania kolizji od gory
+	public Rectangle getBoundsTop() {
+		
+		return new Rectangle((int) x + (int)((width/2)-((width/2)/2)), (int) y, (int) width/2, (int) height/2);
+	}
+	
+	// do wykrywania kolizji z prawej strony
+	public Rectangle getBoundsRight() {
+		
+		return new Rectangle((int) x + (int)width - 5, (int) y + 15, (int) 5, (int) height - 30);
+	}
+	
+	// do wykrywania kolizji z lewej strony
+	public Rectangle getBoundsLeft() {
+		
+		return new Rectangle((int) x, (int) y + 15, (int) 5, (int) height -30);
+	}
+
+	
 }

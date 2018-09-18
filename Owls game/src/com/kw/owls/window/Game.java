@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 
+import com.kw.owls.framework.KeyInput;
 import com.kw.owls.framework.ObjectId;
 import com.kw.owls.objects.Block;
 import com.kw.owls.objects.Player;
@@ -30,15 +31,18 @@ public class Game extends Canvas implements Runnable{
 		
 		handler = new Handler();
 		
+		this.addKeyListener(new KeyInput(handler));
+		
 		// Do celow testowych - generowanie rund, gry - docelowo bedzie w osobnej klasie Spawner.java
 		handler.addObject(new Block(100, 100, ObjectId.Block));
 		
 		// teren
-		for(int i = 0; i < 25; i++)
+		for(int i = 0; i < 20; i++)
 			handler.addObject(new Block(0 + i*32, 500, ObjectId.Block));
 			
+		handler.addObject(new Block(500, 400, ObjectId.Block));
 			
-		handler.addObject(new Player(300, 300, ObjectId.Player));
+		handler.addObject(new Player(300, 300, ObjectId.Player, handler));
 	
 		
 		
