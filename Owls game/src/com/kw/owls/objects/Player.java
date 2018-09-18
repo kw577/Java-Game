@@ -46,7 +46,7 @@ public class Player extends GameObject{
 		
 		// skok
 		if (handler.isUp() && jumping == false) {
-			velY = -5;
+			velY = -6;
 			jumping = true;
 		}
 		
@@ -72,7 +72,16 @@ public class Player extends GameObject{
 			
 			if(tempObject.getId() == ObjectId.Block) {		
 			
-								
+				
+				// Player uderzy glowa w jakis blok
+				if(getBoundsTop().intersects(tempObject.getBounds())) { // jesli gracz stoi na jakims bloku
+					
+					y = tempObject.getY() + 32; // nalezy tak dobrac wspolrzedna y aby player odbijal sie od bloku
+					
+					velY = 0;
+				} 
+				
+				// Player stoi na jakims bloku
 				if(getBounds().intersects(tempObject.getBounds())) { // jesli gracz stoi na jakims bloku
 					
 					y = tempObject.getY() - height;
@@ -83,6 +92,20 @@ public class Player extends GameObject{
 					falling = false;
 
 				} 
+				
+				// Right collision
+				if(getBoundsRight().intersects(tempObject.getBounds())) { // jesli gracz stoi na jakims bloku 
+					
+					x = tempObject.getX() - width;
+				} 
+				
+				// Left collision
+				if(getBoundsLeft().intersects(tempObject.getBounds())) { // jesli gracz stoi na jakims bloku
+					
+					x = tempObject.getX() + 35;
+				}
+				
+				
 				
 			}
 		} 
@@ -113,7 +136,7 @@ public class Player extends GameObject{
 	// do wykrywania kolizji z innymi obiektami od dolu
 	public Rectangle getBounds() {
 		// generowany prostokat do okreslaania kolizji od daolu (okreslania czy Player stoi na jakims obiekcie jest powiekszony od dolu o 1 px dla lepszego dzialania wykrywania kolizji
-		return new Rectangle((int) x+(int)((width/2)-((width/2)/2)), (int) y + ((int)(height/2)), (int) width/2, (int) height/2 + 1);
+		return new Rectangle((int) x+(int)((width/2)-((width/2)/2))-2, (int) y + ((int)(height/2)), (int) width/2 + 4, (int) height/2 + 1);
 	}
 	
 	// do wykrywania kolizji od gory
@@ -125,14 +148,14 @@ public class Player extends GameObject{
 	// do wykrywania kolizji z prawej strony
 	public Rectangle getBoundsRight() {
 		
-		return new Rectangle((int) x + (int)width - 5, (int) y + 15, (int) 5, (int) height - 30);
+		return new Rectangle((int) x + (int)width - 5, (int) y + 10, (int) 5, (int) height - 20);
 	}
 	
 	// do wykrywania kolizji z lewej strony
 	public Rectangle getBoundsLeft() {
 		
-		return new Rectangle((int) x, (int) y + 15, (int) 5, (int) height -30);
+		return new Rectangle((int) x, (int) y + 10, (int) 5, (int) height -20);
 	}
 
-	
+	// napisac osobna funkcje do wykrywania kolizji z pociskami (nie ma potrzeby przeprowadzania obliczen dla 4rech osobnych funkcji)
 }

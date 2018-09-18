@@ -41,9 +41,11 @@ public class Game extends Canvas implements Runnable{
 			handler.addObject(new Block(0 + i*32, 500, ObjectId.Block));
 			
 		handler.addObject(new Block(500, 400, ObjectId.Block));
+		
+		handler.addObject(new Block(400, 350, ObjectId.Block));
 			
 		handler.addObject(new Player(300, 300, ObjectId.Player, handler));
-	
+		
 		
 		
 	}
