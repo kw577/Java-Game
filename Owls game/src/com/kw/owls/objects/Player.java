@@ -28,7 +28,7 @@ public class Player extends GameObject{
 		
 		BufferedImageLoader loader = new BufferedImageLoader();
 		
-		player_image = loader.loadImage("/player_image1.png");
+		player_image = loader.loadImage("/player_image2.png");
 		
 	}
 
