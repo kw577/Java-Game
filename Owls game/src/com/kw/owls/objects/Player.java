@@ -4,23 +4,32 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+
+import javax.swing.ImageIcon;
 
 import com.kw.owls.framework.GameObject;
 import com.kw.owls.framework.ObjectId;
+import com.kw.owls.window.BufferedImageLoader;
 import com.kw.owls.window.Handler;
 
 public class Player extends GameObject{
 
 	private float width = 48, height = 96;
-	
+	private BufferedImage player_image;
 	private boolean supported = false; //zmienna oznaczajaca czy player stoi na jakims bloku
 	private float gravity = 0.2f;
-	private final float MAX_SPEED = 10;  // maksymalna przyjeta szybkosc spadania
+	private final float MAX_SPEED = 10;  // maksymalna przyjeta szybkosc spadania  
 	Handler handler;
 	
 	public Player(float x, float y, ObjectId id, Handler handler) {
 		super(x, y, id);
 		this.handler = handler;
+		
+		BufferedImageLoader loader = new BufferedImageLoader();
+		
+		player_image = loader.loadImage("/player_image1.png");
+		
 	}
 
 	
@@ -121,16 +130,17 @@ public class Player extends GameObject{
 	public void render(Graphics g) {
 		
 		g.setColor(Color.blue);
-		g.fillRect((int) x, (int) y, (int) width, (int) height);
+		//g.fillRect((int) x, (int) y, (int) width, (int) height);
 		
-		Graphics2D g2d = (Graphics2D) g;
-		g.setColor(Color.RED);
+		//Graphics2D g2d = (Graphics2D) g;
+		//g.setColor(Color.RED);
 		
-		g2d.draw(getBounds());
-		g2d.draw(getBoundsRight());
-		g2d.draw(getBoundsLeft());
-		g2d.draw(getBoundsTop());
+		//g2d.draw(getBounds());
+		//g2d.draw(getBoundsRight());
+		//g2d.draw(getBoundsLeft());
+		//g2d.draw(getBoundsTop());
 		
+		g.drawImage(player_image, (int)x, (int)y, null);
 	}
 
 	// do wykrywania kolizji z innymi obiektami od dolu

@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 
 import com.kw.owls.framework.KeyInput;
 import com.kw.owls.framework.ObjectId;
+import com.kw.owls.framework.Texture;
 import com.kw.owls.objects.Block;
 import com.kw.owls.objects.Player;
 
@@ -30,7 +31,7 @@ public class Game extends Canvas implements Runnable{
 	
 	private Handler handler;
 	private Camera camera;
-	
+	//private Texture texture;
 	
 	
 	// konstruktor
@@ -45,6 +46,8 @@ public class Game extends Canvas implements Runnable{
 				
 		handler = new Handler();
 		camera = new Camera(0, 0); // poczatkowe polozenie kamery sledzacej gracza 
+		
+		//texture = new Texture();
 		
 		loadLevel(level);
 		
