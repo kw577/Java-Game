@@ -10,13 +10,14 @@ import javax.swing.ImageIcon;
 
 import com.kw.owls.framework.GameObject;
 import com.kw.owls.framework.ObjectId;
+import com.kw.owls.framework.SpriteSheet;
 import com.kw.owls.window.BufferedImageLoader;
 import com.kw.owls.window.Handler;
 
 public class Player extends GameObject{
 
 	private float width = 48, height = 96;
-	private BufferedImage player_image;
+	private BufferedImage player_images_all;
 	private boolean supported = false; //zmienna oznaczajaca czy player stoi na jakims bloku
 	private float gravity = 0.2f;
 	private final float MAX_SPEED = 15;  // maksymalna przyjeta szybkosc spadania  
@@ -25,13 +26,42 @@ public class Player extends GameObject{
 	private int accelerateTimer = 0;
 	private final int accelerateTimerMax = 50; // okresla czas po jakim nastapi zwiekszenie szybkosci ruchu
 	
+	private SpriteSheet playerSpriteSheet;
+	
+	
+	// do renderowania animacji
+	private boolean turned_left = false; // rysunki animacji gdy gracz jest zwrocony w lewo
+	private boolean turned_right = true; // rysunki animacji gdy gracz jest zwrocony w prawo - domyslnie gre zaczyna sie animacja tego typu
+	private boolean high_fall = false; // upadek z duzej wysokosci
+	
+	
+	// timery do renderowania animacji
+	private final int blink_eye_timer = 5000; // czas do kolejnego mrugniecia
+	private int b_e_timer = 5000; // aktualny status timera
+	private final int start_timer2 = 200;
+	private int timer2 = 200; // upadek z duzej wysokosci - timer animacji
+	private int running_timer = 90; // czas do zmiany animacji biegania
+	private final int running_timer_start = 90;
+	private int choose_run_animation = 1; // przyjmuje wartosc (-1) lub 1 - kazdej wartosci odpowiada inny obrazek animacji
+	
+	
 	public Player(float x, float y, ObjectId id, Handler handler) {
 		super(x, y, id);
 		this.handler = handler;
 		
 		BufferedImageLoader loader = new BufferedImageLoader();
 		
-		player_image = loader.loadImage("/player_image2.png");
+		player_images_all = loader.loadImage("/player_images_all.png");
+		
+		try {
+			player_images_all = loader.loadImage("/player_images_all.png");
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		
+		playerSpriteSheet = new SpriteSheet(player_images_all);
+		
+		
 		
 	}
 
@@ -169,8 +199,148 @@ public class Player extends GameObject{
 		//g2d.draw(getBoundsLeft());
 		//g2d.draw(getBoundsTop());
 		
-		g.drawImage(player_image, (int)x, (int)y, null);
+		
+		
+		direction();
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		// animacja gdy gracz stoi w miejscu bez ruchu
+		if(velX == 0 && velY == 0 && high_fall == false) {
+			b_e_timer--;
+			if(b_e_timer > 0) {
+				if(turned_right) 
+				g.drawImage(playerSpriteSheet.grabImage(1, 1, 64, 96), (int)x, (int)y, null);
+				if(turned_left)
+				g.drawImage(playerSpriteSheet.grabImage(8, 3, 64, 96), (int)x - 16, (int)y, null);
+			}
+			if(b_e_timer < 0) { // gracz mruga
+
+				if(turned_right) 
+				g.drawImage(playerSpriteSheet.grabImage(2, 1, 64, 96), (int)x, (int)y, null);
+				if(turned_left)
+				g.drawImage(playerSpriteSheet.grabImage(7, 3, 64, 96), (int)x - 16, (int)y, null);
+				
+				if(b_e_timer <= (-100)) // renderowanie obrazka z zamknietymia oczami nastepuje gdy b_e_timer przyjmuje warotsci w zakresie od 0 do (-100) - czyli czas trwania mrugniecia to 120 jedn
+				b_e_timer = blink_eye_timer;
+			}
+			this.running_timer = this.running_timer_start; // ustawienie od poczatku timera zmiany animacji podczas biegu
+		}
+		
+		
+		// animacja gdy gracz skacze
+		if(velY != 0) {
+			if(velY < 0) {
+				if(turned_right) 
+				g.drawImage(playerSpriteSheet.grabImage(5, 2, 64, 96), (int)x - 16, (int)y, null);
+				if(turned_left)
+				g.drawImage(playerSpriteSheet.grabImage(4, 4, 64, 96), (int)x, (int)y, null);
+			}
+			if(velY > 0 && velY < 14) { // gracz mruga
+
+				if(turned_right) 
+				g.drawImage(playerSpriteSheet.grabImage(6, 2, 64, 96), (int)x - 16, (int)y, null);
+				if(turned_left)
+				g.drawImage(playerSpriteSheet.grabImage(3, 4, 64, 96), (int)x, (int)y, null);
+				
+			}
+			if(velY > 14) { // upadek z duzej wysokosci - utrata punktow zdrowia
+
+				if(turned_right) 
+				g.drawImage(playerSpriteSheet.grabImage(8, 2, 64, 96), (int)x - 16, (int)y, null);
+				if(turned_left)
+				g.drawImage(playerSpriteSheet.grabImage(1, 4, 64, 96), (int)x, (int)y, null);
+				
+				if(!this.high_fall) high_fall = true; 
+			}
+			
+			
+
+		}
+		
+		// upadek z duzej wysokosci
+		if(velY == 0 && high_fall == true) {
+			if(turned_right) 
+			g.drawImage(playerSpriteSheet.grabImage(7, 2, 64, 96), (int)x - 16, (int)y, null);
+			if(turned_left)
+			g.drawImage(playerSpriteSheet.grabImage(2, 4, 64, 96), (int)x, (int)y, null);
+			
+			timer2--;
+			if(timer2 <= 0) {
+				timer2 = start_timer2;
+				high_fall = false;
+			}
+			
+			
+		}
+		
+		
+		// bieganie w zaleznosci od predkosci inna animacja
+		if(velX != 0 && velY == 0 && high_fall == false) {
+			
+			running_timer--;
+			if(running_timer <= 0) {
+				this.choose_run_animation *= (-1);
+				this.running_timer = this.running_timer_start;
+			}
+			
+			if(Math.abs(velX) < 8 ) {
+				if(turned_right && choose_run_animation > 0) 
+					g.drawImage(playerSpriteSheet.grabImage(4, 1, 64, 96), (int)x - 16, (int)y, null);
+				if(turned_right && choose_run_animation < 0) 
+					g.drawImage(playerSpriteSheet.grabImage(8, 1, 64, 96), (int)x - 16, (int)y, null);
+				if(turned_left && choose_run_animation > 0) 
+					g.drawImage(playerSpriteSheet.grabImage(5, 3, 64, 96), (int)x, (int)y, null);
+				if(turned_left && choose_run_animation < 0) 
+					g.drawImage(playerSpriteSheet.grabImage(1, 3, 64, 96), (int)x, (int)y, null);
+			
+			}
+
+			if(Math.abs(velX) >= 8 ) {
+				if(turned_right && choose_run_animation > 0) 
+					g.drawImage(playerSpriteSheet.grabImage(5, 1, 64, 96), (int)x - 16, (int)y, null);
+				if(turned_right && choose_run_animation < 0) 
+					g.drawImage(playerSpriteSheet.grabImage(3, 1, 64, 96), (int)x - 16, (int)y, null);
+				if(turned_left && choose_run_animation > 0) 
+					g.drawImage(playerSpriteSheet.grabImage(4, 3, 64, 96), (int)x, (int)y, null);
+				if(turned_left && choose_run_animation < 0) 
+					g.drawImage(playerSpriteSheet.grabImage(6, 3, 64, 96), (int)x, (int)y, null);
+			
+			}
+			
+			
+			
+			
+
+			
+			
+			
+		}
+		
+		
+		
+		
 	}
+
+	private void direction() {
+		// pomocniczo do renderowania animacji - sprawdza czy gracz porusza sie w lewo czy w prawo
+		if(this.turned_right && handler.isLeft()) {
+			turned_right = false;
+			turned_left = true;
+		}
+		if(this.turned_left && handler.isRight()) {
+			turned_right = true;
+			turned_left = false;
+		}
+		
+	}
+
 
 	// do wykrywania kolizji z innymi obiektami od dolu
 	public Rectangle getBounds() {
