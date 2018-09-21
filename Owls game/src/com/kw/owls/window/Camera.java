@@ -21,7 +21,16 @@ public class Camera {
 		//x--; // test - gyby zawartscia tej funckji byla ta jedna linia kodu - kamera przemieszczalaby sie jednostajnie w prawo
 		
 		x = -player.getX() - Game.WIDTH/2 + 200;
-		y = -player.getY() + 350;
+		//y = -player.getY() + 350; // kamera zawsze sledzi ruchy gracza po osi y
+		
+		
+		y = -800;
+		if(player.getY() < 900) {
+			y+=-(player.getY()-900);
+		}
+		
+		
+		System.out.println("\nCamera: wsp X: " + this.x + " wspY: " + this.y);
 		//x += ((player.getX() - x) - 1000/2) * 0.05f;
 		//y += ((player.getY() - y) - 563/2) * 0.05f;
 		

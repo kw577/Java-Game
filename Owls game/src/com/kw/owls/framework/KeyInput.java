@@ -32,8 +32,8 @@ public class KeyInput extends KeyAdapter{
 				if(key == KeyEvent.VK_SPACE && tempObject.jumping == false && tempObject.falling == false) {
 					handler.setUp(true);
 				}
-				if(key == KeyEvent.VK_A) handler.setLeft(true);
-				if(key == KeyEvent.VK_D) handler.setRight(true);
+				if(key == KeyEvent.VK_LEFT) handler.setLeft(true);
+				if(key == KeyEvent.VK_RIGHT) handler.setRight(true);
 			}
 		}
 		 
@@ -47,8 +47,8 @@ public class KeyInput extends KeyAdapter{
 			
 			if(tempObject.getId() == ObjectId.Player) {
 				if(key == KeyEvent.VK_SPACE) handler.setUp(false);
-				if(key == KeyEvent.VK_A) handler.setLeft(false);
-				if(key == KeyEvent.VK_D) handler.setRight(false);
+				if(key == KeyEvent.VK_LEFT) handler.setLeft(false);
+				if(key == KeyEvent.VK_RIGHT) handler.setRight(false);
 			}
 		}
 	}

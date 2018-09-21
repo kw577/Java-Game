@@ -19,8 +19,11 @@ public class Player extends GameObject{
 	private BufferedImage player_image;
 	private boolean supported = false; //zmienna oznaczajaca czy player stoi na jakims bloku
 	private float gravity = 0.2f;
-	private final float MAX_SPEED = 10;  // maksymalna przyjeta szybkosc spadania  
+	private final float MAX_SPEED = 15;  // maksymalna przyjeta szybkosc spadania  
+	private final float MAX_SPEED_Running = 10; // maksymalna szybkosc biegu
 	Handler handler;
+	private int accelerateTimer = 0;
+	private final int accelerateTimerMax = 50; // okresla czas po jakim nastapi zwiekszenie szybkosci ruchu
 	
 	public Player(float x, float y, ObjectId id, Handler handler) {
 		super(x, y, id);
@@ -45,12 +48,37 @@ public class Player extends GameObject{
 			
 		}
 		
-		// ruch gracza
-		if (handler.isRight()) velX = 5;
-		else if (!handler.isLeft()) velX = 0;
-		
-		if (handler.isLeft()) velX = -5;
-		else if (!handler.isRight()) velX = 0;
+ 		// ruch gracza
+ 		if (handler.isRight()) {
+ 			accelerateTimer--;
+ 			if(accelerateTimer <= 0) {
+ 				if(velX == 0) velX += 4;
+ 				else velX += 2;
+ 				
+ 				accelerateTimer = accelerateTimerMax;
+ 				if(velX >= MAX_SPEED_Running) velX = MAX_SPEED_Running;
+ 			}
+ 			
+ 		}
+ 		else if (!handler.isLeft()) {
+ 			velX = 0;
+ 			accelerateTimer = 0;
+ 		}
+ 		
+ 		if (handler.isLeft()) {
+ 			accelerateTimer--;
+ 			if(accelerateTimer <= 0) {
+ 				if(velX == 0) velX -= 4;
+ 				else velX -= 2;
+ 				
+ 				accelerateTimer = accelerateTimerMax;
+ 				if(velX <= -MAX_SPEED_Running) velX = -MAX_SPEED_Running;
+ 			}
+ 		}
+ 		else if (!handler.isRight()) {
+ 			velX = 0;
+ 			accelerateTimer = 0;
+ 		}
 		
 		
 		// skok
@@ -104,13 +132,13 @@ public class Player extends GameObject{
 				
 				// Right collision
 				if(getBoundsRight().intersects(tempObject.getBounds())) { // jesli gracz stoi na jakims bloku 
-					
+					velX = 0;
 					x = tempObject.getX() - width;
 				} 
 				
 				// Left collision
-				if(getBoundsLeft().intersects(tempObject.getBounds())) { // jesli gracz stoi na jakims bloku
-					
+				if(getBoundsLeft().intersects(tempObject.getBounds())) { // jesli gracz stoi na jakims bloku 
+					velX = 0;
 					x = tempObject.getX() + 35;
 				}
 				
@@ -124,12 +152,13 @@ public class Player extends GameObject{
 		System.out.println("\nvelY: " + velY);
 		System.out.println("\nfalling: " + falling);
 		System.out.println("\njumping: " + jumping);
-		
+		System.out.println("\nPlayer: wsp X: " + this.x + " wspY: " + this.y);
+		System.out.println("\nPlayer: velX: " + this.velX + " velY: " + this.velY);
 	}
 
 	public void render(Graphics g) {
 		
-		g.setColor(Color.blue);
+		//g.setColor(Color.blue);
 		//g.fillRect((int) x, (int) y, (int) width, (int) height);
 		
 		//Graphics2D g2d = (Graphics2D) g;
@@ -146,25 +175,25 @@ public class Player extends GameObject{
 	// do wykrywania kolizji z innymi obiektami od dolu
 	public Rectangle getBounds() {
 		// generowany prostokat do okreslaania kolizji od daolu (okreslania czy Player stoi na jakims obiekcie jest powiekszony od dolu o 1 px dla lepszego dzialania wykrywania kolizji
-		return new Rectangle((int) x+(int)((width/2)-((width/2)/2))-2, (int) y + ((int)(height/2)), (int) width/2 + 4, (int) height/2 + 1);
+		return new Rectangle((int) x+(int)((width/2)-((width/2)/2))-5, (int) y + ((int)(height-9)), (int) width/2 + 10, 12);
 	}
 	
 	// do wykrywania kolizji od gory
 	public Rectangle getBoundsTop() {
 		
-		return new Rectangle((int) x + (int)((width/2)-((width/2)/2)), (int) y, (int) width/2, (int) height/2);
+		return new Rectangle((int) x + (int)((width/2)-((width/2)/2)-5), (int) y, (int) width/2 + 10, 10);
 	}
 	
 	// do wykrywania kolizji z prawej strony
 	public Rectangle getBoundsRight() {
 		
-		return new Rectangle((int) x + (int)width - 5, (int) y + 10, (int) 5, (int) height - 20);
+		return new Rectangle((int) x + (int)width - 22, (int) y + 12, (int) 22, (int) height - 24);
 	}
 	
 	// do wykrywania kolizji z lewej strony
 	public Rectangle getBoundsLeft() {
 		
-		return new Rectangle((int) x, (int) y + 10, (int) 5, (int) height -20);
+		return new Rectangle((int) x, (int) y + 12, (int) 22, (int) height -24);
 	}
 
 	// napisac osobna funkcje do wykrywania kolizji z pociskami (nie ma potrzeby przeprowadzania obliczen dla 4rech osobnych funkcji)
