@@ -6,7 +6,8 @@ public enum ObjectId {
 
 	
 	Player(),
-	Block();
+	Block(),
+	Background(); // elementy w tle gry (chmury, drzewa itd)
 	
 	
 	

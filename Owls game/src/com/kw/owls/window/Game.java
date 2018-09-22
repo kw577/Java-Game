@@ -6,10 +6,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
+import com.kw.owls.background.Cloud;
 import com.kw.owls.framework.KeyInput;
 import com.kw.owls.framework.ObjectId;
-import com.kw.owls.framework.Texture;
 import com.kw.owls.objects.Block;
 import com.kw.owls.objects.Player;
 
@@ -29,7 +30,10 @@ public class Game extends Canvas implements Runnable{
 	private BufferedImage level = null; // do celow testowych - docelowo wczytywanie rund w osobnej klasie spawner
 	
 	
+	Random rand; // do losowego generowania niektorych elementow gry - np tlo - docelowo w klasei Spawner
+	
 	private Handler handler;
+	private BackgroundHandler bcg_handler;
 	private Camera camera;
 	//private Texture texture;
 	
@@ -42,11 +46,13 @@ public class Game extends Canvas implements Runnable{
 		level = loader.loadImage("/Level_1.png"); // load the level - for testing
 		
 		
+		
 		start();
 				
 		handler = new Handler();
+		bcg_handler = new BackgroundHandler();
 		camera = new Camera(0, 0); // poczatkowe polozenie kamery sledzacej gracza 
-		
+		rand = new Random();
 		//texture = new Texture();
 		
 		loadLevel(level);
@@ -54,8 +60,8 @@ public class Game extends Canvas implements Runnable{
 		this.addKeyListener(new KeyInput(handler));
 		
 		// Do celow testowych - generowanie rund, gry - docelowo bedzie w osobnej klasie Spawner.java
-		handler.addObject(new Block(100, 100, ObjectId.Block));
-		
+		handler.addObject(new Block(500, 900, ObjectId.Block));
+		bcg_handler.addObject(new Cloud(500, 800, ObjectId.Background, 1)); // do celow testowych - przenisc do klasy Spawner
 		// teren
 		//for(int i = 0; i < 50; i++)
 		//	handler.addObject(new Block(0 + i*32, 500, ObjectId.Block));
@@ -137,7 +143,7 @@ public class Game extends Canvas implements Runnable{
 	private void tick() {
 		
 		handler.tick();
-		
+	
 		// Kamera sledzi ruchy gracza
 		for(int i = 0; i<handler.object.size(); i++) {
 			if(handler.object.get(i).getId() == ObjectId.Player) {
@@ -162,11 +168,15 @@ public class Game extends Canvas implements Runnable{
 		Graphics2D g2d = (Graphics2D) g;
 		/////////////////////////////
 		// renderowanie grafiki gry w tym bloku
-		g.setColor(Color.BLACK);
+		g.setColor(new Color(190, 220, 235));
 		g.fillRect(0, 0, getWidth(), getHeight());
+		
+		
+		
 		
 		g2d.translate(camera.getX(), camera.getY()); // sledzenie ruchu gracza  
 		
+		bcg_handler.render(g);
 		handler.render(g);
 		
 		
@@ -199,6 +209,9 @@ public class Game extends Canvas implements Runnable{
 						if(green == 0 && red == 0 && blue == 255)
 							handler.addObject(new Player(xx*32, yy*32, ObjectId.Player, handler));
 						
+						// generowanie elementow tla 
+						if(green == 255 && red == 0 && blue == 255) // kolor - cyan
+							bcg_handler.addObject(new Cloud(xx*32, yy*32, ObjectId.Background, rand.nextInt(4) + 1)); // generowanie widoku chury - wybiera losowo jeden z 4 dostepnych rysunkow 
 						
 					}
 				}
