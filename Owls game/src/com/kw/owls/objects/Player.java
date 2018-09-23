@@ -40,8 +40,8 @@ public class Player extends GameObject{
 	private int b_e_timer = 5000; // aktualny status timera
 	private final int start_timer2 = 200;
 	private int timer2 = 200; // upadek z duzej wysokosci - timer animacji
-	private int running_timer = 70; // czas do zmiany animacji biegania
-	private final int running_timer_start = 70;
+	private int running_timer = 40; // czas do zmiany animacji biegania
+	private final int running_timer_start = 40;
 	private int choose_run_animation = 1; // przyjmuje wartosc (-1) lub 1 - kazdej wartosci odpowiada inny obrazek animacji
 	
 	

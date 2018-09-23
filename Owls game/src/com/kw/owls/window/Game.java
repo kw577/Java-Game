@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import com.kw.owls.background.Cloud;
+import com.kw.owls.background.TreeAutumn;
 import com.kw.owls.framework.KeyInput;
 import com.kw.owls.framework.ObjectId;
 import com.kw.owls.objects.Block;
@@ -60,8 +61,8 @@ public class Game extends Canvas implements Runnable{
 		this.addKeyListener(new KeyInput(handler));
 		
 		// Do celow testowych - generowanie rund, gry - docelowo bedzie w osobnej klasie Spawner.java
-		handler.addObject(new Block(500, 900, ObjectId.Block));
-		bcg_handler.addObject(new Cloud(500, 800, ObjectId.Background, 1)); // do celow testowych - przenisc do klasy Spawner
+		//handler.addObject(new Block(500, 900, ObjectId.Block));
+		//bcg_handler.addObject(new Cloud(500, 800, ObjectId.Background, 1)); // do celow testowych - przenisc do klasy Spawner
 		// teren
 		//for(int i = 0; i < 50; i++)
 		//	handler.addObject(new Block(0 + i*32, 500, ObjectId.Block));
@@ -209,14 +210,19 @@ public class Game extends Canvas implements Runnable{
 						if(green == 0 && red == 0 && blue == 255)
 							handler.addObject(new Player(xx*32, yy*32, ObjectId.Player, handler));
 						
-						// generowanie elementow tla 
+						// generowanie elementow tla - chmury
 						if(green == 255 && red == 0 && blue == 255) // kolor - cyan
 							bcg_handler.addObject(new Cloud(xx*32, yy*32, ObjectId.Background, rand.nextInt(4) + 1)); // generowanie widoku chury - wybiera losowo jeden z 4 dostepnych rysunkow 
+						
+						// generowanie elementow tla - drzewa jesienne
+						if(green == 255 && red == 255 && blue == 0) // kolor - zolty
+							bcg_handler.addObject(new TreeAutumn(xx*32, yy*32 - 565, ObjectId.Background, rand.nextInt(2) + 1)); // generowanie widoku drzewa - wybiera losowo jeden z 2 dostepnych rysunkow 
+						//// Uwaga !!! - wszystkie rysunki drzew powinny miec 600 px wysokosci - aby (yy*32 - 570) zawsze wyznaczylo poprawne polozenie drzewa nad poziomem terenu
 						
 					}
 				}
 				
-			//	handler.addObject(new HomingMissile(100, 100, 4, 0, ID.EnemyBullet, handler));
+			//	handler.addObject(new HomingMissile(100, 100, 4, 0, ID.EnemyBullet, handler)); 
 				
 			}
 	
