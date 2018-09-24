@@ -38,8 +38,8 @@ public class Player extends GameObject{
 	// timery do renderowania animacji
 	private final int blink_eye_timer = 5000; // czas do kolejnego mrugniecia
 	private int b_e_timer = 5000; // aktualny status timera
-	private final int start_timer2 = 200;
-	private int timer2 = 200; // upadek z duzej wysokosci - timer animacji
+	private final int start_timer2 = 100;
+	private int timer2 = 100; // upadek z duzej wysokosci - timer animacji
 	private int running_timer = 40; // czas do zmiany animacji biegania
 	private final int running_timer_start = 40;
 	private int choose_run_animation = 1; // przyjmuje wartosc (-1) lub 1 - kazdej wartosci odpowiada inny obrazek animacji
@@ -132,7 +132,7 @@ public class Player extends GameObject{
 
 	
 	private void collision() {
-		// TODO Auto-generated method stub 
+		// TODO Auto-generated method stub
 		supported = false;
 		
 		for(int i = 0; i < handler.object.size(); i++) {

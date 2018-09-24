@@ -26,8 +26,6 @@ public class Camera {
 		if(x > 0) x = 0; 
 		if(x < -15200) x = -15200; 
 		
-		//y = -player.getY() + 350; // kamera zawsze sledzi ruchy gracza po osi y
-		
 		
 		y = -800;
 		if(player.getY() < 900) {
