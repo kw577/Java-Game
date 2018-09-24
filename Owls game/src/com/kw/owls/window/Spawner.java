@@ -1,8 +1,6 @@
 package com.kw.owls.window;
 
 
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.Random;
@@ -13,6 +11,7 @@ import com.kw.owls.framework.ObjectId;
 import com.kw.owls.framework.STATE;
 import com.kw.owls.objects.Block;
 import com.kw.owls.objects.Player;
+import com.kw.owls.objects.TexturesManager;
 
 // klasa zajmuje sie generowaniem odpowiednich przeciwnikow i odpowiedniej ich ilosci w zaleznosci od rundy
 
@@ -23,41 +22,36 @@ public class Spawner {
 	private Game game;
 	private Random rand = new Random();
 	private String level_image_nr;
-
+	private TexturesManager textures;
 	
 	
 	private BufferedImage level = null;
+	
 
-	// Tekstury wykorzystywane w grze
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	
-	
 	// konstruktor
 	public Spawner(Handler handler, BackgroundHandler bcg_handler, Game game) {
 		this.handler = handler;
 		this.bcg_handler = bcg_handler;
 		this.game = game;
-
+		
+		// zastosowanie klasy TexturesManager pozwala na zwiekszenie szybkosci ladowania gry
+		textures = new TexturesManager();		
 	}
 	
+	
+	
+
 	public void tick() {
 			
 		
 		
 		if(game.getGameLevel() == 0 && game.gameState == STATE.Game) {
 			game.setGameLevel(1);
-			level_image_nr = "/wizard_level_" + game.getGameLevel() + ".png";
+			level_image_nr = "/Level_" + game.getGameLevel() + ".png";
 			
 			BufferedImageLoader loader = new BufferedImageLoader();
-			//level = loader.loadImage(level_image_nr);
-			level = loader.loadImage("/Level_1.png"); 
+			level = loader.loadImage(level_image_nr);
+
 		
 			
 			// zaladowanie mapy gry 
@@ -66,6 +60,7 @@ public class Spawner {
 			
 			loadLevel(level);
 			
+			// aby nie zostal zapamietany ruch gracza z poprzedniej rundy
 			handler.setDown(false);
 			handler.setLeft(false);
 			handler.setRight(false);
@@ -90,7 +85,7 @@ public class Spawner {
 				int blue = (pixel) & 0xff;
 				//System.out.println("Red " + red + " green: " + green + " blue " + blue + "\n");
 				if(red == 0 && green == 0 && blue == 0)
-					handler.addObject(new Block(xx*32, yy*32, ObjectId.Block));
+					handler.addObject(new Block(xx*32, yy*32, ObjectId.Block, textures));
 				
 				if(green == 0 && red == 0 && blue == 255)
 					handler.addObject(new Player(xx*32, yy*32, ObjectId.Player, handler));

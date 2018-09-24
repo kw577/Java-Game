@@ -1,26 +1,21 @@
 package com.kw.owls.objects;
 
-import java.awt.Color;
+
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 
 import com.kw.owls.framework.GameObject;
 import com.kw.owls.framework.ObjectId;
-import com.kw.owls.window.BufferedImageLoader;
-
 
 public class Block extends GameObject{
 
-	private BufferedImage block_image = null;
+	private TexturesManager textures;
 	
-	
-	public Block(float x, float y, ObjectId id) {
+	public Block(float x, float y, ObjectId id, TexturesManager textures) {
 		super(x, y, id);
 		
-		BufferedImageLoader loader = new BufferedImageLoader();
-		
-		block_image = loader.loadImage("/textures/grass_1.png");
+		this.textures = textures;
+
 
 	}
 
@@ -38,7 +33,7 @@ public class Block extends GameObject{
 		//g.setColor(Color.red);
 		//g.drawRect((int) x,(int) y, 32, 32);
 		
-		g.drawImage(block_image, (int)x, (int)y, null);
+		g.drawImage(textures.getGrass_texture(), (int)x, (int)y, null);
 	}
 
 

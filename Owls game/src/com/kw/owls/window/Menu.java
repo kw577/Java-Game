@@ -122,7 +122,7 @@ public class Menu extends MouseAdapter{
 			g.drawString("-> Use spacebar to jump", 50, 210);
 			g.drawString("-> Shoot with alt key", 50, 250);
 			g.drawString("-> Collect as much coins as you can find", 50, 290);
-			g.drawString("-> Good luck :) :) :) :) !!!", 50, 330);
+			g.drawString("-> Good luck :) :) :) !!", 50, 330);
 			g.setFont(fnt2);
 			g.drawRect(300, 350, 200, 64);
 			g.drawString("Back", 360, 390);
