@@ -12,6 +12,7 @@ import com.kw.owls.background.Cloud;
 import com.kw.owls.background.TreeAutumn;
 import com.kw.owls.framework.KeyInput;
 import com.kw.owls.framework.ObjectId;
+import com.kw.owls.framework.STATE;
 import com.kw.owls.objects.Block;
 import com.kw.owls.objects.Player;
 
@@ -36,7 +37,14 @@ public class Game extends Canvas implements Runnable{
 	private Handler handler;
 	private BackgroundHandler bcg_handler;
 	private Camera camera;
-	//private Texture texture;
+	private Menu menu;
+	
+	
+	
+	// Parametry gry
+	public static STATE gameState = STATE.Menu;
+	private int gameLevel = 0;
+	
 	
 	
 	// konstruktor
@@ -52,27 +60,15 @@ public class Game extends Canvas implements Runnable{
 				
 		handler = new Handler();
 		bcg_handler = new BackgroundHandler();
+		menu = new Menu(this, handler);
 		camera = new Camera(0, 0); // poczatkowe polozenie kamery sledzacej gracza 
 		rand = new Random();
-		//texture = new Texture();
 		
-		loadLevel(level);
 		
+		//loadLevel(level);
+		
+		this.addMouseListener(menu);
 		this.addKeyListener(new KeyInput(handler));
-		
-		// Do celow testowych - generowanie rund, gry - docelowo bedzie w osobnej klasie Spawner.java
-		//handler.addObject(new Block(500, 900, ObjectId.Block));
-		//bcg_handler.addObject(new Cloud(500, 800, ObjectId.Background, 1)); // do celow testowych - przenisc do klasy Spawner
-		// teren
-		//for(int i = 0; i < 50; i++)
-		//	handler.addObject(new Block(0 + i*32, 500, ObjectId.Block));
-			
-		//handler.addObject(new Block(500, 400, ObjectId.Block));
-		
-		//handler.addObject(new Block(400, 350, ObjectId.Block));
-			
-		//handler.addObject(new Player(300, 300, ObjectId.Player, handler));
-		
 		
 		
 	}
@@ -143,13 +139,26 @@ public class Game extends Canvas implements Runnable{
 	// updatowanie danych gry
 	private void tick() {
 		
-		handler.tick();
-	
-		// Kamera sledzi ruchy gracza
-		for(int i = 0; i<handler.object.size(); i++) {
-			if(handler.object.get(i).getId() == ObjectId.Player) {
-				camera.tick(handler.object.get(i));
+		
+		if(gameState == STATE.Game) {
+			
+			if(this.gameLevel == 0) {
+				this.gameLevel = 1;
+				loadLevel(level);
 			}
+			
+			handler.tick();
+			
+			// Kamera sledzi ruchy gracza
+			for(int i = 0; i<handler.object.size(); i++) {
+				if(handler.object.get(i).getId() == ObjectId.Player) {
+					camera.tick(handler.object.get(i));
+				}
+			}
+		}
+		else if(gameState == STATE.Menu || gameState == STATE.Help) {
+			menu.tick();
+			
 		}
 	
 	}
@@ -169,20 +178,26 @@ public class Game extends Canvas implements Runnable{
 		Graphics2D g2d = (Graphics2D) g;
 		/////////////////////////////
 		// renderowanie grafiki gry w tym bloku
-		g.setColor(new Color(190, 220, 235));
-		g.fillRect(0, 0, getWidth(), getHeight());
+		
+		if(gameState == STATE.Game) {
+			g.setColor(new Color(190, 220, 235));
+			g.fillRect(0, 0, getWidth(), getHeight());
 		
 		
 		
 		
-		g2d.translate(camera.getX(), camera.getY()); // sledzenie ruchu gracza  
+			g2d.translate(camera.getX(), camera.getY()); // sledzenie ruchu gracza  
 		
-		bcg_handler.render(g);
-		handler.render(g);
+			bcg_handler.render(g);
+			handler.render(g);
 		
 		
-		g2d.translate(-camera.getX(), -camera.getY()); // sledzenie ruchu gracza
-		
+			g2d.translate(-camera.getX(), -camera.getY()); // sledzenie ruchu gracza
+		}	
+		else if(gameState == STATE.Menu || gameState == STATE.Help) {
+			menu.render(g);
+					
+		}
 		/////////////////////////////
 		g.dispose();
 		bs.show();
@@ -220,6 +235,7 @@ public class Game extends Canvas implements Runnable{
 						//// Uwaga !!! - wszystkie rysunki drzew powinny miec 600 px wysokosci - aby (yy*32 - 570) zawsze wyznaczylo poprawne polozenie drzewa nad poziomem terenu
 						
 					}
+					System.out.println("\n\nLoading map in progress\n\n");
 				}
 				
 			//	handler.addObject(new HomingMissile(100, 100, 4, 0, ID.EnemyBullet, handler)); 
