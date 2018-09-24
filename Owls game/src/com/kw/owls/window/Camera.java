@@ -21,6 +21,11 @@ public class Camera {
 		//x--; // test - gyby zawartscia tej funckji byla ta jedna linia kodu - kamera przemieszczalaby sie jednostajnie w prawo
 		
 		x = -player.getX() - Game.WIDTH/2 + 200;
+		
+		// granice planszy 
+		if(x > 0) x = 0; 
+		if(x < -15200) x = -15200; 
+		
 		//y = -player.getY() + 350; // kamera zawsze sledzi ruchy gracza po osi y
 		
 		

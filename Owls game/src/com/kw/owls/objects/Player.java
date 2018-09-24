@@ -120,6 +120,10 @@ public class Player extends GameObject{
 		x += velX;
 		y += velY; 
 		
+		// granice planszy - dodatkowo nalezy w ustawic granice dzialania kamery
+		if(x < 0) x = 0; 
+		if(x > 15950) x = 15950; 
+		
 		//////////////////
 		
 		collision();
@@ -128,7 +132,7 @@ public class Player extends GameObject{
 
 	
 	private void collision() {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub 
 		supported = false;
 		
 		for(int i = 0; i < handler.object.size(); i++) {
