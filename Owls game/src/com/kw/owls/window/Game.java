@@ -5,16 +5,11 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-import java.util.Random;
 
-import com.kw.owls.background.Cloud;
-import com.kw.owls.background.TreeAutumn;
 import com.kw.owls.framework.KeyInput;
 import com.kw.owls.framework.ObjectId;
 import com.kw.owls.framework.STATE;
-import com.kw.owls.objects.Block;
-import com.kw.owls.objects.Player;
+
 
 
 public class Game extends Canvas implements Runnable{
@@ -29,43 +24,32 @@ public class Game extends Canvas implements Runnable{
 
 	private boolean running = false;
 	private Thread thread;
-	private BufferedImage level = null; // do celow testowych - docelowo wczytywanie rund w osobnej klasie spawner
-	
-	
-	Random rand; // do losowego generowania niektorych elementow gry - np tlo - docelowo w klasei Spawner
 	
 	private Handler handler;
 	private BackgroundHandler bcg_handler;
 	private Camera camera;
 	private Menu menu;
-	
+	private Spawner spawner;
 	
 	
 	// Parametry gry
 	public static STATE gameState = STATE.Menu;
 	private int gameLevel = 0;
 	
-	
-	
+		
 	// konstruktor
 	public Game() {
 		new Window(800, 600, "Building game", this);
 		
-		BufferedImageLoader loader = new BufferedImageLoader();
-		level = loader.loadImage("/Level_1.png"); // load the level - for testing
-		
-		
-		
+			
 		start();
 				
 		handler = new Handler();
 		bcg_handler = new BackgroundHandler();
 		menu = new Menu(this, handler);
+		spawner = new Spawner(handler, bcg_handler, this);
 		camera = new Camera(0, 0); // poczatkowe polozenie kamery sledzacej gracza 
-		rand = new Random();
 		
-		
-		//loadLevel(level);
 		
 		this.addMouseListener(menu);
 		this.addKeyListener(new KeyInput(handler));
@@ -138,14 +122,12 @@ public class Game extends Canvas implements Runnable{
 
 	// updatowanie danych gry
 	private void tick() {
-		
-		
+			
 		if(gameState == STATE.Game) {
 			
-			if(this.gameLevel == 0) {
-				this.gameLevel = 1;
-				loadLevel(level);
-			}
+	
+			spawner.tick();
+	
 			
 			handler.tick();
 			
@@ -204,44 +186,18 @@ public class Game extends Canvas implements Runnable{
 		
 	}
 	
+
+			
+	public int getGameLevel() {
+		return gameLevel;
+	}
+
 	
-	
-	// loading the level map - funkcja do celow testowych - docelowo wczytywaniem rund bedzie kontrolowane przez osobna klase Spawner
-			private void loadLevel(BufferedImage image) {
-				int w = image.getWidth();
-				int h = image.getHeight();
-				
-				// na podstawie wczytanej mapki laduje sie obszar gry 
-				for(int xx = 0; xx < w; xx++) {
-					for(int yy = 0; yy < h; yy++) {
-						int pixel = image.getRGB(xx, yy);
-						int red = (pixel >> 16) & 0xff;
-						int green = (pixel >> 8) & 0xff;
-						int blue = (pixel) & 0xff;
-						//System.out.println("Red " + red + " green: " + green + " blue " + blue + "\n");
-						if(red == 0 && green == 0 && blue == 0)
-							handler.addObject(new Block(xx*32, yy*32, ObjectId.Block));
-						
-						if(green == 0 && red == 0 && blue == 255)
-							handler.addObject(new Player(xx*32, yy*32, ObjectId.Player, handler));
-						
-						// generowanie elementow tla - chmury
-						if(green == 255 && red == 0 && blue == 255) // kolor - cyan
-							bcg_handler.addObject(new Cloud(xx*32, yy*32, ObjectId.Background, rand.nextInt(4) + 1)); // generowanie widoku chury - wybiera losowo jeden z 4 dostepnych rysunkow 
-						
-						// generowanie elementow tla - drzewa jesienne
-						if(green == 255 && red == 255 && blue == 0) // kolor - zolty
-							bcg_handler.addObject(new TreeAutumn(xx*32, yy*32 - 565, ObjectId.Background, rand.nextInt(2) + 1)); // generowanie widoku drzewa - wybiera losowo jeden z 2 dostepnych rysunkow 
-						//// Uwaga !!! - wszystkie rysunki drzew powinny miec 600 px wysokosci - aby (yy*32 - 570) zawsze wyznaczylo poprawne polozenie drzewa nad poziomem terenu
-						
-					}
-					System.out.println("\n\nLoading map in progress\n\n");
-				}
-				
-			//	handler.addObject(new HomingMissile(100, 100, 4, 0, ID.EnemyBullet, handler)); 
-				
-			}
-	
+	public void setGameLevel(int gameLevel) {
+		this.gameLevel = gameLevel;
+	}		
+			
+			
 	public static void main(String args[]) {
 		new Game();
 	}
