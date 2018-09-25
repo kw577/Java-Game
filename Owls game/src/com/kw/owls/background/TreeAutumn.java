@@ -14,6 +14,9 @@ public class TreeAutumn extends BackgroundObject{
 	private BufferedImage autumn_tree = null;
 	private int type; // 1 - 2 w zaleznosci od typu drzewa laduje sie inny obrazek
 	
+	
+	
+	
 	// Uwaga !!! - wszystkie rysunki drzew powinny miec 600 px wysokosci
 	
 	public TreeAutumn(float x, float y, ObjectId id, int type) {

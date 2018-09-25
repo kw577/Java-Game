@@ -27,7 +27,7 @@ public class Camera {
 		if(x < -15200) x = -15200; 
 		
 		
-		y = -800;
+		y = -750;
 		if(player.getY() < 900) {
 			y+=-(player.getY()-900);
 		}

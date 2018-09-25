@@ -86,8 +86,14 @@ public class Menu extends MouseAdapter{
 	
 	public void render(Graphics g) {
 		
-		g.setColor(Color.black);
-		g.fillRect(0, 0, 1000, 563);
+		g.setColor(new Color(190, 220, 235));
+		g.fillRect(0, 0, game.getWidth(), game.getHeight());
+		
+				
+		g.setColor(new Color(130, 180, 0));
+		g.fillOval(-300, 500, 1600, 300);
+		
+		
 		if(game.gameState == STATE.Menu) {
 			Font fnt = new Font("arial", 1, 50);
 			Font fnt2 = new Font("arial", 1, 30);
