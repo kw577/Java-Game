@@ -1,12 +1,14 @@
 package com.kw.owls.window;
 
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import com.kw.owls.background.Cloud;
 import com.kw.owls.background.TreeAutumn;
+import com.kw.owls.framework.GameObject;
 import com.kw.owls.framework.ObjectId;
 import com.kw.owls.framework.STATE;
 import com.kw.owls.objects.Block;
@@ -24,6 +26,9 @@ public class Spawner {
 	private String level_image_nr;
 	private TexturesManager textures;
 	
+	// Timery ekranu ladowania gry - minimalny czas wyswietlania ekranu przejscia miedzy rundami
+	private int loading_timer = 150;
+	private int loading_timer_start = 150;
 	
 	private BufferedImage level = null;
 	
@@ -40,14 +45,39 @@ public class Spawner {
 	
 	
 	
+	public void render(Graphics g) {
+		g.setColor(Color.RED);
+		g.fillRect(0, 0, game.getWidth(), game.getHeight());
+	}
 
-	public void tick() {
+
+
+
+	public void checkLevel() {
+		// Sprawdza czy zakonczyla sie biezaca runda - ??? np po przejsciu do konca planszy ???
+		
+		
+		// Testowo - runda zmienia sie gdy gracz przejdzie do konca planszy
+		for(int i = 0; i < handler.object.size(); i++) {
+			GameObject tempObject = handler.object.get(i);
 			
-		
-		
-		if(game.getGameLevel() == 0 && game.gameState == STATE.Game) {
+			if(tempObject.getId() == ObjectId.Player) {
+				if(tempObject.getX() >= 15500) {
+					game.gameState = STATE.LoadLevel;
+					// clear haandler
+				}
+			}
+		}
+	}
+
+
+	
+
+	public void load() {
+		// Loading runds
+		if(game.getGameLevel() == 0 && loading_timer == loading_timer_start) {
 			game.setGameLevel(1);
-			level_image_nr = "/Level_" + game.getGameLevel() + ".png";
+			level_image_nr = "/levels/Level_" + game.getGameLevel() + ".png";
 			
 			BufferedImageLoader loader = new BufferedImageLoader();
 			level = loader.loadImage(level_image_nr);
@@ -56,21 +86,107 @@ public class Spawner {
 			
 			// zaladowanie mapy gry 
 			
-			
-			
+
 			loadLevel(level);
 			
-			// aby nie zostal zapamietany ruch gracza z poprzedniej rundy
+			// aby nie zostal zapamietany ruch gracza z poprzedniej rundy - po kazdym "if" lub na koncu tak jak tu zastosowano
+			//handler.setDown(false);
+			//handler.setLeft(false);
+			//handler.setRight(false);
+			//handler.setUp(false);
+			
+			
+			//game.gameState = STATE.Game; //mozna dodawac ten zapis po kazdym "if" lub na koncu tak jak tu zastosowano
+		}
+		else if(game.getGameLevel() == 1 && loading_timer == loading_timer_start) {
+			game.setGameLevel(2);
+			
+			handler.clearHandler();	
+			bcg_handler.clearHandler();
+			
+			level_image_nr = "/levels/Level_" + game.getGameLevel() + ".png";
+			
+			BufferedImageLoader loader = new BufferedImageLoader();
+			level = loader.loadImage(level_image_nr);
+
+		
+			
+			// zaladowanie mapy gry 
+			
+
+			loadLevel(level);
+			
+			
+			//game.gameState = STATE.Game;
+		}
+		else if(game.getGameLevel() == 2 && loading_timer == loading_timer_start) {
+			game.setGameLevel(3);
+			
+			// usuwanie poprzedniej rundy
+			handler.clearHandler();	
+			bcg_handler.clearHandler();
+			
+			level_image_nr = "/levels/Level_" + game.getGameLevel() + ".png";
+			
+			BufferedImageLoader loader = new BufferedImageLoader();
+			level = loader.loadImage(level_image_nr);
+
+		
+			
+			// zaladowanie mapy gry 
+			
+
+			loadLevel(level);
+			
+			
+			//game.gameState = STATE.Game;
+		}
+		else if(game.getGameLevel() == 3 && loading_timer == loading_timer_start) {
+			game.setGameLevel(4);
+			
+			// usuwanie poprzedniej rundy
+			handler.clearHandler();	
+			bcg_handler.clearHandler();
+			
+			level_image_nr = "/levels/Level_" + game.getGameLevel() + ".png";
+			
+			BufferedImageLoader loader = new BufferedImageLoader();
+			level = loader.loadImage(level_image_nr);
+
+		
+			
+			// zaladowanie mapy gry 
+			
+
+			loadLevel(level);
+			
+			
+			//game.gameState = STATE.Game;
+		}
+		
+		// aby ekran przyjcia miedzy rundami trwal ustalona ilosc czasu  
+		loading_timer--;
+		if(loading_timer <= 0) {
+			loading_timer = loading_timer_start;
+			
+			// aby nie zostaly zapamietane ruchy z poprzedniej rundy
 			handler.setDown(false);
 			handler.setLeft(false);
 			handler.setRight(false);
 			handler.setUp(false);
 			
-		} 
-
+			game.gameState = STATE.Game;
+		}
 		
 	}
 	
+	
+	
+	
+	
+	
+	
+		
 	// loading the level map 
 	private void loadLevel(BufferedImage image) {
 		int w = image.getWidth();
@@ -108,9 +224,7 @@ public class Spawner {
 	}
 		
 		
-	public void render(Graphics g) {
 
-	}
 		
 		
 	

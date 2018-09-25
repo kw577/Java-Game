@@ -84,4 +84,9 @@ public class Handler {
 		this.object.remove(object);
 	}
 	
+	public void clearHandler() {
+		this.object.clear();	
+	
+	}
+	
 }

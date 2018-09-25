@@ -31,5 +31,11 @@ public class BackgroundHandler {
 	public void removeObject(BackgroundObject object) {
 		this.object.remove(object);
 	}
+
+	
+	public void clearHandler() {
+		this.object.clear();	
+	
+	}
 	
 }

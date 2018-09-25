@@ -126,7 +126,7 @@ public class Game extends Canvas implements Runnable{
 		if(gameState == STATE.Game) {
 			
 	
-			spawner.tick();
+			spawner.checkLevel();
 	
 			
 			handler.tick();
@@ -140,6 +140,10 @@ public class Game extends Canvas implements Runnable{
 		}
 		else if(gameState == STATE.Menu || gameState == STATE.Help) {
 			menu.tick();
+			
+		}
+		else if(gameState == STATE.LoadLevel) {
+			spawner.load();
 			
 		}
 	
@@ -179,6 +183,10 @@ public class Game extends Canvas implements Runnable{
 		else if(gameState == STATE.Menu || gameState == STATE.Help) {
 			menu.render(g);
 					
+		}
+		else if(gameState == STATE.LoadLevel) {
+			spawner.render(g);
+			
 		}
 		/////////////////////////////
 		g.dispose();
