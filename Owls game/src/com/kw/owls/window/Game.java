@@ -139,7 +139,7 @@ public class Game extends Canvas implements Runnable{
 				}
 			}
 		}
-		else if(gameState == STATE.Menu || gameState == STATE.Help) {
+		else if(gameState == STATE.Menu || gameState == STATE.Help || gameState == STATE.End) {
 			menu.tick();
 			
 		}
@@ -181,7 +181,7 @@ public class Game extends Canvas implements Runnable{
 		
 			g2d.translate(-camera.getX(), -camera.getY()); // sledzenie ruchu gracza
 		}	
-		else if(gameState == STATE.Menu || gameState == STATE.Help) {
+		else if(gameState == STATE.Menu || gameState == STATE.Help || gameState == STATE.End) {
 			menu.render(g);
 					
 		}

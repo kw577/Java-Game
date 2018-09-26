@@ -62,11 +62,30 @@ public class Spawner {
 			GameObject tempObject = handler.object.get(i);
 			
 			if(tempObject.getId() == ObjectId.Player) {
-				if(tempObject.getX() >= 15500) {
+				if(tempObject.getX() >= 15500 && game.getGameLevel() < 4) {
 					game.gameState = STATE.LoadLevel;
 					// clear haandler
 				}
+				
+				
+				// zakonczenie - przejscie calej gry
+				if(tempObject.getX() >= 15500 && game.getGameLevel() == 4) {
+					game.gameState = STATE.End;
+					
+					//Zerowanie stanu gry
+					game.setGameLevel(0);
+					
+					// usuwanie poprzedniej rundy
+					handler.clearHandler();	
+					bcg_handler.clearHandler();
+				}
+				
+				
 			}
+			
+		
+	
+			
 		}
 	}
 
