@@ -52,6 +52,7 @@ public class Game extends Canvas implements Runnable{
 		
 		
 		this.addMouseListener(menu);
+		this.addMouseMotionListener(menu); // podswietlanie przycikow menu gdy sie na nie najedzie myszka
 		this.addKeyListener(new KeyInput(handler));
 		
 		

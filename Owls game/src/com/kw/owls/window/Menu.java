@@ -5,15 +5,32 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import com.kw.owls.framework.STATE;
+import com.kw.owls.framework.SpriteSheet;
 
-public class Menu extends MouseAdapter{
+public class Menu extends MouseAdapter implements MouseMotionListener {
 
 	private Game game;
 	private Handler handler;
 
+	
+	//Textury uzywane w menu gry
+	private BufferedImage buttons = null;
+	private SpriteSheet buttonsSpriteSheet = null;
+	private BufferedImage autumn_tree = null;
+	private BufferedImage clouds = null;
+		
+	//Do podswietlania przyciskow menu
+	private boolean userHooverPlay = false;
+	private boolean userHooverHelp = false;
+	private boolean userHooverExit = false;
+				
+	private boolean GraphicsLoaded = false; // zmienna z informacja czy zostaly zaladowane grafiki gry
+	
 	private Random r = new Random();
 	
 	public Menu(Game game, Handler handler) {
@@ -62,14 +79,42 @@ public class Menu extends MouseAdapter{
 		
 	}
 	
+	// Metoda interfejsu MouseMotionListener
+	public void mouseMoved(MouseEvent e) {
+		int mx = e.getX();
+		int my = e.getY();
+		
+		if(game.gameState == STATE.Menu) {
+			if(mouseOver(mx, my, 300, 150, 200, 64)) {
+				userHooverPlay = true;
+				userHooverHelp = false;
+				userHooverExit = false;
+			} 
+			else if(mouseOver(mx, my, 300, 250, 200, 64)) {
+				userHooverPlay = false;
+				userHooverHelp = true;
+				userHooverExit = false;
+			} 
+			else if(mouseOver(mx, my,  300, 350, 200, 64)) {
+				userHooverPlay = false;
+				userHooverHelp = false;
+				userHooverExit = true;
+			}
+			else {
+				userHooverPlay = false;
+				userHooverHelp = false;
+				userHooverExit = false;
+			}
+		}		
+		
+	}
+		
 	
 	public void mouseReleased(MouseEvent e) {
 		
 	}
 	
-	
-	
-	
+		
 	// metoda sprawdzajaca czy kliknieto w jakis przycisk menu
 	private boolean mouseOver(int mx, int my, int x, int y, int width, int height) {
 		if((mx > x) && (mx < x + width)) {
@@ -84,7 +129,24 @@ public class Menu extends MouseAdapter{
 			
 	}
 	
+	
 	public void render(Graphics g) {
+		
+		// pobranie grafik
+		if(!GraphicsLoaded) {
+			BufferedImageLoader loader = new BufferedImageLoader();
+						
+			try {
+				buttons = loader.loadImage("/textures/buttons_spritesheet.png");
+				autumn_tree = loader.loadImage("/tree_autumn_2.png");
+				clouds = loader.loadImage("/cloud_1.png");
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+						
+			buttonsSpriteSheet = new SpriteSheet(buttons);
+		}
+		
 		
 		g.setColor(new Color(190, 220, 235));
 		g.fillRect(0, 0, game.getWidth(), game.getHeight());
@@ -92,28 +154,50 @@ public class Menu extends MouseAdapter{
 				
 		g.setColor(new Color(130, 180, 0));
 		g.fillOval(-300, 500, 1600, 300);
-		
+				
 		
 		if(game.gameState == STATE.Menu) {
+			
+			g.drawImage(autumn_tree, -70, -70, null);
+			g.drawImage(clouds, 550, 50, null);
+			g.drawImage(clouds, 200, 0, null);
 			Font fnt = new Font("arial", 1, 50);
 			Font fnt2 = new Font("arial", 1, 30);
 			g.setFont(fnt);
+							
+			//g.setColor(Color.red);
+			//g.drawString("Menu", 330, 70);
+						
 			
-			g.setColor(Color.white);
-			g.drawString("Menu", 330, 70);
+			if(!userHooverPlay)
+				g.drawImage(buttonsSpriteSheet.grabImage(1, 1, 220, 84), 290, 140, null);
+			else
+				g.drawImage(buttonsSpriteSheet.grabImage(2, 1, 220, 84), 290, 140, null);
 			
-			g.setFont(fnt2);
-			g.drawRect(300, 150, 200, 64);
-			g.drawString("Play", 360, 190);
+			
+			//g.setFont(fnt2);
+			//g.drawRect(300, 150, 200, 64);
+			//g.drawString("Play", 360, 190);
 					
-			g.drawRect(300, 250, 200, 64);
-			g.drawString("Help", 360, 290);
 			
-			g.drawRect(300, 350, 200, 64);
-			g.drawString("Quit", 360, 390);
+			if(!userHooverHelp)
+				g.drawImage(buttonsSpriteSheet.grabImage(1, 2, 220, 84), 290, 235, null);
+			else
+				g.drawImage(buttonsSpriteSheet.grabImage(2, 2, 220, 84), 290, 235, null);
+						
 			
-
+			//g.drawRect(300, 250, 200, 64);
+			//g.drawString("Help", 360, 290);
 			
+			
+			if(!userHooverExit)
+				g.drawImage(buttonsSpriteSheet.grabImage(1, 3, 220, 84), 290, 332, null);
+			else
+				g.drawImage(buttonsSpriteSheet.grabImage(2, 3, 220, 84), 290, 332, null);
+					
+			//g.drawRect(300, 350, 200, 64);
+			//g.drawString("Quit", 360, 390);
+						
 			
 		} else if(game.gameState == STATE.Help) {
 			Font fnt = new Font("arial", 1, 50);
@@ -136,4 +220,5 @@ public class Menu extends MouseAdapter{
 		} 
 		
 	}
+	
 }
