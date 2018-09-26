@@ -25,7 +25,7 @@ public class TreeAutumn extends BackgroundObject{
 		BufferedImageLoader loader = new BufferedImageLoader();
 		this.type = type;
 		
-		autumn_tree = loader.loadImage("/tree_autumn_" + type + ".png");
+		autumn_tree = loader.loadImage("/background/tree_autumn_" + type + ".png");
 	}
 	
 

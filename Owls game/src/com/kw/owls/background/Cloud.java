@@ -20,7 +20,7 @@ public class Cloud extends BackgroundObject{
 		BufferedImageLoader loader = new BufferedImageLoader();
 		this.type = type;
 		
-		clouds = loader.loadImage("/cloud_" + type + ".png");
+		clouds = loader.loadImage("/background/cloud_" + type + ".png");
 	}
 	
 

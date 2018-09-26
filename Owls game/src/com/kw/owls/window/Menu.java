@@ -23,7 +23,9 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 	private SpriteSheet buttonsSpriteSheet = null;
 	private BufferedImage autumn_tree = null;
 	private BufferedImage clouds = null;
-		
+	private BufferedImage flowers = null;	
+	private BufferedImage owl = null;	
+	
 	//Do podswietlania przyciskow menu
 	private boolean userHooverPlay = false;
 	private boolean userHooverHelp = false;
@@ -138,8 +140,10 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 						
 			try {
 				buttons = loader.loadImage("/textures/buttons_spritesheet.png");
-				autumn_tree = loader.loadImage("/tree_autumn_2.png");
-				clouds = loader.loadImage("/cloud_1.png");
+				autumn_tree = loader.loadImage("/background/tree_autumn_2.png");
+				clouds = loader.loadImage("/background/cloud_1.png");
+				flowers = loader.loadImage("/background/flowers_1.png");
+				owl = loader.loadImage("/background/owl_1.png");
 			} catch (Exception e){
 				e.printStackTrace();
 			}
@@ -151,7 +155,10 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 		g.setColor(new Color(190, 220, 235));
 		g.fillRect(0, 0, game.getWidth(), game.getHeight());
 		
-				
+		g.setColor(Color.white);
+		//g.fillRect(170, 450, 70, 40);
+		g.fillOval(190, 450, 95, 95);
+		
 		g.setColor(new Color(130, 180, 0));
 		g.fillOval(-300, 500, 1600, 300);
 				
@@ -161,6 +168,10 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 			g.drawImage(autumn_tree, -70, -70, null);
 			g.drawImage(clouds, 550, 50, null);
 			g.drawImage(clouds, 200, 0, null);
+			g.drawImage(flowers, 500, 350, null);
+			g.drawImage(owl, 180, 420, null);
+			
+			
 			Font fnt = new Font("arial", 1, 50);
 			Font fnt2 = new Font("arial", 1, 30);
 			g.setFont(fnt);
@@ -212,7 +223,7 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 			g.drawString("-> Use spacebar to jump", 50, 210);
 			g.drawString("-> Shoot with alt key", 50, 250);
 			g.drawString("-> Collect as much coins as you can find", 50, 290);
-			g.drawString("-> Good luck :) :) :) :) :) :) :) !!", 50, 330);
+			g.drawString("-> Good luck :) :) :) :) !!!", 50, 330);
 			g.setFont(fnt2);
 			g.drawRect(300, 350, 200, 64);
 			g.drawString("Back", 360, 390);
