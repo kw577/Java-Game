@@ -30,13 +30,16 @@ public class Game extends Canvas implements Runnable{
 	private Camera camera;
 	private Menu menu;
 	private Spawner spawner;
-	
+	private HUD hud;
 	
 	// Parametry gry
 	public static STATE gameState = STATE.Menu;
 	private int gameLevel = 0;
-	
+	private static final int max_health = 5;
+	private int health = 5;  // poziom zdrowia gracza
+	private int flowers = 0; // ilosc zebranych kwiatkow
 		
+	
 	// konstruktor
 	public Game() {
 		new Window(800, 600, "Building game", this);
@@ -48,6 +51,7 @@ public class Game extends Canvas implements Runnable{
 		bcg_handler = new BackgroundHandler();
 		menu = new Menu(this, handler);
 		spawner = new Spawner(handler, bcg_handler, this);
+		hud = new HUD(this);
 		camera = new Camera(0, 0); // poczatkowe polozenie kamery sledzacej gracza 
 		
 		
@@ -178,8 +182,9 @@ public class Game extends Canvas implements Runnable{
 			bcg_handler.render(g);
 			handler.render(g);
 		
-		
 			g2d.translate(-camera.getX(), -camera.getY()); // sledzenie ruchu gracza
+			
+			hud.render(g); // ponizej bloku translate - ma byc wyswietlane w stalym punkcie okna gry
 		}	
 		else if(gameState == STATE.Menu || gameState == STATE.Help || gameState == STATE.End) {
 			menu.render(g);
@@ -206,7 +211,32 @@ public class Game extends Canvas implements Runnable{
 		this.gameLevel = gameLevel;
 	}		
 			
-			
+	
+	public static int getMaxHealth() {
+		return max_health;
+	}
+	
+
+	public int getHealth() {
+		return health;
+	}
+
+
+	public void setHealth(int health) {
+		this.health = health;
+	}
+
+
+	public int getFlowers() {
+		return flowers;
+	}
+
+
+	public void setFlowers(int flowers) {
+		this.flowers = flowers;
+	}
+	
+	
 	public static void main(String args[]) {
 		new Game();
 	}

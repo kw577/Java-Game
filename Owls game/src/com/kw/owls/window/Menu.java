@@ -79,7 +79,7 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 	
 		}  else if(game.gameState == STATE.End) {
 			
-		// Przycisk Back
+		// Przycisk powrotu do menu gry 
 		if(mouseOver(mx, my, 300, 350, 200, 64)) {
 			game.gameState = STATE.Menu;
 			

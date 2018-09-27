@@ -1,17 +1,14 @@
 package com.kw.owls.objects;
 
-import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-
-import javax.swing.ImageIcon;
 
 import com.kw.owls.framework.GameObject;
 import com.kw.owls.framework.ObjectId;
 import com.kw.owls.framework.SpriteSheet;
 import com.kw.owls.window.BufferedImageLoader;
+import com.kw.owls.window.Game;
 import com.kw.owls.window.Handler;
 
 public class Player extends GameObject{
@@ -23,6 +20,7 @@ public class Player extends GameObject{
 	private final float MAX_SPEED = 15;  // maksymalna przyjeta szybkosc spadania  
 	private final float MAX_SPEED_Running = 10; // maksymalna szybkosc biegu
 	Handler handler;
+	private Game game; 
 	private int accelerateTimer = 0;
 	private final int accelerateTimerMax = 50; // okresla czas po jakim nastapi zwiekszenie szybkosci ruchu
 	
@@ -45,9 +43,14 @@ public class Player extends GameObject{
 	private int choose_run_animation = 1; // przyjmuje wartosc (-1) lub 1 - kazdej wartosci odpowiada inny obrazek animacji
 	
 	
-	public Player(float x, float y, ObjectId id, Handler handler) {
+	// timery zmiany stanu zdrowia i punktow - do testow
+	private final int timer_test_start = 100;
+	private int timer_test = 100;
+	
+	public Player(float x, float y, ObjectId id, Handler handler, Game game) {
 		super(x, y, id);
 		this.handler = handler;
+		this.game = game;
 		
 		BufferedImageLoader loader = new BufferedImageLoader();
 		
@@ -66,6 +69,26 @@ public class Player extends GameObject{
 
 	
 	public void tick() {	
+		
+		
+		
+		
+		
+		// do celow testowych zmiany poziomu zdrowia i punktacji wyswietlanych przez hud 
+		timer_test--;
+		if (timer_test <= 0) {
+			if(game.getHealth() > 0)
+			game.setHealth(game.getHealth()-1);
+			
+			game.setFlowers(game.getFlowers() + 1);
+			timer_test = timer_test_start;
+		}
+		
+		
+		
+		
+		
+		
 		
 		if(jumping || falling) {
 			

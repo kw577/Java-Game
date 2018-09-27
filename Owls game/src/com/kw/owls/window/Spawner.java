@@ -74,6 +74,9 @@ public class Spawner {
 					
 					//Zerowanie stanu gry
 					game.setGameLevel(0);
+					game.setHealth(game.getMaxHealth());
+					game.setFlowers(0);
+					
 					
 					// usuwanie poprzedniej rundy
 					handler.clearHandler();	
@@ -120,6 +123,9 @@ public class Spawner {
 		else if(game.getGameLevel() == 1 && loading_timer == loading_timer_start) {
 			game.setGameLevel(2);
 			
+			// ustawienie poziomu zdrowia przy rozpoczeciu kolejnej rundy
+			game.setHealth(game.getMaxHealth());
+			
 			handler.clearHandler();	
 			bcg_handler.clearHandler();
 			
@@ -140,6 +146,9 @@ public class Spawner {
 		}
 		else if(game.getGameLevel() == 2 && loading_timer == loading_timer_start) {
 			game.setGameLevel(3);
+			
+			// ustawienie poziomu zdrowia przy rozpoczeciu kolejnej rundy
+			game.setHealth(game.getMaxHealth());
 			
 			// usuwanie poprzedniej rundy
 			handler.clearHandler();	
@@ -162,6 +171,9 @@ public class Spawner {
 		}
 		else if(game.getGameLevel() == 3 && loading_timer == loading_timer_start) {
 			game.setGameLevel(4);
+			
+			// ustawienie poziomu zdrowia przy rozpoczeciu kolejnej rundy
+			game.setHealth(game.getMaxHealth());
 			
 			// usuwanie poprzedniej rundy
 			handler.clearHandler();	
@@ -223,7 +235,7 @@ public class Spawner {
 					handler.addObject(new Block(xx*32, yy*32, ObjectId.Block, textures));
 				
 				if(green == 0 && red == 0 && blue == 255)
-					handler.addObject(new Player(xx*32, yy*32, ObjectId.Player, handler));
+					handler.addObject(new Player(xx*32, yy*32, ObjectId.Player, handler, game));
 				
 				// generowanie elementow tla - chmury
 				if(green == 255 && red == 0 && blue == 255) // kolor - cyan
