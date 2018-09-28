@@ -20,7 +20,7 @@ public class HUD {
 	// Pomocniczo do generowania grafiki przedstawiajacej stan punktacji
 	private int score_copy = 0;
 	private int pom = 0;
-	private int counter = 0; // zlicza ile cyfr ma liczba reprezentujaca ilosc punktow uzyskane przez gracza
+	private int counter = 0; // zlicza ile cyfr ma liczba reprezentujaca ilosc punktow uzyskane przez gracza 
 	
 	// Konstruktor
 	public HUD(Game game) {
@@ -56,12 +56,12 @@ public class HUD {
 		
 		
 		// wyswietla ilosc zdobytych punktow 
-		g.drawImage(flower_av, 725, 0, null);
+		g.drawImage(flower_av, 715, 0, null);
 		
 		score_copy = game.getFlowers();
 		while(score_copy > 0) {
 			pom = score_copy % 10;
-			g.drawImage(numbersSpriteSheet.grabImage(pom + 1, 1, 35, 40), 695 - counter*35, 10, null); // wyswietla obrazek odpowiadajacy ilosci punktow zdrowia
+			g.drawImage(numbersSpriteSheet.grabImage(pom + 1, 1, 35, 40), 685 - counter*35, 10, null); // wyswietla obrazek odpowiadajacy ilosci punktow zdrowia
 				
 			score_copy = (int)(score_copy - pom)/10;
 			counter++;

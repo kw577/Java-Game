@@ -12,8 +12,12 @@ import com.kw.owls.framework.GameObject;
 import com.kw.owls.framework.ObjectId;
 import com.kw.owls.framework.STATE;
 import com.kw.owls.objects.Block;
+import com.kw.owls.objects.Ground;
 import com.kw.owls.objects.Player;
 import com.kw.owls.objects.TexturesManager;
+import com.kw.owls.objects.WaterDeep;
+import com.kw.owls.objects.WaterMid;
+import com.kw.owls.objects.WaterSurface;
 
 // klasa zajmuje sie generowaniem odpowiednich przeciwnikow i odpowiedniej ich ilosci w zaleznosci od rundy
 
@@ -74,8 +78,7 @@ public class Spawner {
 					
 					//Zerowanie stanu gry
 					game.setGameLevel(0);
-					game.setHealth(game.getMaxHealth());
-					game.setFlowers(0);
+
 					
 					
 					// usuwanie poprzedniej rundy
@@ -99,6 +102,11 @@ public class Spawner {
 		// Loading runds
 		if(game.getGameLevel() == 0 && loading_timer == loading_timer_start) {
 			game.setGameLevel(1);
+			
+			// Zerowanie stanu gry
+			game.setHealth(game.getMaxHealth());
+			game.setFlowers(0);
+			
 			level_image_nr = "/levels/Level_" + game.getGameLevel() + ".png";
 			
 			BufferedImageLoader loader = new BufferedImageLoader();
@@ -231,11 +239,24 @@ public class Spawner {
 				int green = (pixel >> 8) & 0xff;
 				int blue = (pixel) & 0xff;
 				//System.out.println("Red " + red + " green: " + green + " blue " + blue + "\n");
-				if(red == 0 && green == 0 && blue == 0)
+				if(red == 0 && green == 255 && blue == 0)
 					handler.addObject(new Block(xx*32, yy*32, ObjectId.Block, textures));
+				
+				if(red == 0 && green == 0 && blue == 0)
+					handler.addObject(new Ground(xx*32, yy*32, ObjectId.Ground, textures));
 				
 				if(green == 0 && red == 0 && blue == 255)
 					handler.addObject(new Player(xx*32, yy*32, ObjectId.Player, handler, game));
+				
+				if(green == 255 && red == 170 && blue == 255)
+					handler.addObject(new WaterSurface(xx*32, yy*32, ObjectId.WaterSurface, textures));
+				
+				if(green == 150 && red == 110 && blue == 190)
+					handler.addObject(new WaterMid(xx*32, yy*32, ObjectId.WaterMid, textures));
+				
+				if(green == 90 && red == 50 && blue == 120)
+					handler.addObject(new WaterDeep(xx*32, yy*32, ObjectId.WaterDeep, textures));
+				
 				
 				// generowanie elementow tla - chmury
 				if(green == 255 && red == 0 && blue == 255) // kolor - cyan
@@ -245,6 +266,7 @@ public class Spawner {
 				if(green == 255 && red == 255 && blue == 0) // kolor - zolty
 					bcg_handler.addObject(new TreeAutumn(xx*32, yy*32 - 565, ObjectId.Background, rand.nextInt(2) + 1)); // generowanie widoku drzewa - wybiera losowo jeden z 2 dostepnych rysunkow 
 				//// Uwaga !!! - wszystkie rysunki drzew powinny miec 600 px wysokosci - aby (yy*32 - 570) zawsze wyznaczylo poprawne polozenie drzewa nad poziomem terenu
+				
 				
 			}
 			System.out.println("\n\nSpawner: Loading map in progress\n\n");

@@ -7,6 +7,10 @@ public enum ObjectId {
 	
 	Player(),
 	Block(),
+	Ground(),
+	WaterSurface(),
+	WaterMid(),
+	WaterDeep(),
 	Background(); // elementy w tle gry (chmury, drzewa itd)
 	
 	

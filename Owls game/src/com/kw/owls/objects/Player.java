@@ -163,7 +163,7 @@ public class Player extends GameObject{
 			
 			
 			
-			if(tempObject.getId() == ObjectId.Block) {		
+			if(tempObject.getId() == ObjectId.Block || tempObject.getId() == ObjectId.Ground) {		
 			
 				
 				// Player uderzy glowa w jakis blok

@@ -245,7 +245,7 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 			g.drawString("VICTORY", 330, 70);
 			
 			g.setFont(fnt3);
-			g.drawString("-> Your Score", 50, 170);
+			g.drawString("-> Your Score: " + game.getFlowers(), 50, 170);
 
 			g.setFont(fnt2);
 			g.drawRect(300, 350, 200, 64);
