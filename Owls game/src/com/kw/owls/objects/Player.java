@@ -16,6 +16,7 @@ public class Player extends GameObject{
 
 	private float width = 48, height = 96;
 	private BufferedImage player_images_all;
+	private BufferedImage diving_alert;
 	private boolean supported = false; //zmienna oznaczajaca czy player stoi na jakims bloku
 	private float gravity = 0.2f;
 	private final float MAX_SPEED = 15;  // maksymalna przyjeta szybkosc spadania  
@@ -64,6 +65,10 @@ public class Player extends GameObject{
 	private int lostFlowersTimerStart = 200;
 	private int temp; // zmienna pomocnicza
 	
+	private int alertTimer = 30;
+	private int alertTimerStart = 30;
+	private int alertAnimation = -1;
+	
 	public Player(float x, float y, ObjectId id, Handler handler, Game game) {
 		super(x, y, id);
 		this.handler = handler;
@@ -74,6 +79,7 @@ public class Player extends GameObject{
 		
 		try {
 			player_images_all = loader.loadImage("/player_images_all.png");
+			diving_alert = loader.loadImage("/others/diving_alert.png");
 		} catch (Exception e){
 			e.printStackTrace();
 		}
@@ -180,7 +186,7 @@ public class Player extends GameObject{
 		}
 		
 		// upadek z duzej wysokosci - gracz traci 1 pkt zdrowia
-		if(high_fall == true &&  velY == 0 && injured == false) {
+		if(injured == false && high_fall == true &&  velY == 0) {
 			
 			injured = true;
 			
@@ -334,6 +340,21 @@ public class Player extends GameObject{
 		
 		
 		direction();
+		
+		
+		// wyswietla ostrzezenie ze gracz znajduje sie zbyt dlugo pod woda 		
+		if(divingTimer < (0.3*divingTimerStart)) {
+			
+			if(alertAnimation < 0)
+			g.drawImage(diving_alert, (int)(x + 70), (int)(y - 70), null);
+			
+			alertTimer--;
+			if(alertTimer <= 0) {
+				alertAnimation *= (-1);
+				alertTimer = alertTimerStart;
+			}
+		}
+		
 		
 		
 		
