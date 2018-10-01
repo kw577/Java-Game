@@ -38,8 +38,9 @@ public class Game extends Canvas implements Runnable{
 	private static final int max_health = 5;
 	private int health = 5;  // poziom zdrowia gracza
 	private int flowers = 0; // ilosc zebranych kwiatkow
-		
+	private int lostFlowers = 0; //otrzymuje informacje z klasy Player ze nastapila utrata punktow i przekazuje ja do HUD.java	
 	
+
 	// konstruktor
 	public Game() {
 		new Window(800, 600, "Building game", this);
@@ -234,6 +235,16 @@ public class Game extends Canvas implements Runnable{
 
 	public void setFlowers(int flowers) {
 		this.flowers = flowers;
+	}
+	
+	
+	public int getLostFlowers() {
+		return lostFlowers;
+	}
+
+
+	public void setLostFlowers(int lostFlowers) {
+		this.lostFlowers = lostFlowers;
 	}
 	
 	

@@ -3,6 +3,7 @@ package com.kw.owls.objects;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
 import com.kw.owls.framework.GameObject;
 import com.kw.owls.framework.ObjectId;
@@ -47,13 +48,29 @@ public class Player extends GameObject{
 	private final int timer_test_start = 100;
 	private int timer_test = 100;
 	
+	// timery okreslajace czas po jakim gracz ponownie moze stracic punkty zdrowia i punkty gry
+	private boolean injured = false;
+	
+	private boolean underWater = false; // przechowuje informacje czy gracz znajduje sie pod woda
+	private int divingTimer = 1000; // timer nurkowania - ilosc czasu jaka gracz moze byc pod woda bez utraty punktow zdrowia
+	private int divingTimerStart = 1000;
+	
+	private int injuredTimer = 200;
+	private int injuredTimerStart = 200;
+	
+	private boolean lostFlowers = false;
+	private Random random;
+	private int lostFlowersTimer = 200;
+	private int lostFlowersTimerStart = 200;
+	private int temp; // zmienna pomocnicza
+	
 	public Player(float x, float y, ObjectId id, Handler handler, Game game) {
 		super(x, y, id);
 		this.handler = handler;
 		this.game = game;
 		
 		BufferedImageLoader loader = new BufferedImageLoader();
-		
+		random = new Random();
 		
 		try {
 			player_images_all = loader.loadImage("/player_images_all.png");
@@ -77,16 +94,21 @@ public class Player extends GameObject{
 		// do celow testowych zmiany poziomu zdrowia i punktacji wyswietlanych przez hud 
 		timer_test--;
 		if (timer_test <= 0) {
-			if(game.getHealth() > 0)
-			game.setHealth(game.getHealth()-1);
+			//if(game.getHealth() > 0)
+			//game.setHealth(game.getHealth()-1);
 			
-			game.setFlowers(game.getFlowers() + 1);
+			//game.setFlowers(game.getFlowers() + 1);
 			timer_test = timer_test_start;
 		}
 		
 		
+		if(game.getFlowers() == 0)
+		{
+			game.setFlowers(10);
+		}
 		
 		
+		///////
 		
 		
 		
@@ -151,13 +173,49 @@ public class Player extends GameObject{
 		
 		collision();
 		
+		// upadek z duzej wysokosci - gracz gubi kwiatki (1 - 3 szt.)
+		if(lostFlowers == false && velY > 14) {
+			
+			losePoints();
+		}
+		
+		// upadek z duzej wysokosci - gracz traci 1 pkt zdrowia
+		if(high_fall == true &&  velY == 0 && injured == false) {
+			
+			injured = true;
+			
+			if(game.getHealth() > 0) {
+				game.setHealth(game.getHealth() - 1);
+			}
+		}
+		
+		
+		// odliczanie timera po ktorym gracz znowu moze stracic punkty gry
+		if(lostFlowers == true) {
+			lostFlowersTimer--;
+			if(lostFlowersTimer <= 0) {
+				lostFlowers = false;
+				game.setLostFlowers(0);
+				lostFlowersTimer = lostFlowersTimerStart;
+			}
+		}
+		
+		// odliczanie timera po ktorym gracz znowu moze stracic punkty zdrowia
+		if(injured == true) {
+			injuredTimer--;
+			if(injuredTimer <= 0) {
+				injured = false;
+				injuredTimer = injuredTimerStart;
+			}
+		}
+		
 	}
 
 	
 	private void collision() {
 		// TODO Auto-generated method stub
 		supported = false;
-		
+		underWater = false; 
 		for(int i = 0; i < handler.object.size(); i++) {
 			GameObject tempObject = handler.object.get(i);
 			
@@ -201,15 +259,63 @@ public class Player extends GameObject{
 				
 				
 			}
+			
+			// gracz wpada do wody sredniej glebokosci - gubi losowa ilosc kwiatkow (1 - 3)
+			if(lostFlowers == false && tempObject.getId() == ObjectId.WaterMid) {
+				
+				
+				if(getBoundsWhole().intersects(tempObject.getBounds())) { 
+					losePoints();
+				}
+				
+			}
+			
+			// gracz wpada do glebokiej wody traci punkty zdrowia
+			if(tempObject.getId() == ObjectId.WaterDeep) {
+				
+				if(getBoundsWhole().intersects(tempObject.getBounds())) { 
+					
+					underWater = true;
+					divingTimer--;
+					
+					if(divingTimer <= 0 && injured == false) {
+						if(game.getHealth() > 0)
+							game.setHealth(game.getHealth() - 1);
+						
+						injured = true;
+					}
+					
+					
+					
+					
+				}
+				
+			}
+			
+			
+			
+			
+			
+			
 		} 
 		if(supported == false)
 			falling = true;
 		
+		if(!underWater) divingTimer = divingTimerStart;
+		
+		/////
 		System.out.println("\nvelY: " + velY);
 		System.out.println("\nfalling: " + falling);
 		System.out.println("\njumping: " + jumping);
 		System.out.println("\nPlayer: wsp X: " + this.x + " wspY: " + this.y);
 		System.out.println("\nPlayer: velX: " + this.velX + " velY: " + this.velY);
+		
+		System.out.println("\n\n\nUnder water: " + this.underWater);
+		System.out.println("\nDiving timer: " + this.divingTimer);
+		System.out.println("\nInjured: " + this.injured);
+		/////
+		
+		
 	}
 
 	public void render(Graphics g) {
@@ -224,7 +330,7 @@ public class Player extends GameObject{
 		//g2d.draw(getBoundsRight());
 		//g2d.draw(getBoundsLeft());
 		//g2d.draw(getBoundsTop());
-		
+		//g2d.draw(getBoundsWhole());
 		
 		
 		direction();
@@ -291,7 +397,7 @@ public class Player extends GameObject{
 		}
 		
 		// upadek z duzej wysokosci
-		if(velY == 0 && high_fall == true) {
+		if(high_fall == true && velY == 0) {
 			if(turned_right) 
 			g.drawImage(playerSpriteSheet.grabImage(7, 2, 64, 96), (int)x - 16, (int)y, null);
 			if(turned_left)
@@ -368,6 +474,20 @@ public class Player extends GameObject{
 	}
 
 
+	private void losePoints() {
+		
+		// zmniejszenie ilosci zebranych punktow
+		temp = random.nextInt(3) + 1;
+		game.setFlowers(game.getFlowers() - temp);
+		if(game.getFlowers() < 0) game.setFlowers(0);
+		
+		
+		lostFlowers = true;
+		game.setLostFlowers(temp);
+		
+	}
+	
+	
 	// do wykrywania kolizji z innymi obiektami od dolu
 	public Rectangle getBounds() {
 		// generowany prostokat do okreslaania kolizji od daolu (okreslania czy Player stoi na jakims obiekcie jest powiekszony od dolu o 1 px dla lepszego dzialania wykrywania kolizji
@@ -392,5 +512,11 @@ public class Player extends GameObject{
 		return new Rectangle((int) x, (int) y + 12, (int) 22, (int) height -24);
 	}
 
+	
+	// do wykrywania obrazen gracza - obejmuje caly obrys gracza
+	public Rectangle getBoundsWhole() {
+		
+		return new Rectangle((int) x, (int) y + 8, (int) width, (int) height-10);
+	}
 	// napisac osobna funkcje do wykrywania kolizji z pociskami (nie ma potrzeby przeprowadzania obliczen dla 4rech osobnych funkcji)
 }

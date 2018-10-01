@@ -22,12 +22,16 @@ public class HUD {
 	private int pom = 0;
 	private int counter = 0; // zlicza ile cyfr ma liczba reprezentujaca ilosc punktow uzyskane przez gracza 
 	
+	private int healthTimer = 35; // timer oznaczenia niskiego stanu punktow zdrowia - ramki wokol avataru gracza
+	private int healthTimerStart = 35;
+	private int healthAlert = -1;
+	
 	// Konstruktor
 	public HUD(Game game) {
 		
 		this.game = game;
 		
-		// zaladowanie grafiki
+		// zaladowanie grafiki 
 		BufferedImageLoader loader = new BufferedImageLoader();
 		try {
 			// siatka col x row = 44 x 50 px dla pliku numbers_spritesheet.png oraz 35 x 40 px dla pliku numbers_smaller_spritesheet.png
@@ -45,14 +49,41 @@ public class HUD {
 	
 	public void render(Graphics g) {
 		
+				
+		// komunikat o niskim stanie zdrowia gracza - migajaca ramka wokol avataru
+		if(game.getHealth() <= 1) {
+			
+			healthTimer--;
+			if(healthTimer <= 0) {
+				healthAlert *= -1;
+				healthTimer = healthTimerStart;
+			}
+			
+			if(healthAlert < 0){
+			g.setColor(Color.red);
+			g.fillOval(0, 0, 70, 70);
+			}
+		}
+		
+		
+		
 		//// wyswietlanie stanu zdrowia gracza w tym bloku
-		g.drawImage(player_av, 0, 0, null);
-		g.drawImage(numbersSpriteSheet.grabImage(3, 2, 35, 40), 60, 12, null); // znak "x" 
+		g.drawImage(player_av, 4, 3, null);
+		g.drawImage(numbersSpriteSheet.grabImage(3, 2, 35, 40), 70, 12, null); // znak "x" 
 		
 		if(game.getHealth() >= 0)
 		g.drawImage(numbersSpriteSheet.grabImage(game.getHealth() + 1, 1, 35, 40), 100, 10, null); // wyswietla obrazek odpowiadajacy ilosci punktow zdrowia
 		
 		////
+			
+		
+		if(game.getLostFlowers() > 0) {
+			Font font = new Font("Arial",Font.BOLD, 25);
+			g.setFont(font);
+		
+			g.setColor(Color.red);
+			g.drawString("-" + game.getLostFlowers(), 740, 85);
+		}
 		
 		
 		// wyswietla ilosc zdobytych punktow 
@@ -69,6 +100,9 @@ public class HUD {
 		counter = 0;
 	
 		//
+		
+		
+		
 		
 		
 	}
