@@ -22,6 +22,13 @@ public class TexturesManager {
 	private BufferedImage water_flower_1 = null;
 	private BufferedImage water_flower_2 = null;
 	private BufferedImage water_flower_3 = null;
+	private BufferedImage usual_flower_1 = null;
+	private BufferedImage usual_flower_2 = null;
+	private BufferedImage usual_flower_3 = null;
+	private BufferedImage usual_flower_4 = null;
+	private BufferedImage usual_flower_5 = null;
+	private BufferedImage usual_flower_6 = null;
+	private BufferedImage usual_flower_7 = null;
 	
 	// konstruktor
 	public TexturesManager() {
@@ -39,6 +46,15 @@ public class TexturesManager {
 			water_flower_1 = loader.loadImage("/textures/water_flower_1.png");
 			water_flower_2 = loader.loadImage("/textures/water_flower_2.png");
 			water_flower_3 = loader.loadImage("/textures/water_flower_3.png");
+			
+			usual_flower_1 = loader.loadImage("/textures/usual_flower_1.png");
+			usual_flower_2 = loader.loadImage("/textures/usual_flower_2.png");
+			usual_flower_3 = loader.loadImage("/textures/usual_flower_3.png");
+			usual_flower_4 = loader.loadImage("/textures/usual_flower_4.png");
+			usual_flower_5 = loader.loadImage("/textures/usual_flower_5.png");
+			usual_flower_6 = loader.loadImage("/textures/usual_flower_6.png");
+			usual_flower_7 = loader.loadImage("/textures/usual_flower_7.png");
+			
 		} catch (Exception e){
 			e.printStackTrace();
 		}				
@@ -71,7 +87,7 @@ public class TexturesManager {
 	}
 	
 	
-	public Image getWater_flower(int type) {
+	public BufferedImage getWater_flower(int type) {
 		if(type == 0)
 			return water_flower_1;
 		if(type == 1)
@@ -80,7 +96,22 @@ public class TexturesManager {
 			return water_flower_3;
 	}
 
-
+	public BufferedImage getUsual_flower(int type) {
+		if(type == 0)
+			return usual_flower_1;
+		if(type == 1)
+			return usual_flower_2;
+		if(type == 2)
+			return usual_flower_3;
+		if(type == 3)
+			return usual_flower_4;
+		if(type == 4)
+			return usual_flower_5;
+		if(type == 5)
+			return usual_flower_6;
+		else
+			return usual_flower_7;
+	}
 		
 		
 	

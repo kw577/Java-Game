@@ -15,6 +15,7 @@ import com.kw.owls.objects.Block;
 import com.kw.owls.objects.Ground;
 import com.kw.owls.objects.Player;
 import com.kw.owls.objects.TexturesManager;
+import com.kw.owls.objects.UsualFlower;
 import com.kw.owls.objects.WaterDeep;
 import com.kw.owls.objects.WaterFlowers;
 import com.kw.owls.objects.WaterMid;
@@ -261,7 +262,17 @@ public class Spawner {
 				if(green == 0 && red == 128 && blue == 128)
 					handler.addObject(new WaterFlowers(xx*32, yy*32 - 10, ObjectId.WaterFlower, textures, rand.nextInt(4)));
 				
-				System.out.println("\nliczba przypadkowa " + rand.nextInt(4));
+				if(green == 0 && red == 255 && blue == 0)
+					handler.addObject(new UsualFlower(xx*32, yy*32 - 15, ObjectId.UsualFlower, textures, rand.nextInt(7))); // rand.nextInt(7) - wybiera jeden z 7 losowych obrazkow 
+				
+				
+				
+				//System.out.println("\nliczba przypadkowa " + rand.nextInt(8));
+				
+				
+				
+				
+				
 				
 				// generowanie elementow tla - chmury
 				if(green == 255 && red == 0 && blue == 255) // kolor - cyan

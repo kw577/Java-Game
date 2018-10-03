@@ -300,7 +300,7 @@ public class Player extends GameObject{
 				
 			}
 			
-			// gracz zbiera kwiatek - otrzymuje punkty
+			// gracz zbiera kwiatek wodny - otrzymuje 2 punkty
 			if(tempObject.getId() == ObjectId.WaterFlower) {
 							
 				if(getBoundsWhole().intersects(tempObject.getBounds())) { 
@@ -311,6 +311,18 @@ public class Player extends GameObject{
 				}
 							
 			}	
+			
+			// gracz zbiera kwiatek zwykly - otrzymuje 1 punkt
+			if(tempObject.getId() == ObjectId.UsualFlower) {
+							
+				if(getBoundsWhole().intersects(tempObject.getBounds())) { 
+							
+					game.setFlowers(game.getFlowers() + 1); // + 2pkt do punktacji gry
+					handler.removeObject(tempObject); // po zebraniu obiekt zostaje usunety
+														
+				}
+							
+			}
 			
 		} 
 		

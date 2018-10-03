@@ -11,6 +11,7 @@ public enum ObjectId {
 	WaterSurface(),
 	WaterMid(),
 	WaterDeep(),
+	UsualFlower(),
 	WaterFlower(),
 	Background(); // elementy w tle gry (chmury, drzewa itd)
 	

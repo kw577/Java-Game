@@ -10,13 +10,13 @@ import com.kw.owls.framework.ObjectId;
 
 
 
-public class WaterFlowers extends GameObject{
+public class UsualFlower extends GameObject{
 
-	private float width = 48, height = 48;
+	private float width = 20, height = 48;
 	private TexturesManager textures;
-	private int type; // typ kwiatka - w zaleznosci od niego przyjmuje sie renderowany obrazek - parametr ten jest generowawny losowo w klasie Spawner,java 
+	private int type; // typ kwiatka - w zaleznosci od niego przyjmuje sie renderowany obrazek - parametr ten jest generowany losowo w klasie Spawner.java 
 	
-	public WaterFlowers(int x, int y, ObjectId id, TexturesManager textures, int type) {
+	public UsualFlower(int x, int y, ObjectId id, TexturesManager textures, int type) {
 		super(x, y, id);
 		
 		this.textures = textures;
@@ -32,9 +32,9 @@ public class WaterFlowers extends GameObject{
 	
 	public void render(Graphics g) {
 		//g.setColor(Color.cyan);
-		//g.fillRect((int)x, (int)y, 48, 48);
+		//g.fillRect((int)x, (int)y, (int)width, (int)height);
 		
-		g.drawImage(textures.getWater_flower(type), (int)x, (int)y, null);
+		g.drawImage(textures.getUsual_flower(type), (int)x, (int)y, null);
 		
 		//Graphics2D g2d = (Graphics2D) g;
 		//g.setColor(Color.RED);
@@ -47,7 +47,7 @@ public class WaterFlowers extends GameObject{
 	
 	public Rectangle getBounds() {
 
-		return new Rectangle((int)(x + width/4), (int)(y+height/2), 24, 24);
+		return new Rectangle((int)(x + width/4), (int)(y + height/3), (int)(width/2), (int)(height*2/3));
 	}
 
 }
