@@ -98,6 +98,7 @@ public class Player extends GameObject{
 		
 		
 		// do celow testowych zmiany poziomu zdrowia i punktacji wyswietlanych przez hud 
+		/*		
 		timer_test--;
 		if (timer_test <= 0) {
 			//if(game.getHealth() > 0)
@@ -112,7 +113,8 @@ public class Player extends GameObject{
 		{
 			game.setFlowers(10);
 		}
-		
+		*/
+		//blok powyzej - do celow testowych
 		
 		///////
 		
@@ -298,12 +300,21 @@ public class Player extends GameObject{
 				
 			}
 			
-			
-			
-			
-			
+			// gracz zbiera kwiatek - otrzymuje punkty
+			if(tempObject.getId() == ObjectId.WaterFlower) {
+							
+				if(getBoundsWhole().intersects(tempObject.getBounds())) { 
+							
+					game.setFlowers(game.getFlowers() + 2); // + 2pkt do punktacji gry
+					handler.removeObject(tempObject); // po zebraniu obiekt zostaje usunety
+														
+				}
+							
+			}	
 			
 		} 
+		
+		
 		if(supported == false)
 			falling = true;
 		
@@ -499,12 +510,20 @@ public class Player extends GameObject{
 		
 		// zmniejszenie ilosci zebranych punktow
 		temp = random.nextInt(3) + 1;
+		lostFlowers = true;
+		
+		if(game.getFlowers() > 0)
+			game.setLostFlowers(temp);
+		if(game.getFlowers() < temp)
+			game.setLostFlowers(game.getFlowers());
+		
+		
 		game.setFlowers(game.getFlowers() - temp);
+				
 		if(game.getFlowers() < 0) game.setFlowers(0);
 		
 		
-		lostFlowers = true;
-		game.setLostFlowers(temp);
+	
 		
 	}
 	

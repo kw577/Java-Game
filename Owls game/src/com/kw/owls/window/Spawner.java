@@ -16,6 +16,7 @@ import com.kw.owls.objects.Ground;
 import com.kw.owls.objects.Player;
 import com.kw.owls.objects.TexturesManager;
 import com.kw.owls.objects.WaterDeep;
+import com.kw.owls.objects.WaterFlowers;
 import com.kw.owls.objects.WaterMid;
 import com.kw.owls.objects.WaterSurface;
 
@@ -257,6 +258,10 @@ public class Spawner {
 				if(green == 90 && red == 50 && blue == 120)
 					handler.addObject(new WaterDeep(xx*32, yy*32, ObjectId.WaterDeep, textures));
 				
+				if(green == 0 && red == 128 && blue == 128)
+					handler.addObject(new WaterFlowers(xx*32, yy*32 - 10, ObjectId.WaterFlower, textures, rand.nextInt(4)));
+				
+				System.out.println("\nliczba przypadkowa " + rand.nextInt(4));
 				
 				// generowanie elementow tla - chmury
 				if(green == 255 && red == 0 && blue == 255) // kolor - cyan

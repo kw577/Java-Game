@@ -77,7 +77,7 @@ public class HUD {
 		////
 			
 		
-		if(game.getLostFlowers() > 0) {
+		if(game.getLostFlowers() > 0) {  
 			Font font = new Font("Arial",Font.BOLD, 25);
 			g.setFont(font);
 		
