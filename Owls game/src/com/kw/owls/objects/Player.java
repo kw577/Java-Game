@@ -215,6 +215,16 @@ public class Player extends GameObject{
 		
 		// odliczanie timera po ktorym gracz znowu moze stracic punkty zdrowia
 		if(injured == true) {
+			
+			
+			// timery migania gracza gdy jest ranny
+			render_timer--;
+			if(render_timer < 0) {
+				render*=(-1); 
+				render_timer = render_timer_start;
+			}
+						
+			
 			injuredTimer--;
 			if(injuredTimer <= 0) {
 				injured = false;
@@ -225,13 +235,7 @@ public class Player extends GameObject{
 				render_timer = render_timer_start;
 			}
 			
-			
-			// timery migania gracza gdy jest ranny
-			render_timer--;
-			if(render_timer < 0) {
-				render*=(-1); 
-				render_timer = render_timer_start;
-			}
+
 		}
 		
 	}

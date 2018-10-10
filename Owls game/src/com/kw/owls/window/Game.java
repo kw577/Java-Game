@@ -35,8 +35,8 @@ public class Game extends Canvas implements Runnable{
 	// Parametry gry
 	public static STATE gameState = STATE.Menu;
 	private int gameLevel = 0;
-	private static final int max_health = 5;
-	private int health = 5;  // poziom zdrowia gracza
+	private static final int max_health = 7;
+	private int health = 7;  // poziom zdrowia gracza
 	private int flowers = 0; // ilosc zebranych kwiatkow 
 	private int lostFlowers = 0; //otrzymuje informacje z klasy Player ze nastapila utrata punktow i przekazuje ja do HUD.java	
 	
@@ -144,7 +144,7 @@ public class Game extends Canvas implements Runnable{
 				}
 			}
 		}
-		else if(gameState == STATE.Menu || gameState == STATE.Help || gameState == STATE.End) {
+		else if(gameState == STATE.Menu || gameState == STATE.Help || gameState == STATE.End || gameState == STATE.Defeat) {
 			menu.tick();
 			
 		}
@@ -187,7 +187,7 @@ public class Game extends Canvas implements Runnable{
 			
 			hud.render(g); // ponizej bloku translate - ma byc wyswietlane w stalym punkcie okna gry
 		}	
-		else if(gameState == STATE.Menu || gameState == STATE.Help || gameState == STATE.End) {
+		else if(gameState == STATE.Menu || gameState == STATE.Help || gameState == STATE.End || gameState == STATE.Defeat) {
 			menu.render(g);
 					
 		}

@@ -82,7 +82,7 @@ public class Spawner {
 					//Zerowanie stanu gry
 					game.setGameLevel(0);
 
-					
+					game.setLostFlowers(0);
 					
 					// usuwanie poprzedniej rundy
 					handler.clearHandler();	
@@ -93,9 +93,24 @@ public class Spawner {
 			}
 			
 		
-	
-			
 		}
+		
+		// przegrana - gracz traci wszystkie punkty zycia
+		if(game.gameState == STATE.Game && game.getHealth() <= 0) {
+			game.gameState = STATE.Defeat;
+			
+			//Zerowanie stanu gry
+			game.setGameLevel(0);
+			game.setLostFlowers(0);
+			
+			
+			// usuwanie poprzedniej rundy
+			handler.clearHandler();	
+			bcg_handler.clearHandler();
+		}
+		
+		
+		
 	}
 
 
@@ -109,7 +124,7 @@ public class Spawner {
 			// Zerowanie stanu gry
 			game.setHealth(game.getMaxHealth());
 			game.setFlowers(0);
-			
+			game.setLostFlowers(0);
 			level_image_nr = "/levels/Level_" + game.getGameLevel() + ".png";
 			
 			BufferedImageLoader loader = new BufferedImageLoader();
@@ -136,7 +151,7 @@ public class Spawner {
 			
 			// ustawienie poziomu zdrowia przy rozpoczeciu kolejnej rundy
 			game.setHealth(game.getMaxHealth());
-			
+			game.setLostFlowers(0);
 			handler.clearHandler();	
 			bcg_handler.clearHandler();
 			
@@ -157,7 +172,7 @@ public class Spawner {
 		}
 		else if(game.getGameLevel() == 2 && loading_timer == loading_timer_start) {
 			game.setGameLevel(3);
-			
+			game.setLostFlowers(0);
 			// ustawienie poziomu zdrowia przy rozpoczeciu kolejnej rundy
 			game.setHealth(game.getMaxHealth());
 			
@@ -182,7 +197,7 @@ public class Spawner {
 		}
 		else if(game.getGameLevel() == 3 && loading_timer == loading_timer_start) {
 			game.setGameLevel(4);
-			
+			game.setLostFlowers(0);
 			// ustawienie poziomu zdrowia przy rozpoczeciu kolejnej rundy
 			game.setHealth(game.getMaxHealth());
 			

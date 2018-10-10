@@ -79,13 +79,21 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 	
 		}  else if(game.gameState == STATE.End) {
 			
-		// Przycisk powrotu do menu gry 
-		if(mouseOver(mx, my, 300, 350, 200, 64)) {
-			game.gameState = STATE.Menu;
-			
-		}
+			// Przycisk powrotu do menu gry 
+			if(mouseOver(mx, my, 300, 350, 200, 64)) {
+				game.gameState = STATE.Menu;
+				
+			} 
 
-	} 
+		} else if(game.gameState == STATE.Defeat) {
+			
+			// Przycisk powrotu do menu gry 
+			if(mouseOver(mx, my, 300, 350, 200, 64)) {
+				game.gameState = STATE.Menu;
+				
+			} 
+
+		} 
 		
 	}
 	
@@ -243,6 +251,21 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 			Font fnt3 = new Font("arial", 1, 20);
 			g.setColor(Color.white);
 			g.drawString("VICTORY", 330, 70);
+			
+			g.setFont(fnt3);
+			g.drawString("-> Your Score: " + game.getFlowers(), 50, 170);
+
+			g.setFont(fnt2);
+			g.drawRect(300, 350, 200, 64);
+			g.drawString("Menu", 360, 390);
+						
+		} else if(game.gameState == STATE.Defeat) {
+			Font fnt = new Font("arial", 1, 50);
+			g.setFont(fnt);
+			Font fnt2 = new Font("arial", 1, 30);
+			Font fnt3 = new Font("arial", 1, 20);
+			g.setColor(Color.white);
+			g.drawString("You lose", 330, 70);
 			
 			g.setFont(fnt3);
 			g.drawString("-> Your Score: " + game.getFlowers(), 50, 170);
