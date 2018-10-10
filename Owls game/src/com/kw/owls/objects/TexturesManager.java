@@ -29,7 +29,7 @@ public class TexturesManager {
 	private BufferedImage usual_flower_5 = null;
 	private BufferedImage usual_flower_6 = null;
 	private BufferedImage usual_flower_7 = null;
-	
+	private BufferedImage spiky_bush = null;
 	// konstruktor
 	public TexturesManager() {
 		
@@ -55,6 +55,7 @@ public class TexturesManager {
 			usual_flower_6 = loader.loadImage("/textures/usual_flower_6.png");
 			usual_flower_7 = loader.loadImage("/textures/usual_flower_7.png");
 			
+			spiky_bush = loader.loadImage("/textures/spiky_bush.png");
 		} catch (Exception e){
 			e.printStackTrace();
 		}				
@@ -84,6 +85,10 @@ public class TexturesManager {
 	
 	public BufferedImage getWater_deep() {
 		return water_deep;
+	}
+	
+	public BufferedImage getSpiky_bush() {
+		return spiky_bush;
 	}
 	
 	

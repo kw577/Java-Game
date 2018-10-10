@@ -69,6 +69,11 @@ public class Player extends GameObject{
 	private int alertTimerStart = 30;
 	private int alertAnimation = -1;
 	
+	//Przez krotki czas po otrzymaniu obrazen gracz miga - ponizej potrzebne timery 
+	private int render = 1; //tylko gdy wartosc = 1 grafika jest renderowana
+	private int render_timer = 0;
+	private int render_timer_start = 12;
+	
 	public Player(float x, float y, ObjectId id, Handler handler, Game game) {
 		super(x, y, id);
 		this.handler = handler;
@@ -214,6 +219,18 @@ public class Player extends GameObject{
 			if(injuredTimer <= 0) {
 				injured = false;
 				injuredTimer = injuredTimerStart;
+				
+				//zerowanie timerow migania gracza (gracz miga gdy otrzyma jakies obrazenia)
+				render = 1;
+				render_timer = render_timer_start;
+			}
+			
+			
+			// timery migania gracza gdy jest ranny
+			render_timer--;
+			if(render_timer < 0) {
+				render*=(-1); 
+				render_timer = render_timer_start;
 			}
 		}
 		
@@ -324,6 +341,23 @@ public class Player extends GameObject{
 							
 			}
 			
+			// gracz wpada w kolczasty krzak i traci 1pkt zdrowia
+			if(tempObject.getId() == ObjectId.SpikyBush) {
+							
+				if(injured == false && getBoundsWhole().intersects(tempObject.getBounds())) { 
+							
+					injured = true;
+					
+					if(game.getHealth() > 0) {
+						game.setHealth(game.getHealth() - 1);
+					}
+					
+														
+				}
+							
+			}
+					
+			
 		} 
 		
 		
@@ -391,18 +425,20 @@ public class Player extends GameObject{
 		if(velX == 0 && velY == 0 && high_fall == false) {
 			b_e_timer--;
 			if(b_e_timer > 0) {
-				if(turned_right) 
-				g.drawImage(playerSpriteSheet.grabImage(1, 1, 64, 96), (int)x, (int)y, null);
-				if(turned_left)
-				g.drawImage(playerSpriteSheet.grabImage(8, 3, 64, 96), (int)x - 16, (int)y, null);
+				if(render == 1) {
+					if(turned_right) 
+					g.drawImage(playerSpriteSheet.grabImage(1, 1, 64, 96), (int)x, (int)y, null);
+					if(turned_left)
+					g.drawImage(playerSpriteSheet.grabImage(8, 3, 64, 96), (int)x - 16, (int)y, null);
+				}
 			}
 			if(b_e_timer < 0) { // gracz mruga
-
-				if(turned_right) 
-				g.drawImage(playerSpriteSheet.grabImage(2, 1, 64, 96), (int)x, (int)y, null);
-				if(turned_left)
-				g.drawImage(playerSpriteSheet.grabImage(7, 3, 64, 96), (int)x - 16, (int)y, null);
-				
+				if(render == 1) {
+					if(turned_right) 
+					g.drawImage(playerSpriteSheet.grabImage(2, 1, 64, 96), (int)x, (int)y, null);
+					if(turned_left)
+					g.drawImage(playerSpriteSheet.grabImage(7, 3, 64, 96), (int)x - 16, (int)y, null);
+				}
 				if(b_e_timer <= (-100)) // renderowanie obrazka z zamknietymia oczami nastepuje gdy b_e_timer przyjmuje warotsci w zakresie od 0 do (-100) - czyli czas trwania mrugniecia to 120 jedn
 				b_e_timer = blink_eye_timer;
 			}
@@ -413,26 +449,28 @@ public class Player extends GameObject{
 		// animacja gdy gracz skacze
 		if(velY != 0) {
 			if(velY < 0) {
-				if(turned_right) 
-				g.drawImage(playerSpriteSheet.grabImage(5, 2, 64, 96), (int)x - 16, (int)y, null);
-				if(turned_left)
-				g.drawImage(playerSpriteSheet.grabImage(4, 4, 64, 96), (int)x, (int)y, null);
+				if(render == 1) {
+					if(turned_right) 
+					g.drawImage(playerSpriteSheet.grabImage(5, 2, 64, 96), (int)x - 16, (int)y, null);
+					if(turned_left)
+					g.drawImage(playerSpriteSheet.grabImage(4, 4, 64, 96), (int)x, (int)y, null);
+				}
 			}
 			if(velY > 0 && velY < 14) { // gracz mruga
-
-				if(turned_right) 
-				g.drawImage(playerSpriteSheet.grabImage(6, 2, 64, 96), (int)x - 16, (int)y, null);
-				if(turned_left)
-				g.drawImage(playerSpriteSheet.grabImage(3, 4, 64, 96), (int)x, (int)y, null);
-				
+				if(render == 1) {
+					if(turned_right) 
+					g.drawImage(playerSpriteSheet.grabImage(6, 2, 64, 96), (int)x - 16, (int)y, null);
+					if(turned_left)
+					g.drawImage(playerSpriteSheet.grabImage(3, 4, 64, 96), (int)x, (int)y, null);
+				}
 			}
 			if(velY > 14) { // upadek z duzej wysokosci - utrata punktow zdrowia
-
-				if(turned_right) 
-				g.drawImage(playerSpriteSheet.grabImage(8, 2, 64, 96), (int)x - 16, (int)y, null);
-				if(turned_left)
-				g.drawImage(playerSpriteSheet.grabImage(1, 4, 64, 96), (int)x, (int)y, null);
-				
+				if(render == 1) {
+					if(turned_right) 
+					g.drawImage(playerSpriteSheet.grabImage(8, 2, 64, 96), (int)x - 16, (int)y, null);
+					if(turned_left)
+					g.drawImage(playerSpriteSheet.grabImage(1, 4, 64, 96), (int)x, (int)y, null);
+				}
 				if(!this.high_fall) high_fall = true; 
 			}
 			
@@ -442,11 +480,12 @@ public class Player extends GameObject{
 		
 		// upadek z duzej wysokosci
 		if(high_fall == true && velY == 0) {
-			if(turned_right) 
-			g.drawImage(playerSpriteSheet.grabImage(7, 2, 64, 96), (int)x - 16, (int)y, null);
-			if(turned_left)
-			g.drawImage(playerSpriteSheet.grabImage(2, 4, 64, 96), (int)x, (int)y, null);
-			
+			if(render == 1) {
+				if(turned_right) 
+				g.drawImage(playerSpriteSheet.grabImage(7, 2, 64, 96), (int)x - 16, (int)y, null);
+				if(turned_left)
+				g.drawImage(playerSpriteSheet.grabImage(2, 4, 64, 96), (int)x, (int)y, null);
+			}
 			timer2--;
 			if(timer2 <= 0) {
 				timer2 = start_timer2;
@@ -467,35 +506,32 @@ public class Player extends GameObject{
 			}
 			
 			if(Math.abs(velX) < 8 ) {
-				if(turned_right && choose_run_animation > 0) 
-					g.drawImage(playerSpriteSheet.grabImage(4, 1, 64, 96), (int)x - 16, (int)y, null);
-				if(turned_right && choose_run_animation < 0) 
-					g.drawImage(playerSpriteSheet.grabImage(8, 1, 64, 96), (int)x - 16, (int)y, null);
-				if(turned_left && choose_run_animation > 0) 
-					g.drawImage(playerSpriteSheet.grabImage(5, 3, 64, 96), (int)x, (int)y, null);
-				if(turned_left && choose_run_animation < 0) 
-					g.drawImage(playerSpriteSheet.grabImage(1, 3, 64, 96), (int)x, (int)y, null);
-			
+				if(render == 1) {
+					if(turned_right && choose_run_animation > 0) 
+						g.drawImage(playerSpriteSheet.grabImage(4, 1, 64, 96), (int)x - 16, (int)y, null);
+					if(turned_right && choose_run_animation < 0) 
+						g.drawImage(playerSpriteSheet.grabImage(8, 1, 64, 96), (int)x - 16, (int)y, null);
+					if(turned_left && choose_run_animation > 0) 
+						g.drawImage(playerSpriteSheet.grabImage(5, 3, 64, 96), (int)x, (int)y, null);
+					if(turned_left && choose_run_animation < 0) 
+						g.drawImage(playerSpriteSheet.grabImage(1, 3, 64, 96), (int)x, (int)y, null);
+				}
 			}
 
 			if(Math.abs(velX) >= 8 ) {
-				if(turned_right && choose_run_animation > 0) 
-					g.drawImage(playerSpriteSheet.grabImage(5, 1, 64, 96), (int)x - 16, (int)y, null);
-				if(turned_right && choose_run_animation < 0) 
-					g.drawImage(playerSpriteSheet.grabImage(3, 1, 64, 96), (int)x - 16, (int)y, null);
-				if(turned_left && choose_run_animation > 0) 
-					g.drawImage(playerSpriteSheet.grabImage(4, 3, 64, 96), (int)x, (int)y, null);
-				if(turned_left && choose_run_animation < 0) 
-					g.drawImage(playerSpriteSheet.grabImage(6, 3, 64, 96), (int)x, (int)y, null);
-			
+				if(render == 1) {
+					if(turned_right && choose_run_animation > 0) 
+						g.drawImage(playerSpriteSheet.grabImage(5, 1, 64, 96), (int)x - 16, (int)y, null);
+					if(turned_right && choose_run_animation < 0) 
+						g.drawImage(playerSpriteSheet.grabImage(3, 1, 64, 96), (int)x - 16, (int)y, null);
+					if(turned_left && choose_run_animation > 0) 
+						g.drawImage(playerSpriteSheet.grabImage(4, 3, 64, 96), (int)x, (int)y, null);
+					if(turned_left && choose_run_animation < 0) 
+						g.drawImage(playerSpriteSheet.grabImage(6, 3, 64, 96), (int)x, (int)y, null);
+				}
 			}
 			
-			
-			
-			
-
-			
-			
+						
 			
 		}
 		
