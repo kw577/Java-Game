@@ -371,15 +371,15 @@ public class Player extends GameObject{
 		if(!underWater) divingTimer = divingTimerStart;
 		
 		/////
-		System.out.println("\nvelY: " + velY);
-		System.out.println("\nfalling: " + falling);
-		System.out.println("\njumping: " + jumping);
-		System.out.println("\nPlayer: wsp X: " + this.x + " wspY: " + this.y);
-		System.out.println("\nPlayer: velX: " + this.velX + " velY: " + this.velY);
+		//System.out.println("\nvelY: " + velY);
+		//System.out.println("\nfalling: " + falling);
+		//System.out.println("\njumping: " + jumping);
+		//System.out.println("\nPlayer: wsp X: " + this.x + " wspY: " + this.y);
+		//System.out.println("\nPlayer: velX: " + this.velX + " velY: " + this.velY);
 		
-		System.out.println("\n\n\nUnder water: " + this.underWater);
-		System.out.println("\nDiving timer: " + this.divingTimer);
-		System.out.println("\nInjured: " + this.injured);
+		//System.out.println("\n\n\nUnder water: " + this.underWater);
+		//System.out.println("\nDiving timer: " + this.divingTimer);
+		//System.out.println("\nInjured: " + this.injured);
 		/////
 		
 		

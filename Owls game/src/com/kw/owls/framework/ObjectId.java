@@ -14,6 +14,7 @@ public enum ObjectId {
 	UsualFlower(),
 	WaterFlower(),
 	SpikyBush(),
+	OwlDaisy(),
 	Background(); // elementy w tle gry (chmury, drzewa itd)
 	
 	

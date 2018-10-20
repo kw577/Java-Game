@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.util.LinkedList;
 
 import com.kw.owls.framework.GameObject;
+import com.kw.owls.framework.ObjectId;
 
 // klasa przechowuje wszystkie obiekty gry
 
@@ -14,6 +15,12 @@ public class Handler {
 	// ruch gracza - spr. KeyInput.java - implementacja w ten sposob zapobiega efektowi "sticky keys"
 	private boolean up = false, down = false, right = false, left = false;
 	
+	// parametry gracza - przekazywane do klasy typu Owl.java
+	private float player_x;
+	private float player_y;
+	private float player_velX;
+	private float player_velY;
+	
 	private GameObject tempObject;
 	
 	
@@ -22,7 +29,33 @@ public class Handler {
 			tempObject = object.get(i);
 			
 			tempObject.tick();
+			
+		
+			if(tempObject.getId() == ObjectId.Player) {
+				this.player_x = tempObject.getX();
+				this.player_y = tempObject.getY();
+				this.player_velX = tempObject.getVelX();
+				this.player_velY = tempObject.getVelY();
+			}
+			
+			
 		}
+	}
+		
+	public float getPlayer_x() {
+		return player_x;
+	}
+
+	public float getPlayer_y() {
+		return player_y;
+	}
+	
+	public float getPlayer_velX() {
+		return player_velX;
+	}
+
+	public float getPlayer_velY() {
+		return player_velY;
 	}
 	
 	

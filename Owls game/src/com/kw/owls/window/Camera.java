@@ -32,8 +32,11 @@ public class Camera {
 			y+=-(player.getY()-900);
 		}
 		
+		// info
+		//System.out.println("\nCamera: wsp X: " + this.x + " wspY: " + this.y);
 		
-		System.out.println("\nCamera: wsp X: " + this.x + " wspY: " + this.y);
+		
+		
 		//x += ((player.getX() - x) - 1000/2) * 0.05f;
 		//y += ((player.getY() - y) - 563/2) * 0.05f;
 		
