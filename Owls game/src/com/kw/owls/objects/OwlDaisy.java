@@ -5,11 +5,13 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
 import com.kw.owls.background.Cloud;
 import com.kw.owls.background.TreeAutumn;
 import com.kw.owls.framework.GameObject;
 import com.kw.owls.framework.ObjectId;
+import com.kw.owls.framework.SpriteSheet;
 import com.kw.owls.window.BufferedImageLoader;
 import com.kw.owls.window.Game;
 import com.kw.owls.window.Handler;
@@ -22,7 +24,13 @@ public class OwlDaisy extends GameObject{
     private BufferedImage level_map;
     private int width = 32;
     private int height = 32;
-  
+    private BufferedImage position_marking;
+    private SpriteSheet positionSpriteSheet;
+    
+    // timery animacji
+    private int mark_position_timer = 0; // odmierzanie czasu do zmiany animacji 
+    private int position_changeAnimation = 5; // czas po ktorym zmieni sie animacja
+    
     // Wprawadzenie timera powoduje rowniez zmniejszenie losci obliczen
     private int timer = 5; // czas reakcji - czas po jakim nastapi np korekta toru lotu, lub decyzji o pomocy dla gracza
     private final int max_speed = 15;
@@ -83,9 +91,17 @@ public class OwlDaisy extends GameObject{
         try {
             owl_image = loader.loadImage("/bird_2.png");
             level_map = loader.loadImage("/levels/Level_" + game.getGameLevel() + ".png");
+            position_marking = loader.loadImage("/others/position_marking.png");
         } catch (Exception e){
             e.printStackTrace();
         }
+        
+        
+       		
+        positionSpriteSheet = new SpriteSheet(position_marking);
+        
+        
+        
     }
 
 
@@ -107,16 +123,56 @@ public class OwlDaisy extends GameObject{
               
       
         // te wartosci musza byc obliczane na poczatku kazdej funkcji tick()
-        this.follow_point_x = handler.getPlayer_x() - 50;
-        this.follow_point_y = handler.getPlayer_y() - 100;
+         
+        if(game.getPlayer_click_x() > 0 && game.getPlayer_click_y() > 0) {
+        	this.follow_point_x = game.getPlayer_click_x();
+        	this.follow_point_y = game.getPlayer_click_y();
+        }
+        else {
+        	this.follow_point_x = handler.getPlayer_x() - 50;
+            this.follow_point_y = handler.getPlayer_y() - 100;
+        }
+         
       
         dx1 = follow_point_x - this.x;
         dy1 = follow_point_y - this.y;
       
         dist = (int) (Math.sqrt(dx1 * dx1 + dy1 * dy1));
+        
+        // ustalanie kierunku i sybkosci poruszania sie
+        set_velocity_vector();
+        
+        //////////////////////////////////////////////////////////////////          
+        
+          
+      
+        // Sprawdzane co 5 cykli gry
+        if (timer <= 0) {
+            timer = 5;
+          
+            //////////////////
+            // Ustalanie punktu docelowego lotu
+          
+          
+          
+            this.follow_point(follow_point_x, follow_point_y);
+          
+        }
+      
        
+        // Sprawdzana w kazdym cyklu gry
+        collision();
+          
        
-       
+        System.out.println("");
+    }
+      
+    
+    
+    
+    // Funkcja ustala wektor predkosci - kierunek - wartosc oraz wektor rozpoczecia ruchu 
+    private void set_velocity_vector(){
+    	
         // Rozpoczecie ruchu - w sytuacji gdy poprzednio velX = velY = 0
         if(velX == 0 && velY == 0 && dist > 50) {
           
@@ -173,43 +229,7 @@ public class OwlDaisy extends GameObject{
        
        
        
-       
- 
-                  
-          
-                  
-        //////////////////////////////////////////////////////////////////          
-     
-      
-          
-      
-        // Sprawdzane co 5 cykli gry
-        if (timer <= 0) {
-            timer = 5;
-          
-            //////////////////
-            // Ustalanie punktu docelowego lotu
-          
-          
-          
-            this.follow_point(follow_point_x, follow_point_y);
-          
-        }
-      
-      
-      
-       
-       
-       
-       
-        // Sprawdzana w kazdym cyklu gry
-        collision();
-          
-       
-        System.out.println("");
     }
-      
-      
       
     private void collision() {
     	this.collision_timer++;
@@ -420,7 +440,24 @@ public class OwlDaisy extends GameObject{
   
   
     public void render(Graphics g) {
-  
+    	
+    	// zaznacza punkt wybrany przez gracza do sterowania ruchem OwlDaisy
+    	
+    	if(game.getPlayer_click_x() > 0 && game.getPlayer_click_x() > 0) {
+    		g.setColor(Color.red);
+        	//g.fillOval((int)game.getPlayer_click_x(), (int)game.getPlayer_click_y(), 32, 32);
+        	
+    		this.mark_position_timer++;
+    		
+    		g.drawImage(positionSpriteSheet.grabImage((int)(mark_position_timer/position_changeAnimation + 1), 1, 30, 37), (int)game.getPlayer_click_x(), (int)game.getPlayer_click_y(), null);
+    		
+    		if(this.mark_position_timer >= (position_changeAnimation * 6 - 1)) {
+    			this.mark_position_timer = 0;
+    		}
+    	}
+    	
+    	
+    	
         g.setColor(Color.green);
         //g.fillOval((int)x, (int)y, 32, 32);
       

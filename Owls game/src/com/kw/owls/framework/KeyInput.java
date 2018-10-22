@@ -2,17 +2,19 @@ package com.kw.owls.framework;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import com.kw.owls.window.Game;
 import com.kw.owls.window.Handler;
 
 public class KeyInput extends KeyAdapter{
 
 	Handler handler;
+	Game game;
 	
 	
-	
-	public KeyInput(Handler handler) {
+	public KeyInput(Handler handler, Game game) {
 
 		this.handler = handler;
+		this.game = game;
 	}
 
 	public void keyPressed(KeyEvent e) {
@@ -22,6 +24,12 @@ public class KeyInput extends KeyAdapter{
 		// wylaczenie gry po wcisniecia przycisku Esc
 		if(key == KeyEvent.VK_ESCAPE) {
 			System.exit(1);
+		}
+		
+		// sterowanie sowkami - resetowanie wybranego punktu 
+		if(key == KeyEvent.VK_C) {
+			game.setPlayer_click_x(-1);
+			game.setPlayer_click_y(-1);
 		}
 		
 		// implementacja sterowania klawiatura w ten sposob zapobiega efektowi "sticky keys"

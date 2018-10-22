@@ -374,7 +374,9 @@ public class Player extends GameObject{
 		//System.out.println("\nvelY: " + velY);
 		//System.out.println("\nfalling: " + falling);
 		//System.out.println("\njumping: " + jumping);
+		//System.out.println("\n\n\n\n\n\n\nClick: " + game.getPlayer_click_x() + "   " + game.getPlayer_click_y());
 		//System.out.println("\nPlayer: wsp X: " + this.x + " wspY: " + this.y);
+		
 		//System.out.println("\nPlayer: velX: " + this.velX + " velY: " + this.velY);
 		
 		//System.out.println("\n\n\nUnder water: " + this.underWater);

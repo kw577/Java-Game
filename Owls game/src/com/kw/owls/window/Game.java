@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 
 import com.kw.owls.framework.KeyInput;
+import com.kw.owls.framework.MouseInput;
 import com.kw.owls.framework.ObjectId;
 import com.kw.owls.framework.STATE;
 
@@ -40,7 +41,11 @@ public class Game extends Canvas implements Runnable{
 	private int flowers = 0; // ilosc zebranych kwiatkow 
 	private int lostFlowers = 0; //otrzymuje informacje z klasy Player ze nastapila utrata punktow i przekazuje ja do HUD.java	
 	
-
+	// do sterowania sowkami - przechowuje wspolrzedne punktu wybranego przez gracza (przyciski myszy)
+    private int player_click_x = -1; // -1 to wartosc startowa - oznacza ze gracz nie wybral zadnego punktu
+    private int player_click_y = -1;
+    
+    
 	// konstruktor
 	public Game() {
 		new Window(800, 600, "Building game", this);
@@ -58,9 +63,10 @@ public class Game extends Canvas implements Runnable{
 		
 		this.addMouseListener(menu);
 		this.addMouseMotionListener(menu); // podswietlanie przycikow menu gdy sie na nie najedzie myszka
-		this.addKeyListener(new KeyInput(handler));
+		this.addKeyListener(new KeyInput(handler, this));
 		
-		
+		// do sterowania sowkami podczas gry
+		this.addMouseListener(new MouseInput(handler, camera, this));
 	}
 	
 	
@@ -117,6 +123,7 @@ public class Game extends Canvas implements Runnable{
 			if(System.currentTimeMillis() - timer > 1000) {
 				timer += 1000;
 				System.out.println("FPS: " + frames);
+								
 				frames = 0;
 				updates = 0;
 			}
@@ -247,6 +254,25 @@ public class Game extends Canvas implements Runnable{
 		this.lostFlowers = lostFlowers;
 	}
 	
+	public int getPlayer_click_x() {
+		return player_click_x;
+	}
+
+
+	public void setPlayer_click_x(int player_click_x) {
+		this.player_click_x = player_click_x;
+	}
+
+
+	public int getPlayer_click_y() {
+		return player_click_y;
+	}
+
+
+	public void setPlayer_click_y(int player_click_y) {
+		this.player_click_y = player_click_y;
+	}
+
 	
 	public static void main(String args[]) {
 		new Game();
