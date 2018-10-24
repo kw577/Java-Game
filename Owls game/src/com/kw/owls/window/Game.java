@@ -29,10 +29,12 @@ public class Game extends Canvas implements Runnable{
 	private Handler handler;
 	private BackgroundHandler bcg_handler;
 	private Camera camera;
+
 	private Menu menu;
 	private Spawner spawner;
 	private HUD hud;
 	
+
 	// Parametry gry
 	public static STATE gameState = STATE.Menu;
 	private int gameLevel = 0;
@@ -45,7 +47,17 @@ public class Game extends Canvas implements Runnable{
     private int player_click_x = -1; // -1 to wartosc startowa - oznacza ze gracz nie wybral zadnego punktu
     private int player_click_y = -1;
     
+       
+    // Wspolpraca z sowkami - ktaora sowka pomaga w danej rundzie
+    private boolean daisyHelping = false;
+    private boolean betsyHelping = false;
+    private boolean ziggyHelping = false;
+    private boolean askingForHelp = false; // nie mozna jednoczesnie prosic 2 sowek o pomoc
+    private String owlName = ""; 
+    private boolean playerConfirm = false; // czy gracz potwierdzil chec wspolpracy z sowka
+    private boolean playerReject = false; // czy gracz wybral przycisk "NIE"
     
+	
 	// konstruktor
 	public Game() {
 		new Window(800, 600, "Building game", this);
@@ -65,11 +77,14 @@ public class Game extends Canvas implements Runnable{
 		this.addMouseMotionListener(menu); // podswietlanie przycikow menu gdy sie na nie najedzie myszka
 		this.addKeyListener(new KeyInput(handler, this));
 		
+		this.addMouseListener(hud);
+		this.addMouseMotionListener(hud);
+		
 		// do sterowania sowkami podczas gry
 		this.addMouseListener(new MouseInput(handler, camera, this));
 	}
 	
-	
+
 	public synchronized void start() {
 		if(running)
 			return;
@@ -271,6 +286,75 @@ public class Game extends Canvas implements Runnable{
 
 	public void setPlayer_click_y(int player_click_y) {
 		this.player_click_y = player_click_y;
+	}
+
+	
+	public boolean isDaisyHelping() {
+		return daisyHelping;
+	}
+
+
+	public void setDaisyHelping(boolean daisyHelping) {
+		this.daisyHelping = daisyHelping;
+	}
+
+
+	public boolean isBetsyHelping() {
+		return betsyHelping;
+	}
+
+
+	public void setBetsyHelping(boolean betsyHelping) {
+		this.betsyHelping = betsyHelping;
+	}
+
+
+	public boolean isZiggyHelping() {
+		return ziggyHelping;
+	}
+
+
+	public void setZiggyHelping(boolean ziggyHelping) {
+		this.ziggyHelping = ziggyHelping;
+	}
+
+	public boolean isAskingForHelp() {
+		return askingForHelp;
+	}
+
+
+	public void setAskingForHelp(boolean askingForHelp) {
+		this.askingForHelp = askingForHelp;
+	}
+
+	
+	public String getOwlName() {
+		return owlName;
+	}
+
+
+	public void setOwlName(String owlName) {
+		this.owlName = owlName;
+	}
+	
+	
+	public boolean isPlayerConfirm() {
+		return playerConfirm;
+	}
+
+
+	public void setPlayerConfirm(boolean playerConfirm) {
+		this.playerConfirm = playerConfirm;
+	}
+
+	
+	public boolean isPlayerReject() {
+		return playerReject;
+	}
+
+
+	public void setPlayerReject(boolean playerReject) {
+		this.playerReject = playerReject;
 	}
 
 	

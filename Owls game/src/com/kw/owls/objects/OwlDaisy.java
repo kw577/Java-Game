@@ -3,12 +3,10 @@ package com.kw.owls.objects;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.util.Random;
 
-import com.kw.owls.background.Cloud;
-import com.kw.owls.background.TreeAutumn;
 import com.kw.owls.framework.GameObject;
 import com.kw.owls.framework.ObjectId;
 import com.kw.owls.framework.SpriteSheet;
@@ -27,6 +25,13 @@ public class OwlDaisy extends GameObject{
     private BufferedImage position_marking;
     private SpriteSheet positionSpriteSheet;
    
+    // ask owl for help
+    private boolean playerAsist = false; // okresla czy Daisy pomaga graczowi
+    private boolean askedForHelp = false; // do przeprowadzania procedury nawiazywania wspolpracy
+    private int askedHelpTimer = 0; // odmierza czas w ktorym trzeba sie zdecydowac na pomoc sowki
+    private final int askedHelpTimerMax = 500; // po tym czasie zniknie okno nawiazywania wspolpracy
+    
+    
     // timery animacji
     private int mark_position_timer = 0; // odmierzanie czasu do zmiany animacji
     private int position_changeAnimation = 5; // czas po ktorym zmieni sie animacja
@@ -107,68 +112,134 @@ public class OwlDaisy extends GameObject{
 
     public void tick() {
       
-        //////////////////////////////////////////////////////////////////
-        // W KAZDYM CYKLU GRY
-        timer--;
-        x += velX;
-        y += velY;
-     
-        // granice planszy - musza byc ustawione gdyz jesli Daisy zblizy sie do granicy planszy
-        // funkcja readMap() bedzie chciala pobrac z mapy piksele o wartosci ujemnej co wyrzuci blad
-        // zamiast ustalania granic w ponizszy sposob mozna by tez modyfikowac funkcje read map
-         if(x < 32) x = 32;
-         if(x > 15900) x = 15900;
+    	if(this.playerAsist) {
+    		 //////////////////////////////////////////////////////////////////
+            // W KAZDYM CYKLU GRY
+            timer--;
+            x += velX;
+            y += velY;
+         
+            // granice planszy - musza byc ustawione gdyz jesli Daisy zblizy sie do granicy planszy
+            // funkcja readMap() bedzie chciala pobrac z mapy piksele o wartosci ujemnej co wyrzuci blad
+            // zamiast ustalania granic w ponizszy sposob mozna by tez modyfikowac funkcje read map
+             if(x < 32) x = 32;
+             if(x > 15900) x = 15900;
+               
+             //////////////////
+                 
+         
+            // te wartosci musza byc obliczane na poczatku kazdej funkcji tick()
+            
+            if(game.getPlayer_click_x() > 0 && game.getPlayer_click_y() > 0) {
+                this.follow_point_x = game.getPlayer_click_x();
+                this.follow_point_y = game.getPlayer_click_y();
+            }
+            else {
+                this.follow_point_x = handler.getPlayer_x() - 50;
+                this.follow_point_y = handler.getPlayer_y() - 100;
+            }
+            
+         
+            dx1 = follow_point_x - this.x;
+            dy1 = follow_point_y - this.y;
+         
+            dist = (int) (Math.sqrt(dx1 * dx1 + dy1 * dy1));
            
-         //////////////////
+            // ustalanie kierunku i sybkosci poruszania sie
+            set_velocity_vector();
+           
+            //////////////////////////////////////////////////////////////////         
+           
              
-     
-        // te wartosci musza byc obliczane na poczatku kazdej funkcji tick()
-        
-        if(game.getPlayer_click_x() > 0 && game.getPlayer_click_y() > 0) {
-            this.follow_point_x = game.getPlayer_click_x();
-            this.follow_point_y = game.getPlayer_click_y();
-        }
-        else {
-            this.follow_point_x = handler.getPlayer_x() - 50;
-            this.follow_point_y = handler.getPlayer_y() - 100;
-        }
-        
-     
-        dx1 = follow_point_x - this.x;
-        dy1 = follow_point_y - this.y;
-     
-        dist = (int) (Math.sqrt(dx1 * dx1 + dy1 * dy1));
+         
+            // Sprawdzane co 5 cykli gry
+            if (timer <= 0) {
+                timer = 5;
+             
+                //////////////////
+                // Ustalanie punktu docelowego lotu
+             
+             
+             
+                this.follow_point(follow_point_x, follow_point_y);
+             
+            }
+         
+          
+            // Sprawdzana w kazdym cyklu gry
+            collision();
+             
+          
+            //System.out.println("");
+            
+            
+    	} 
+    	
+    	if (!this.playerAsist) {
+    		
+    		wait_for_player();
+    		
+    	}
        
-        // ustalanie kierunku i sybkosci poruszania sie
-        set_velocity_vector();
-       
-        //////////////////////////////////////////////////////////////////         
-       
-         
-     
-        // Sprawdzane co 5 cykli gry
-        if (timer <= 0) {
-            timer = 5;
-         
-            //////////////////
-            // Ustalanie punktu docelowego lotu
-         
-         
-         
-            this.follow_point(follow_point_x, follow_point_y);
-         
-        }
-     
-      
-        // Sprawdzana w kazdym cyklu gry
-        collision();
-         
-      
-        System.out.println("");
     }
      
    
-   
+    
+    
+    
+    private void wait_for_player() {
+		// sprawdza czy player wybral daisy do pomocy 
+		System.out.println("\naskedForHelpTimer: " + this.askedHelpTimer);
+		// w kazdej rundzie mozna wybrac tylko 1 sowke do pomocy i nie mozna juz zmienic wyboru az do zakonczenia rundy
+		if(!game.isAskingForHelp() && !game.isDaisyHelping() && !game.isBetsyHelping() && !game.isZiggyHelping()) {
+			//System.out.println("\nWaiting for player");
+			if(this.getBounds3().contains(new Point(game.getPlayer_click_x(),game.getPlayer_click_y()))) {
+				//System.out.println("\nChecking point");
+				game.setAskingForHelp(true);
+				game.setOwlName("Daisy");
+				this.askedForHelp = true;
+				
+				//System.out.println("\n\n\nDaisy will be helping you");
+				//game.setDaisyHelping(true);
+    			//this.playerAsist = true;
+    			
+    			game.setPlayer_click_x(-1);
+    			game.setPlayer_click_y(-1);
+    		}
+		}
+		
+		else if(this.askedForHelp) {
+			askedHelpTimer++;
+			
+			game.setPlayer_click_x(-1);
+			game.setPlayer_click_y(-1);
+			// uplynal czas 
+			if(askedHelpTimer > askedHelpTimerMax) {
+				game.setAskingForHelp(false);
+				game.setOwlName("");
+				this.askedForHelp = false;
+				this.askedHelpTimer = 0;
+			}
+		}
+		
+		if(this.askedForHelp && game.isPlayerConfirm()) {
+			this.playerAsist = true;
+			game.setDaisyHelping(true);
+			
+			game.setAskingForHelp(false);
+			game.setPlayerConfirm(false);
+			this.askedForHelp = false;
+			this.askedHelpTimer = 0;
+			
+		}
+		if(this.askedForHelp && game.isPlayerReject()) {
+			game.setAskingForHelp(false);
+			game.setOwlName("");
+			game.setPlayerReject(false);
+			this.askedForHelp = false;
+			this.askedHelpTimer = 0;
+		}
+    }
    
     // Funkcja ustala wektor predkosci - kierunek - wartosc oraz wektor rozpoczecia ruchu
     private void set_velocity_vector(){
@@ -237,7 +308,7 @@ public class OwlDaisy extends GameObject{
     private void collision() {
         this.collision_timer++;
        
-        System.out.println("\nSprawdzam kolizje - timer: " + collision_timer + "                        licz.kol.1: " + collision_dir1_counter + "    licz.kol.2: " + collision_dir2_counter);
+        //System.out.println("\nSprawdzam kolizje - timer: " + collision_timer + "                        licz.kol.1: " + collision_dir1_counter + "    licz.kol.2: " + collision_dir2_counter);
        
         // Zabezpieczenie zeby nie przekroczyc zasiegu int
         if(collision_timer > 9999999) {
@@ -253,21 +324,21 @@ public class OwlDaisy extends GameObject{
                          
                 if(getBounds().intersects(tempObject.getBounds())) {
                     // jezeli wystapi kolizja zapamietuje na jakim kierunku i zeruje licznik czasu do nastepnej kolizji
-                    System.out.println("\n##############################################################");
-                    System.out.println("\nKolizja !!!! - od poprzedniej kolizji minelo: " + collision_timer);
-                    System.out.println("\nvelX: " + velX + " velY: " + velY);
-                    System.out.println("\nprev_velX: " + prev_velX + " prev_velY: " + prev_velY);
+                    //System.out.println("\n##############################################################");
+                    //System.out.println("\nKolizja !!!! - od poprzedniej kolizji minelo: " + collision_timer);
+                    //System.out.println("\nvelX: " + velX + " velY: " + velY);
+                    //System.out.println("\nprev_velX: " + prev_velX + " prev_velY: " + prev_velY);
                     // kolizja - kilka razy ten sam kierunek predkosci powoduje kolizje
                     if(prev_velX == velX && prev_velY == velY && collision_timer < sequence_collision_timer) {
                         this.collision_dir1_counter++;
-                        System.out.println("\nKolizja typu 1 - ten sam kierunek i zwrot po raz: " + collision_dir1_counter);
+                        //System.out.println("\nKolizja typu 1 - ten sam kierunek i zwrot po raz: " + collision_dir1_counter);
                        
                     }
                    
                     // kolizja - kilka razy na przemian prostopadle kierunki predkosci powoduja kolizje
                     if((prev_velX * velX + prev_velY*velY == 0) && collision_timer < (sequence_perpendicular_collision_timer)) { // (sequence_perpendicular_collision_timer) - wartosc przyjeta na podstawie obserwacji - z logow wynika ze cykl takiej kolizji wychodzi ok 12 - 16
                         this.collision_dir2_counter++;
-                        System.out.println("\nKolizja typu 2 - wektory prostopadle - po raz: " + collision_dir2_counter);
+                        //System.out.println("\nKolizja typu 2 - wektory prostopadle - po raz: " + collision_dir2_counter);
                        
                     }
                    
@@ -346,9 +417,9 @@ public class OwlDaisy extends GameObject{
          
             // Wybieram najmniejszy kat
             choosed_angle = this.choose_angle();
-            System.out.println("\nWybrano kat na pozycji " + choosed_angle);
+            //System.out.println("\nWybrano kat na pozycji " + choosed_angle);
          
-            System.out.println("\nOwlDaisy: velX: " + velX + "    velY: " + velY);
+            //System.out.println("\nOwlDaisy: velX: " + velX + "    velY: " + velY);
             if(choosed_angle == 0)
                 temp_velY = 0;
             else if(choosed_angle == 1)
@@ -378,7 +449,7 @@ public class OwlDaisy extends GameObject{
          
             // Wybieram najmniejszy kat
             choosed_angle = this.choose_angle();
-            System.out.println("\nWybrano kat na pozycji " + choosed_angle);
+            //System.out.println("\nWybrano kat na pozycji " + choosed_angle);
          
             if(choosed_angle == 0)
                 temp_velX = 0;
@@ -409,7 +480,7 @@ public class OwlDaisy extends GameObject{
          
             // Wybieram najmniejszy kat
             choosed_angle = this.choose_angle();
-            System.out.println("\nWybrano kat na pozycji " + choosed_angle);
+            //System.out.println("\nWybrano kat na pozycji " + choosed_angle);
          
             if(choosed_angle == 0) {
                 temp_velX = velX;
@@ -446,13 +517,13 @@ public class OwlDaisy extends GameObject{
        
         // zaznacza punkt wybrany przez gracza do sterowania ruchem OwlDaisy
        
-        if(game.getPlayer_click_x() > 0 && game.getPlayer_click_x() > 0) {
+        if(this.playerAsist && game.getPlayer_click_x() > 0 && game.getPlayer_click_x() > 0) {
             g.setColor(Color.red);
             //g.fillOval((int)game.getPlayer_click_x(), (int)game.getPlayer_click_y(), 32, 32);
            
             this.mark_position_timer++;
            
-            g.drawImage(positionSpriteSheet.grabImage((int)(mark_position_timer/position_changeAnimation + 1), 1, 30, 37), (int)game.getPlayer_click_x(), (int)game.getPlayer_click_y(), null);
+            g.drawImage(positionSpriteSheet.grabImage((int)(mark_position_timer/position_changeAnimation + 1), 1, 30, 37), (int)(game.getPlayer_click_x() - 15), (int)(game.getPlayer_click_y()-30), null);
            
             if(this.mark_position_timer >= (position_changeAnimation * 6 - 1)) {
                 this.mark_position_timer = 0;
@@ -518,6 +589,8 @@ public class OwlDaisy extends GameObject{
         // obrys do wykrywania kolizji z elementami otoczenia
         g.setColor(Color.green);
         g2d.draw(getBounds());
+        g.setColor(Color.cyan);
+        g2d.draw(getBounds3());
 
     }
 
@@ -526,12 +599,12 @@ public class OwlDaisy extends GameObject{
        // (this.x + width/2)/32 - 1) - skanuje teren dookola OwlDaisy - start w pkt (-1, -1) wzg polozenia OwlDaisy
        this.readMap((int)((this.x + width/2)/32 - 1), (int)((this.y + height/2)/32 - 1), 3, 3);
     
-       System.out.println("OwlDaisy - Tabela terenu otaczajacego");
+       //System.out.println("OwlDaisy - Tabela terenu otaczajacego");
        for(int xx = 0; xx < 3; xx++) {
            for(int yy = 0; yy < 3; yy++) {
-               System.out.print(surrunding_area[yy][xx] + " ");
+               //System.out.print(surrunding_area[yy][xx] + " ");
            }
-           System.out.println("");
+           //System.out.println("");
        }
     
     
@@ -582,12 +655,12 @@ public class OwlDaisy extends GameObject{
      
      
     
-       System.out.println("OwlDaisy - Tabela terenu otaczajacego z priorytetem wyboru pol");
+       //System.out.println("OwlDaisy - Tabela terenu otaczajacego z priorytetem wyboru pol");
        for(int xx = 0; xx < 3; xx++) {
            for(int yy = 0; yy < 3; yy++) {
-               System.out.print(surrunding_area[yy][xx] + " ");
+               //System.out.print(surrunding_area[yy][xx] + " ");
            }
-           System.out.println("");
+           //System.out.println("");
        }
     
        // Jesli zostanie wykryta sekwencja kolizji na tym samym kierunku (wiecej niz 5 razy z rzedu)
@@ -606,13 +679,13 @@ public class OwlDaisy extends GameObject{
            // zmiana priorytetu wyboru tego kierunku na nizszy
            surrunding_area[change_value_x][change_value_y] = 2;
           
-           System.out.println("/n####################### UWAGA #################################3");
-            System.out.println("/nOwlDaisy - Tabela terenu otaczajacego z uwzglednieniem sekwencyjnych kolizji");
+           //System.out.println("/n####################### UWAGA #################################3");
+            //System.out.println("/nOwlDaisy - Tabela terenu otaczajacego z uwzglednieniem sekwencyjnych kolizji");
                for(int xx = 0; xx < 3; xx++) {
                    for(int yy = 0; yy < 3; yy++) {
-                       System.out.print(surrunding_area[yy][xx] + " ");
+                       //System.out.print(surrunding_area[yy][xx] + " ");
                    }
-                   System.out.println("");
+                   //System.out.println("");
                }
           
          
@@ -651,57 +724,57 @@ public class OwlDaisy extends GameObject{
                     if(xx == 0 && yy == 0) {
                         current_velX = -minSpeed;
                         current_velY = -minSpeed;
-                        System.out.println("\n 1 ");
+                        //System.out.println("\n 1 ");
                     }
                     if(xx == 1 && yy == 0) {
                         current_velX = 0;
                         current_velY = -minSpeed;
-                        System.out.println("\n 2 ");
+                        //System.out.println("\n 2 ");
                     }
                     if(xx == 2 && yy == 0) {
                         current_velX = minSpeed;
                         current_velY = -minSpeed;
-                        System.out.println("\n 3 ");
+                        //System.out.println("\n 3 ");
                     }
                     if(xx == 0 && yy == 1) {
                         current_velX = -minSpeed;
                         current_velY = 0;
-                        System.out.println("\n 4 ");
+                        //System.out.println("\n 4 ");
                     }
                     if(xx == 1 && yy == 1) {
-                        System.out.println("\n 5 ");
+                        //System.out.println("\n 5 ");
                         continue;
                     }
                     if(xx == 2 && yy == 1) {
                         current_velX = minSpeed;
                         current_velY = 0;
-                        System.out.println("\n 6 ");
+                        //System.out.println("\n 6 ");
                     }
                     if(xx == 0 && yy == 2) {
                         current_velX = -minSpeed;
                         current_velY = minSpeed;
-                        System.out.println("\n 7 ");
+                        //System.out.println("\n 7 ");
                     }
                     if(xx == 1 && yy == 2) {
                         current_velX = 0;
                         current_velY = minSpeed;
-                        System.out.println("\n 8 ");
+                        //System.out.println("\n 8 ");
                     }
                     if(xx == 2 && yy == 2) {
                         current_velX = minSpeed;
                         current_velY = minSpeed;
-                        System.out.println("\n 9 ");
+                        //System.out.println("\n 9 ");
 
                     }
                   
                     current_angle = (int) angle(dx1, dy1, current_velX, current_velY);
-                    System.out.println("\n current_angle: " + current_angle);
+                    //System.out.println("\n current_angle: " + current_angle);
                     if(current_angle < angle_min) {
                         angle_min = current_angle;
                         best_velX = current_velX;
                         best_velY = current_velY;
                     }
-                    System.out.println("\n Angle_min: " + angle_min);
+                    //System.out.println("\n Angle_min: " + angle_min);
                 }
   
             }
@@ -710,7 +783,7 @@ public class OwlDaisy extends GameObject{
       
         // jesli w surrounding_area nie bylo zadnego pola oznaczonego jako 0 - w nastepnej kolejnosci beda brane pod uwage pola oznaczone jako 2
         if(angle_min == 9999) { // angle_min nie zmieni wartosci - tylko gdy nie bylo ani jednego pola "0"
-            System.out.println("\nPrzeszukiwanie pol o wartosci kolizyjnosci - 2");
+            //System.out.println("\nPrzeszukiwanie pol o wartosci kolizyjnosci - 2");
             for(int xx = 0; xx < 3; xx++) {
                 for(int yy = 0; yy < 3; yy++) {
                     if(surrunding_area[xx][yy] == 2) {
@@ -737,7 +810,7 @@ public class OwlDaisy extends GameObject{
       
         // jesli w surrounding_area nie bylo zadnego pola oznaczonego jako 0 ani jako 2 - w nastepnej kolejnosci beda brane pod uwage pola oznaczone jako 3
         if(angle_min == 9999) { // angle_min nie zmieni wartosci - tylko gdy nie bylo ani jednego pola "0"
-            System.out.println("\nPrzeszukiwanie pol o wartosci kolizyjnosci - 3");
+            //System.out.println("\nPrzeszukiwanie pol o wartosci kolizyjnosci - 3");
             for(int xx = 0; xx < 3; xx++) {
                 for(int yy = 0; yy < 3; yy++) {
                     if(surrunding_area[xx][yy] == 3) {
@@ -764,7 +837,7 @@ public class OwlDaisy extends GameObject{
             }
         }
       
-        System.out.println("\nBest vel_X: " + best_velX + "Best vel_Y: " + best_velY);
+        //System.out.println("\nBest vel_X: " + best_velX + "Best vel_Y: " + best_velY);
      
      
        this.velX = best_velX;
@@ -791,7 +864,7 @@ public class OwlDaisy extends GameObject{
        */
      
      
-       System.out.println("\nUstalanie nowego wektora predkosci: " + velX + " " + velY);
+       //System.out.println("\nUstalanie nowego wektora predkosci: " + velX + " " + velY);
     
        // po ustaleniu kierunku poczatkowego jest on utrzymywany przez co najmniej 10 cykli
        timer = 10;
@@ -804,8 +877,8 @@ public class OwlDaisy extends GameObject{
        if (collision_dir2_counter > 5) {
           
           
-           System.out.println("/n####################### UWAGA #################################");
-           System.out.println("/nZwiekszono timer do ze wzgledu na wystapienie sekwencji kolizji na prostopadlych wektorach predkosci");
+           //System.out.println("/n####################### UWAGA #################################");
+           //System.out.println("/nZwiekszono timer do ze wzgledu na wystapienie sekwencji kolizji na prostopadlych wektorach predkosci");
           
            timer = 15; // opoznienie funckji follow_point()
          
@@ -826,7 +899,7 @@ public class OwlDaisy extends GameObject{
         //int w = level_map.getWidth();
         //int h = level_map.getHeight();
      
-        System.out.println("\nPixel start: " + start_x + " " + start_y);
+        //System.out.println("\nPixel start: " + start_x + " " + start_y);
      
         // na podstawie wczytanej mapki laduje sie obszar gry
         for(int xx = 0; xx < amount_columns; xx++) {
@@ -914,9 +987,9 @@ public class OwlDaisy extends GameObject{
      
      
         //Wydruk tabeli
-        System.out.println("\nTabela kierunkow: ");
+        //System.out.println("\nTabela kierunkow: ");
         for(int i = 0; i < 6; i++) {
-            System.out.println(angle[i] + " ");
+            //System.out.println(angle[i] + " ");
         }
      
      
@@ -939,7 +1012,7 @@ public class OwlDaisy extends GameObject{
             }
         }
      
-        System.out.println("\nFirst choosed angle: "+ angle_min + " Position: " + angle_min_position);
+        //System.out.println("\nFirst choosed angle: "+ angle_min + " Position: " + angle_min_position);
         for(int i = 0; i < 3; i++) {
             if(angle[i] < angle_min && angle[i+3] == 0) {
                          
@@ -955,7 +1028,7 @@ public class OwlDaisy extends GameObject{
      
      
      
-        System.out.println("\nFinally choosed angle: "+ angle_min + " Position: " + angle_min_position);
+        //System.out.println("\nFinally choosed angle: "+ angle_min + " Position: " + angle_min_position);
      
         //
          return angle_min_position;
@@ -1003,5 +1076,11 @@ public class OwlDaisy extends GameObject{
         //return new Rectangle((int)(x + 11*vx), (int)(y + 11*vy), (int)32, (int)32);
     }
  
+    
+    // uzywana do sprawdzenia czy player wybral Daisy do wspolpracy
+    public Rectangle getBounds3() {
+     
+        return new Rectangle((int)x, (int)y, (int)width, (int)height);
+    }
  
 }

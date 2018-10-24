@@ -3,13 +3,17 @@ package com.kw.owls.window;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 
+import com.kw.owls.framework.STATE;
 import com.kw.owls.framework.SpriteSheet;
 
 // klasa monitoruje i wyswietla stan parametrow gry - zdrowie gracza, ilosc punktow i.t.d
 
-public class HUD {
+public class HUD extends MouseAdapter implements MouseMotionListener {
 
 	private Game game;
 	private BufferedImage player_av = null;
@@ -26,6 +30,7 @@ public class HUD {
 	private int healthTimerStart = 35;
 	private int healthAlert = -1;
 	
+		
 	// Konstruktor
 	public HUD(Game game) {
 		
@@ -103,9 +108,70 @@ public class HUD {
 		
 		
 		
+		// wyswietla komunikat do nawiazania wspolpracy z sowka
+		if(game.isAskingForHelp()) {
+			Font fnt = new Font("arial", 1, 20);
+			g.setFont(fnt);
+			
+			g.setColor(Color.white);
+			
+			g.fillRect(200, 50, 400, 150);
+						
+			g.setColor(Color.black);
+			
+			g.drawString("Do you want " + game.getOwlName() + " to help you", 220, 80);
+			g.drawString("with searching flowers?", 220, 120);
+			
+					
+			g.drawRect(220, 140, 70, 40);
+			g.drawString("YES", 235, 170);
+			
+			g.drawRect(510, 140, 70, 40);
+			g.drawString("NO", 525, 170);
+		}
+		
 		
 		
 	}
+	
+	
+	
+	public void mousePressed(MouseEvent e) {
+		int mx = e.getX();
+		int my = e.getY();
+		
+		if(game.isAskingForHelp()) {
+			
+				//Przycisk YES
+				if(mouseOver(mx, my, 220, 140, 70, 40)) {
+					game.setPlayerConfirm(true);
+				}
+		
+				//Przycisk NO
+				if(mouseOver(mx, my, 510, 140, 70, 40)) {
+					game.setPlayerReject(true);
+				}
+		
+		} 
+		
+	}
+	
+	
+	public void mouseReleased(MouseEvent e) {
+		
+	}
+	
+		
+	// metoda sprawdzajaca czy kliknieto w jakis przycisk menu
+	private boolean mouseOver(int mx, int my, int x, int y, int width, int height) {
+		if((mx > x) && (mx < x + width)) {
+			if((my > y) && (my < y + height)) {
+				return true;
+			} else return false;
+		} else return false;
+	}
+	
+	
 	
 	
 }

@@ -83,6 +83,14 @@ public class Spawner {
 					//Zerowanie stanu gry
 					game.setGameLevel(0);
 
+					game.setDaisyHelping(false);
+					game.setBetsyHelping(false);
+					game.setZiggyHelping(false);
+					game.setAskingForHelp(false);
+					game.setOwlName("");
+					game.setPlayerConfirm(false);
+					game.setPlayerReject(false);
+					
 					game.setLostFlowers(0);
 					
 					// usuwanie poprzedniej rundy
@@ -104,6 +112,13 @@ public class Spawner {
 			game.setGameLevel(0);
 			game.setLostFlowers(0);
 			
+			game.setDaisyHelping(false);
+			game.setBetsyHelping(false);
+			game.setZiggyHelping(false);
+			game.setAskingForHelp(false);
+			game.setOwlName("");
+			game.setPlayerConfirm(false);
+			game.setPlayerReject(false);
 			
 			// usuwanie poprzedniej rundy
 			handler.clearHandler();	
@@ -122,10 +137,20 @@ public class Spawner {
 		if(game.getGameLevel() == 0 && loading_timer == loading_timer_start) {
 			game.setGameLevel(1);
 			
+			game.setDaisyHelping(false);
+			game.setBetsyHelping(false);
+			game.setZiggyHelping(false);
+			game.setAskingForHelp(false);
+			game.setOwlName("");
+			game.setPlayerConfirm(false);
+			game.setPlayerReject(false);
+			
 			// Zerowanie stanu gry
 			game.setHealth(game.getMaxHealth());
 			game.setFlowers(0);
 			game.setLostFlowers(0);
+			
+			
 			level_image_nr = "/levels/Level_" + game.getGameLevel() + ".png";
 			
 			BufferedImageLoader loader = new BufferedImageLoader();
@@ -150,6 +175,14 @@ public class Spawner {
 		else if(game.getGameLevel() == 1 && loading_timer == loading_timer_start) {
 			game.setGameLevel(2);
 			
+			game.setDaisyHelping(false);
+			game.setBetsyHelping(false);
+			game.setZiggyHelping(false);
+			game.setAskingForHelp(false);
+			game.setOwlName("");
+			game.setPlayerConfirm(false);
+			game.setPlayerReject(false);
+			
 			// ustawienie poziomu zdrowia przy rozpoczeciu kolejnej rundy
 			game.setHealth(game.getMaxHealth());
 			game.setLostFlowers(0);
@@ -173,6 +206,15 @@ public class Spawner {
 		}
 		else if(game.getGameLevel() == 2 && loading_timer == loading_timer_start) {
 			game.setGameLevel(3);
+			
+			game.setDaisyHelping(false);
+			game.setBetsyHelping(false);
+			game.setZiggyHelping(false);
+			game.setAskingForHelp(false);
+			game.setOwlName("");
+			game.setPlayerConfirm(false);
+			game.setPlayerReject(false);
+			
 			game.setLostFlowers(0);
 			// ustawienie poziomu zdrowia przy rozpoczeciu kolejnej rundy
 			game.setHealth(game.getMaxHealth());
@@ -198,6 +240,15 @@ public class Spawner {
 		}
 		else if(game.getGameLevel() == 3 && loading_timer == loading_timer_start) {
 			game.setGameLevel(4);
+			
+			game.setDaisyHelping(false);
+			game.setBetsyHelping(false);
+			game.setZiggyHelping(false);
+			game.setAskingForHelp(false);
+			game.setOwlName("");
+			game.setPlayerConfirm(false);
+			game.setPlayerReject(false);
+			
 			game.setLostFlowers(0);
 			// ustawienie poziomu zdrowia przy rozpoczeciu kolejnej rundy
 			game.setHealth(game.getMaxHealth());
