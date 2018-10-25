@@ -914,6 +914,8 @@ public class OwlDaisy extends GameObject{
                     surrunding_area[xx][yy] = 1;
                 else if(red == 0 && green == 0 && blue == 0) // Ground
                     surrunding_area[xx][yy] = 1;
+                else if(red == 200 && green == 200 && blue == 200) // Rocks
+                    surrunding_area[xx][yy] = 1;
                 else if(green == 255 && red == 170 && blue == 255) // WaterSurface
                     surrunding_area[xx][yy] = 1; 
                 else if(green == 150 && red == 110 && blue == 190) // WaterMid

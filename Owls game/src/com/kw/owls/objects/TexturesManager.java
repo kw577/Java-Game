@@ -15,6 +15,7 @@ public class TexturesManager {
 	// Textury uzywane w grze
 	private BufferedImage grass_texture = null;
 	private BufferedImage ground_texture = null;
+	private BufferedImage rocks_texture = null;
 	private BufferedImage water_surface_1 = null;
 	private BufferedImage water_surface_2 = null;
 	private BufferedImage water_mid = null;
@@ -39,6 +40,8 @@ public class TexturesManager {
 		try {
 			grass_texture = loader.loadImage("/textures/grass_1.png");
 			ground_texture = loader.loadImage("/textures/ground_1.png");
+			rocks_texture = loader.loadImage("/textures/rocks.png");
+			
 			water_surface_1 = loader.loadImage("/textures/water_surface_1.png");
 			water_surface_2 = loader.loadImage("/textures/water_surface_2.png");
 			water_mid = loader.loadImage("/textures/water_mid.png");
@@ -70,6 +73,10 @@ public class TexturesManager {
 		return ground_texture;
 	}
 	
+	public BufferedImage getRocks_texture() {
+		return rocks_texture;
+	}
+
 	public BufferedImage getWater_surface_1() {
 		return water_surface_1;
 	}

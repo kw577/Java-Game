@@ -15,6 +15,7 @@ import com.kw.owls.objects.Block;
 import com.kw.owls.objects.Ground;
 import com.kw.owls.objects.OwlDaisy;
 import com.kw.owls.objects.Player;
+import com.kw.owls.objects.Rocks;
 import com.kw.owls.objects.SpikyBush;
 import com.kw.owls.objects.TexturesManager;
 import com.kw.owls.objects.UsualFlower;
@@ -314,7 +315,12 @@ public class Spawner {
 				
 				if(red == 0 && green == 0 && blue == 0)
 					handler.addObject(new Ground(xx*32, yy*32, ObjectId.Ground, textures));
-				
+								
+				// klasa Rocks ma takie same wlasciwosci jak klasy Block i Ground tylko rozni sie grafika
+				// przyjmuje id ObjectId.Block aby uniknac zmian w funkcjach collision() innych obiektow
+				if(red == 200 && green == 200 && blue == 200)
+					handler.addObject(new Rocks(xx*32, yy*32, ObjectId.Block, textures));
+								
 				if(green == 0 && red == 0 && blue == 255)
 					handler.addObject(new Player(xx*32, yy*32, ObjectId.Player, handler, game));
 				
@@ -338,7 +344,7 @@ public class Spawner {
 				
 				if(green == 128 && red == 64 && blue == 128)
 					handler.addObject(new OwlDaisy(xx*32, yy*32 - 38, ObjectId.OwlDaisy, handler, game)); // (yy*32 - 38)  - -38 zeby narysowalo krzak na odpoweidniej wysokosci nad ziemia  
-				
+								
 				//System.out.println("\nliczba przypadkowa " + rand.nextInt(8));
 				
 				
