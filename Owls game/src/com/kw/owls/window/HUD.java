@@ -21,6 +21,16 @@ public class HUD extends MouseAdapter implements MouseMotionListener {
 	private SpriteSheet numbersSpriteSheet = null;
 	private BufferedImage numbers = null;
 	
+	private BufferedImage window_buttons = null;
+	private SpriteSheet buttonsSpriteSheet = null;
+	private BufferedImage textarea = null;	
+	private BufferedImage daisy_av = null;	
+	
+	
+	//Do podswietlania przyciskow menu
+	private boolean userHooverYes = false;
+	private boolean userHooverNo = false;
+	
 	// Pomocniczo do generowania grafiki przedstawiajacej stan punktacji
 	private int score_copy = 0;
 	private int pom = 0;
@@ -30,7 +40,10 @@ public class HUD extends MouseAdapter implements MouseMotionListener {
 	private int healthTimerStart = 35;
 	private int healthAlert = -1;
 	
-		
+	
+	
+	
+	
 	// Konstruktor
 	public HUD(Game game) {
 		
@@ -43,12 +56,19 @@ public class HUD extends MouseAdapter implements MouseMotionListener {
 			numbers = loader.loadImage("/hud/numbers_smaller_spritesheet.png"); 
 			player_av = loader.loadImage("/hud/player_avatar.png");
 			flower_av = loader.loadImage("/hud/flower_avatar.png");
+			
+			
+			
+			window_buttons = loader.loadImage("/hud/window_buttons.png");
+			textarea = loader.loadImage("/hud/textarea.png");
+			daisy_av = loader.loadImage("/hud/daisy_av.png");
+			
 		} catch (Exception e){
 			e.printStackTrace();
 		}
 		
 		numbersSpriteSheet = new SpriteSheet(numbers);
-		
+		buttonsSpriteSheet = new SpriteSheet(window_buttons);
 	}
 	
 	
@@ -110,27 +130,59 @@ public class HUD extends MouseAdapter implements MouseMotionListener {
 		
 		// wyswietla komunikat do nawiazania wspolpracy z sowka
 		if(game.isAskingForHelp()) {
+			
+			g.drawImage(textarea, 190, 40, null);
+			
+			if(!userHooverYes)
+				g.drawImage(buttonsSpriteSheet.grabImage(1, 1, 90, 60), 210, 130, null);
+			else
+				g.drawImage(buttonsSpriteSheet.grabImage(2, 1, 90, 60), 210, 130, null);
+			
+			
+			if(!userHooverNo)
+				g.drawImage(buttonsSpriteSheet.grabImage(1, 2, 90, 60), 500, 130, null);
+			else
+				g.drawImage(buttonsSpriteSheet.grabImage(2, 2, 90, 60), 500, 130, null);
+			
+			
 			Font fnt = new Font("arial", 1, 20);
 			g.setFont(fnt);
-			
-			g.setColor(Color.white);
-			
-			g.fillRect(200, 50, 400, 150);
-						
 			g.setColor(Color.black);
 			
-			g.drawString("Do you want " + game.getOwlName() + " to help you", 220, 80);
-			g.drawString("with searching flowers?", 220, 120);
+			g.drawString("Do you want " + game.getOwlName() + " to help you", 250, 90);
+			g.drawString("with searching flowers?", 285, 120);
 			
+			
+			if(game.getOwlName() == "Daisy") {
+				g.drawImage(daisy_av, 355, 140, null);
+			}
+			
+	
+			
+			// stare okno - ZACHOWAC DO TESTOW !!
+			//Font fnt2 = new Font("arial", 1, 20);
+			//g.setFont(fnt2);
+			
+			//g.setColor(Color.red);
+			
+			//g.drawRect(200, 50, 400, 150);
+						
+			//g.setColor(Color.red);
+			
+			//g.drawString("Do you want " + game.getOwlName() + " to help you", 220, 80);
+			//g.drawString("with searching flowers?", 220, 120);
 					
-			g.drawRect(220, 140, 70, 40);
-			g.drawString("YES", 235, 170);
+			//g.drawRect(220, 140, 70, 40);
+			//g.drawString("YES", 235, 170);
 			
-			g.drawRect(510, 140, 70, 40);
-			g.drawString("NO", 525, 170);
+			//g.drawRect(510, 140, 70, 40);
+			//g.drawString("NO", 525, 170);
 		}
 		
-		
+		if(!game.isAskingForHelp()) {
+			this.userHooverNo = false;
+			this.userHooverYes = false;
+		}
 		
 	}
 	
@@ -156,10 +208,33 @@ public class HUD extends MouseAdapter implements MouseMotionListener {
 		
 	}
 	
-	
+		
 	public void mouseReleased(MouseEvent e) {
 		
 	}
+	
+	
+	// Metoda interfejsu MouseMotionListener
+		public void mouseMoved(MouseEvent e) {
+			int mx = e.getX();
+			int my = e.getY();
+			
+			if(game.isAskingForHelp()) {
+				if(mouseOver(mx, my, 220, 140, 70, 40)) {
+					userHooverYes = true;
+					userHooverNo = false;
+				} 
+				else if(mouseOver(mx, my, 510, 140, 70, 40)) {
+					userHooverYes = false;
+					userHooverNo = true;
+				} 
+				else {
+					userHooverYes = false;
+					userHooverNo = false;
+				}
+			}		
+			
+		}
 	
 		
 	// metoda sprawdzajaca czy kliknieto w jakis przycisk menu
