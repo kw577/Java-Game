@@ -24,7 +24,8 @@ public class OwlDaisy extends GameObject{
     private int height = 32;
     private BufferedImage position_marking;
     private SpriteSheet positionSpriteSheet;
-   
+    private SpriteSheet owlSpriteSheet;
+    
     // ask owl for help
     private boolean playerAsist = false; // okresla czy Daisy pomaga graczowi
     private boolean askedForHelp = false; // do przeprowadzania procedury nawiazywania wspolpracy
@@ -83,8 +84,18 @@ public class OwlDaisy extends GameObject{
     private int sequence_collision_timer = 8; // czas w ktorym jesli wystapia 2 kolizje o takich samych zwrotach (typ 1) - zostana zaliczone do sekwencji
     private int sequence_perpendicular_collision_timer = 20; // czas w ktorym jesli wystapia 2 kolizje dla wektorow prostopadlych (typ 2) - zostana zaliczone do sekwencji, 20 - ustalone na podstawie obserwacji logow
    
+    
+    
+    // do renderowania animacji
+ 	private boolean turned_left = false; // rysunki animacji gdy gracz jest zwrocony w lewo
+ 	private boolean turned_right = true; // rysunki animacji gdy gracz jest zwrocony w prawo - domyslnie gre zaczyna sie animacja tego typu
    
+    // timery animacji
+    private int owl_anim_timer = 0; // odmierzanie czasu do zmiany animacji
+    private int owl_changeAnimation = 8; // czas po ktorym zmieni sie animacja
    
+    
+    
     public OwlDaisy(int x, int y, ObjectId id, Handler handler, Game game) {
         super(x, y, id);
         this.handler = handler;
@@ -94,7 +105,7 @@ public class OwlDaisy extends GameObject{
      
      
         try {
-            owl_image = loader.loadImage("/bird_2.png");
+            owl_image = loader.loadImage("/owls/daisy_spritesheet.png");
             level_map = loader.loadImage("/levels/Level_" + game.getGameLevel() + ".png");
             position_marking = loader.loadImage("/others/position_marking.png");
         } catch (Exception e){
@@ -104,8 +115,8 @@ public class OwlDaisy extends GameObject{
        
               
         positionSpriteSheet = new SpriteSheet(position_marking);
-       
-       
+        owlSpriteSheet = new SpriteSheet(owl_image);
+        
        
     }
 
@@ -531,11 +542,53 @@ public class OwlDaisy extends GameObject{
         }
        
        
-       
+        
+        
+        
+        ///// renderowanie Daisy gdy pomaga graczowi
+        if(this.playerAsist) {
+        
+	        this.owl_anim_timer++;
+	        direction();
+	        
+	        g.setColor(Color.white);
+	        
+	        if(turned_right) {
+	        	g.fillOval((int) (x + 15), (int) (y+5), 17, 17);
+	        	g.drawImage(owlSpriteSheet.grabImage((int)(owl_anim_timer/owl_changeAnimation + 1), 3, 100, 50), (int)(x - 37), (int)(y-7), null);
+	        }
+	        	
+	        if(turned_left) {
+	        	g.fillOval((int) (x), (int) (y+5), 17, 17);
+	        	g.drawImage(owlSpriteSheet.grabImage((int)(owl_anim_timer/owl_changeAnimation + 1), 1, 100, 50), (int)(x - 31), (int)(y-7), null);
+	            
+	        }
+	        
+	        if(this.owl_anim_timer >= (owl_changeAnimation * 4 - 1)) {
+	            this.owl_anim_timer = 0;
+	        }
+        }
+        
+        // renderwanie Daisy gdy czeka na gracza
+        if(!this.playerAsist) {
+        	g.setColor(Color.white);
+        	if((handler.getPlayer_x() - this.x) >= 0) { // Daisy patrzy w prawo
+        		g.fillOval((int) (x + 15), (int) (y+5), 17, 17);
+	        	g.drawImage(owlSpriteSheet.grabImage((int)(1), 4, 100, 50), (int)(x - 37), (int)(y-7), null);
+        	}
+        	else { // Daisy patrzy w lewo
+        		g.fillOval((int) (x), (int) (y+5), 17, 17);
+	        	g.drawImage(owlSpriteSheet.grabImage((int)(1), 2, 100, 50), (int)(x - 31), (int)(y-7), null);
+	            
+        	}
+        }
+        
+        //////////////
+        
         g.setColor(Color.green);
         //g.fillOval((int)x, (int)y, 32, 32);
      
-        g.drawImage(owl_image, (int)(x - 30), (int)(y-5), null);
+        
      
         //g.setColor(Color.cyan);
         //g.fillRect((int)x, (int)y, (int)width, (int)height);
@@ -1084,5 +1137,20 @@ public class OwlDaisy extends GameObject{
      
         return new Rectangle((int)x, (int)y, (int)width, (int)height);
     }
+    
+    
+    private void direction() {
+		// pomocniczo do renderowania animacji - sprawdza czy Daisy porusza sie w lewo czy w prawo
+		if(this.velX < 0) {
+			turned_right = false;
+			turned_left = true;
+		}
+		if(this.velX > 0) {
+			turned_right = true;
+			turned_left = false;
+		}
+	
+		
+	}
  
 }
