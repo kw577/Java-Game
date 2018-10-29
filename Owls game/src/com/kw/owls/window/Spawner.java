@@ -15,6 +15,7 @@ import com.kw.owls.objects.Block;
 import com.kw.owls.objects.Ground;
 import com.kw.owls.objects.OwlDaisy;
 import com.kw.owls.objects.Player;
+import com.kw.owls.objects.RareFlower;
 import com.kw.owls.objects.Rocks;
 import com.kw.owls.objects.SpikyBush;
 import com.kw.owls.objects.TexturesManager;
@@ -339,6 +340,9 @@ public class Spawner {
 				if(green == 0 && red == 255 && blue == 0)
 					handler.addObject(new UsualFlower(xx*32, yy*32 - 15, ObjectId.UsualFlower, textures, rand.nextInt(7))); // rand.nextInt(7) - wybiera jeden z 7 losowych obrazkow 
 				
+				if(green == 130 && red == 255 && blue == 255)
+					handler.addObject(new RareFlower(xx*32, yy*32 - 15, ObjectId.RareFlower, textures, rand.nextInt(4))); // rand.nextInt(4) - wybiera jeden z 4 losowych obrazkow 
+								
 				if(green == 128 && red == 255 && blue == 0)
 					handler.addObject(new SpikyBush(xx*32, yy*32 - 38, ObjectId.SpikyBush, textures)); // (yy*32 - 38)  - -38 zeby narysowalo krzak na odpoweidniej wysokosci nad ziemia  
 				

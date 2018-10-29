@@ -345,6 +345,18 @@ public class Player extends GameObject{
 							
 			}
 			
+			// gracz zbiera rzadki kwiatek - otrzymuje 3 punkty
+			if(tempObject.getId() == ObjectId.RareFlower) {
+									
+				if(getBoundsWhole().intersects(tempObject.getBounds())) { 
+										
+					game.setFlowers(game.getFlowers() + 3); // + 3pkt do punktacji gry
+					handler.removeObject(tempObject); // po zebraniu obiekt zostaje usunety
+																
+				}
+										
+			}
+			
 			// gracz wpada w kolczasty krzak i traci 1pkt zdrowia
 			if(tempObject.getId() == ObjectId.SpikyBush) {
 							

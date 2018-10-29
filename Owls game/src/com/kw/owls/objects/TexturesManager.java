@@ -30,6 +30,12 @@ public class TexturesManager {
 	private BufferedImage usual_flower_5 = null;
 	private BufferedImage usual_flower_6 = null;
 	private BufferedImage usual_flower_7 = null;
+	
+	private BufferedImage rare_flower_1 = null;
+	private BufferedImage rare_flower_2 = null;
+	private BufferedImage rare_flower_3 = null;
+	private BufferedImage rare_flower_4 = null;
+	
 	private BufferedImage spiky_bush = null;
 	// konstruktor
 	public TexturesManager() {
@@ -57,6 +63,11 @@ public class TexturesManager {
 			usual_flower_5 = loader.loadImage("/textures/usual_flower_5.png");
 			usual_flower_6 = loader.loadImage("/textures/usual_flower_6.png");
 			usual_flower_7 = loader.loadImage("/textures/usual_flower_7.png");
+			
+			rare_flower_1 = loader.loadImage("/textures/rare_flower_1.png");
+			rare_flower_2 = loader.loadImage("/textures/rare_flower_2.png");
+			rare_flower_3 = loader.loadImage("/textures/rare_flower_3.png");
+			rare_flower_4 = loader.loadImage("/textures/rare_flower_4.png");
 			
 			spiky_bush = loader.loadImage("/textures/spiky_bush.png");
 		} catch (Exception e){
@@ -125,6 +136,16 @@ public class TexturesManager {
 			return usual_flower_7;
 	}
 		
-		
+	public BufferedImage getRare_flower(int type) {
+		if(type == 0)
+			return rare_flower_1;
+		if(type == 1)
+			return rare_flower_2;
+		if(type == 2)
+			return rare_flower_3;
+		else
+			return rare_flower_4;
+	}
+	
 	
 }
