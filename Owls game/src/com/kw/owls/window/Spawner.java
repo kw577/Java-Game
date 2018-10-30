@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import com.kw.owls.background.Cloud;
+import com.kw.owls.background.SignpostNextRound;
 import com.kw.owls.background.TreeAutumn;
 import com.kw.owls.framework.GameObject;
 import com.kw.owls.framework.ObjectId;
@@ -72,14 +73,14 @@ public class Spawner {
 			GameObject tempObject = handler.object.get(i);
 			
 			if(tempObject.getId() == ObjectId.Player) {
-				if(tempObject.getX() >= 15500 && game.getGameLevel() < 4) {
+				if(tempObject.getX() >= 15800 && game.getGameLevel() < 4) {
 					game.gameState = STATE.LoadLevel;
 					// clear haandler
 				}
 				
 				
 				// zakonczenie - przejscie calej gry
-				if(tempObject.getX() >= 15500 && game.getGameLevel() == 4) {
+				if(tempObject.getX() >= 15800 && game.getGameLevel() == 4) {
 					game.gameState = STATE.End;
 					
 					//Zerowanie stanu gry
@@ -355,7 +356,10 @@ public class Spawner {
 				
 				
 				
-				
+				// generowanie elementow tla - drogowskaz - koniec rundy
+				if(green == 100 && red == 160 && blue == 65) // kolor - cyan
+					bcg_handler.addObject(new SignpostNextRound(xx*32, yy*32, ObjectId.Background)); // generowanie widoku chury - wybiera losowo jeden z 4 dostepnych rysunkow 
+								
 				// generowanie elementow tla - chmury
 				if(green == 255 && red == 0 && blue == 255) // kolor - cyan
 					bcg_handler.addObject(new Cloud(xx*32, yy*32, ObjectId.Background, rand.nextInt(4) + 1)); // generowanie widoku chury - wybiera losowo jeden z 4 dostepnych rysunkow 
