@@ -200,7 +200,7 @@ public class OwlDaisy extends GameObject{
     
     private void wait_for_player() {
 		// sprawdza czy player wybral daisy do pomocy 
-		System.out.println("\naskedForHelpTimer: " + this.askedHelpTimer);
+		//System.out.println("\naskedForHelpTimer: " + this.askedHelpTimer);
 		// w kazdej rundzie mozna wybrac tylko 1 sowke do pomocy i nie mozna juz zmienic wyboru az do zakonczenia rundy
 		if(!game.isAskingForHelp() && !game.isDaisyHelping() && !game.isBetsyHelping() && !game.isZiggyHelping()) {
 			//System.out.println("\nWaiting for player");

@@ -18,6 +18,7 @@ import com.kw.owls.objects.OwlDaisy;
 import com.kw.owls.objects.Player;
 import com.kw.owls.objects.RareFlower;
 import com.kw.owls.objects.Rocks;
+import com.kw.owls.objects.Sheep;
 import com.kw.owls.objects.SpikyBush;
 import com.kw.owls.objects.TexturesManager;
 import com.kw.owls.objects.UsualFlower;
@@ -349,7 +350,11 @@ public class Spawner {
 				
 				if(green == 128 && red == 64 && blue == 128)
 					handler.addObject(new OwlDaisy(xx*32, yy*32 - 38, ObjectId.OwlDaisy, handler, game)); // (yy*32 - 38)  - -38 zeby narysowalo krzak na odpoweidniej wysokosci nad ziemia  
-								
+				
+				
+				if(green == 200 && red == 255 && blue == 10)
+					handler.addObject(new Sheep(xx*32, yy*32 - 38, ObjectId.Sheep, handler, game)); // (yy*32 - 38)  - -38 zeby narysowalo krzak na odpoweidniej wysokosci nad ziemia  
+				
 				//System.out.println("\nliczba przypadkowa " + rand.nextInt(8));
 				
 				
