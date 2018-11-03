@@ -10,6 +10,7 @@ import java.util.Random;
 
 import com.kw.owls.framework.GameObject;
 import com.kw.owls.framework.ObjectId;
+import com.kw.owls.framework.SpriteSheet;
 import com.kw.owls.window.BufferedImageLoader;
 import com.kw.owls.window.Game;
 import com.kw.owls.window.Handler;
@@ -21,6 +22,13 @@ public class Sheep extends GameObject{
     private int width = 70;
     private int height = 54;
     
+    private int health = 5000; // po utracie tych punktow owca na pewien czas zostanie ogluszona
+    private final int max_health = 5000;
+    
+    
+    private BufferedImage sheep_images = null;
+    private SpriteSheet sheepSpriteSheet;
+    
     private Handler handler;
     private Game game;
     
@@ -28,7 +36,7 @@ public class Sheep extends GameObject{
     private final int max_fall_velocity = 15;
     
     private BufferedImage level_map;
-    private BufferedImage sheep = null;
+    
     
     // do ustalenie kierunku ruchu
     private Random rand;
@@ -50,6 +58,21 @@ public class Sheep extends GameObject{
     
     private boolean chasing_player = false; // sprawdza czy owca biegnie za graczem
     
+    private boolean stunned = false; // czy owca zostala ogluszona (przez pociski rzucane prze gracza lub OwlZiggy)
+    private int stunned_timer = 0;
+    private int stunned_timer_start = 300; // timer unieruchomienia owcy
+    
+    // renderowanie animacji
+ 	private boolean turned_left = false; // rysunki animacji gdy obiekt jest zwrocony w lewo
+ 	private boolean turned_right = true; // rysunki animacji gdy obiekt jest zwrocony w prawo - domyslnie gre zaczyna sie animacja tego typu
+   
+ 	// timery animacji
+    private int sheep_anim_timer = 0; // odmierzanie czasu do zmiany animacji
+    private int sheep_changeAnimation = 25; // czas po ktorym zmieni sie animacja
+    
+    private int stunned_anim_timer = 0; // odmierzanie czasu do zmiany animacji
+    private int stunned_changeAnimation = 8; // czas po ktorym zmieni sie animacja
+    
 	// kosntruktor
 	public Sheep(int x, int y, ObjectId id, Handler handler, Game game) {
 		super(x, y, id);
@@ -64,13 +87,22 @@ public class Sheep extends GameObject{
 	     try {
 	            
 	         level_map = loader.loadImage("/levels/Level_" + game.getGameLevel() + ".png");
-	         sheep = loader.loadImage("/sheep_1.png");
+	         sheep_images = loader.loadImage("/objects/sheep_spritesheet.png");
 	         
 	         
 	     } catch (Exception e){
 	         e.printStackTrace();
 	     }
 		
+   
+	     
+		
+		sheepSpriteSheet = new SpriteSheet(sheep_images);
+			
+	     
+	     
+	     
+	     
 	}
 	
 
@@ -99,6 +131,32 @@ public class Sheep extends GameObject{
 		}
 		
 		
+		// !!!! ta funkcja musi byc po funkcji collision() !!!!
+		// do testow - utrata punktow zdrowia - przejscie w stan stunned 
+		this.health--;
+		if(health < 100 && health > 0) System.out.println("\nHealth: " + this.health);
+		if(this.health <= 0) {
+			this.stunned = true;
+			
+		}
+		
+		if(this.stunned) {
+			this.stunned_timer++;
+			System.out.println("\nstunned_timer: " + this.stunned_timer);
+			if(this.stunned_timer > this.stunned_timer_start) {
+				
+				
+				this.stunned_timer = 0;
+				this.stunned = false;
+				this.health = this.max_health;
+				// zerowanie timerow animacji
+				this.sheep_anim_timer = 0;
+				this.stunned_anim_timer = 0;
+				this.direction_timer = 0;
+			}
+			
+		}
+		
 		
 	}
 
@@ -106,6 +164,7 @@ public class Sheep extends GameObject{
 	private void choose_direction() {
 		
 		// Obliczanie odleglosci od gracza
+		if(!stunned) {
 				check_dist_timer--;
 				
 				if(check_dist_timer <= 0) {
@@ -127,6 +186,7 @@ public class Sheep extends GameObject{
 								
 					this.chasing_player = true;
 					
+					
 					if(dx1 > 0) velX = -3;
 					else velX = 3;
 				}
@@ -140,6 +200,11 @@ public class Sheep extends GameObject{
 				else {
 					
 					this.chasing_player = false;
+					
+					// zwolnienie po zakonczeniu poscigu gracza
+					if(velX > 1) velX = 0.8f;
+					if(velX < -1) velX = -0.8f;
+					
 					////////////////////////////////////////
 					// Poruszanie sie gdy w poblizu nie ma gracza
 						
@@ -167,8 +232,13 @@ public class Sheep extends GameObject{
 						else if(this.velX != 0) {
 							if(this.choose_direction == 0)
 								velX = 0;
-							else
+							else 
 								velX *= -1;  // zmiana kierunku poruszania sie na przeciwny
+							
+							
+								
+								
+								
 						}
 						
 					}
@@ -176,16 +246,22 @@ public class Sheep extends GameObject{
 				
 				}
 				
+		}	
 				
 				
-				///////////////////////
+		if(this.stunned) {
+			velX = 0;
+		}
 				
-				velY += gravity;
+				
+		///////////////////////
+				
+		velY += gravity;
 				
 				
-				// maksymalna szybkosc spadania
-				if(velY > this.max_fall_velocity) 
-					velY = this.max_fall_velocity;
+		// maksymalna szybkosc spadania
+		if(velY > this.max_fall_velocity) 
+			velY = this.max_fall_velocity;
 				
 				
 	}
@@ -315,8 +391,85 @@ public class Sheep extends GameObject{
 		 //g.setColor(Color.yellow);
 		 //g.fillRect((int)x, (int)y, width, height);
 		
-		 g.drawImage(sheep, (int)x, (int)y, null);
+		 direction();
 		
+		 
+		  if(!stunned) {
+			 this.sheep_anim_timer++;
+			 
+			 
+			 if(velX == 0) {
+				 if(turned_right) {
+					 g.drawImage(sheepSpriteSheet.grabImage((int)(1), 1, 75, 60), (int)(x-2), (int)(y-3), null);    
+				 }
+				 if(turned_left) {
+					 g.drawImage(sheepSpriteSheet.grabImage((int)(1), 4, 75, 60), (int)(x-2), (int)(y-3), null);    
+				 }
+			 }
+			 
+			 if(velX != 0) {
+				 
+				 
+				 if(turned_right) {
+					 g.drawImage(sheepSpriteSheet.grabImage((int)(sheep_anim_timer/sheep_changeAnimation + 1), 2, 75, 60), (int)(x-2), (int)(y-3), null);    
+				 }
+				 if(turned_left) {
+					 g.drawImage(sheepSpriteSheet.grabImage((int)(sheep_anim_timer/sheep_changeAnimation + 1), 5, 75, 60), (int)(x-2), (int)(y-3), null);    
+				 }
+			 }
+			 
+			 if(this.chasing_player) this.sheep_anim_timer++; // przyspieszenie timera animacji jesli owca biegnie za graczem 
+			 
+			 if(this.sheep_anim_timer >= (sheep_changeAnimation * 2 - 1)) {
+		            this.sheep_anim_timer = 0;
+		        }
+
+		 }
+		 
+		 if(stunned) {
+			 this.stunned_anim_timer++;
+			 
+			 if(turned_right) {
+				 g.drawImage(sheepSpriteSheet.grabImage((int)(stunned_anim_timer/stunned_changeAnimation + 1), 3, 75, 60), (int)(x-2), (int)(y-3), null);    
+			 }
+			 if(turned_left) {
+				 g.drawImage(sheepSpriteSheet.grabImage((int)(stunned_anim_timer/stunned_changeAnimation + 1), 6, 75, 60), (int)(x-2), (int)(y-3), null);    
+			 }
+			 
+			 if(this.stunned_anim_timer >= (stunned_changeAnimation * 3 - 1)) {
+		            this.stunned_anim_timer = 0;
+		     }
+		 }
+		 
+		 
+		 /*
+	        if(this.playerAsist) {
+	            
+		        this.owl_anim_timer++;
+		        direction();
+		        
+		        g.setColor(Color.white);
+		        
+		        if(turned_right) {
+		        	g.fillOval((int) (x + 15), (int) (y+5), 17, 17);
+		        	g.drawImage(owlSpriteSheet.grabImage((int)(owl_anim_timer/owl_changeAnimation + 1), 3, 100, 50), (int)(x - 37), (int)(y-7), null);
+		        }
+		        	
+		        if(turned_left) {
+		        	g.fillOval((int) (x), (int) (y+5), 17, 17);
+		        	g.drawImage(owlSpriteSheet.grabImage((int)(owl_anim_timer/owl_changeAnimation + 1), 1, 100, 50), (int)(x - 31), (int)(y-7), null);
+		            
+		        }
+		        
+		        if(this.owl_anim_timer >= (owl_changeAnimation * 4 - 1)) {
+		            this.owl_anim_timer = 0;
+		        }
+	        }
+		 */
+		 
+		 
+		 
+		    
 		 //g.setColor(Color.green);
 		 //g.fillOval((int)x, (int)y, 5, 5);
 	     
@@ -356,6 +509,19 @@ public class Sheep extends GameObject{
 	}
 	
 	
+	 private void direction() {
+			// pomocniczo do renderowania animacji - sprawdza czy Daisy porusza sie w lewo czy w prawo
+			if(this.velX < 0) {
+				turned_right = false;
+				turned_left = true;
+			}
+			if(this.velX > 0) {
+				turned_right = true;
+				turned_left = false;
+			}
+		
+			
+		}
 	
 	// !!! Uwaga - dodac getBounds - obrys glowy - do funkcji zjadania kwiatkow
 	
