@@ -321,6 +321,19 @@ public class Player extends GameObject{
 				
 			}
 			
+			
+			// owca zjada losowa kwiatki (1 - 3szt) - o ile nie jest unieruchomiona (stunned)
+			if(lostFlowers == false && tempObject.getId() == ObjectId.Sheep) {
+				
+				
+				if(getBoundsWhole().intersects(tempObject.getBounds())) { 
+					losePoints();
+				}
+				
+			}
+			
+			
+			
 			// gracz zbiera kwiatek wodny - otrzymuje 2 punkty
 			if(tempObject.getId() == ObjectId.WaterFlower) {
 							

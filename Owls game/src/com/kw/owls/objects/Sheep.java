@@ -478,6 +478,10 @@ public class Sheep extends GameObject{
 		
 	     g2d.draw(getBoundsTop());
 	     g2d.draw(getBoundsBottom());
+	     
+	     g.setColor(Color.yellow);
+	     g2d.draw(getBounds());
+	     
 	     /*
 	     // rysowanie prostokatow z miniHandler - ktore odzwierciedlaja przylegly teren
 	     // !!!! UWAGA - aby rysowanie dzialalo nalezy usunac komende miniHandler.clear() z funckji collision() (miniHandler jest czyszczony przed rozpoczeciem funkcji render)
@@ -491,22 +495,38 @@ public class Sheep extends GameObject{
 	     */
 	}
 
+	
+	
 	// do wykrywania utraty punktow gry przez gracza
-	public Rectangle getBounds() {
-		
-		return new Rectangle((int)x, (int)y, width, height);
-	}
-	
-	public Rectangle getBoundsTop() {
-	
-		return new Rectangle((int)x, (int)y, width, (height-10));
-	}
-	
-	
-	public Rectangle getBoundsBottom() {
-		
-		return new Rectangle((int)(x+width/4), (int)(y+height-10), width/2, 10);
-	}
+	 	public Rectangle getBounds() {
+	 		
+	 		if(this.turned_left && !this.stunned) {
+	 			return new Rectangle((int)x, (int)y, width/2, height/2 + 10);
+	 		}
+	 		else if(this.turned_right && !this.stunned) {
+	 			return new Rectangle((int)(x + width/2), (int)y, width/2, height/2 + 10);
+	 		}
+	 		
+	 		// w przciwnym razie zostaje zwrocony obszar poza obszarem gry tak aby nie moglo dojsc do kolizji - utraty punktow gry
+	 		else return new Rectangle((int)(x + width/4), (int)(y + height + 20), width/2, 5); // mozna by tez zwrocic prostokat w zupelnie dowolnym miekscu planszy poza obszarem gry
+	 	}
+	 	
+	 	
+	 	
+	 	
+	 	
+	 	
+	 	
+	 	public Rectangle getBoundsTop() {
+	 	
+	 		return new Rectangle((int)x, (int)y, width, (height-10));
+	 	}
+	 	
+	 	
+	 	public Rectangle getBoundsBottom() {
+	 		
+	 		return new Rectangle((int)(x+width/4), (int)(y+height-10), width/2, 10);
+		}
 	
 	
 	 private void direction() {
