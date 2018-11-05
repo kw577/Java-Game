@@ -12,9 +12,9 @@ import com.kw.owls.background.TreeAutumn;
 import com.kw.owls.framework.GameObject;
 import com.kw.owls.framework.ObjectId;
 import com.kw.owls.framework.STATE;
+import com.kw.owls.objects.BlackSheep;
 import com.kw.owls.objects.Block;
 import com.kw.owls.objects.Ground;
-import com.kw.owls.objects.Missile;
 import com.kw.owls.objects.OwlDaisy;
 import com.kw.owls.objects.Player;
 import com.kw.owls.objects.RareFlower;
@@ -355,6 +355,11 @@ public class Spawner {
 				
 				if(green == 200 && red == 255 && blue == 10)
 					handler.addObject(new Sheep(xx*32, yy*32 - 38, ObjectId.Sheep, handler, game)); // (yy*32 - 38)  - -38 zeby narysowalo krzak na odpoweidniej wysokosci nad ziemia  
+				
+				
+				if(green == 100 && red == 100 && blue == 100)
+					handler.addObject(new BlackSheep(xx*32, yy*32, ObjectId.BlackSheep, handler, game));   
+				
 				
 				//System.out.println("\nliczba przypadkowa " + rand.nextInt(8));
 				

@@ -408,7 +408,26 @@ public class Player extends GameObject{
 				}
 							
 			}
+			
+			
+			
+			// baran atakuje gracza i gracz traci 1pkt zdrowia
+			if(tempObject.getId() == ObjectId.BlackSheep) {
+							
+				if(injured == false && getBoundsWhole().intersects(tempObject.getBounds())) { 
+							
+					injured = true;
 					
+					if(game.getHealth() > 0) {
+						game.setHealth(game.getHealth() - 1);
+					}
+					
+														
+				}
+							
+			}
+			
+			
 			
 		} 
 		

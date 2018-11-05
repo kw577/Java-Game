@@ -16,14 +16,14 @@ import com.kw.owls.window.Game;
 import com.kw.owls.window.Handler;
 
 
-// jest przeciwnikiem - niegrozna dla gracza ale moze mu zabrac kilka kwiatkow - utrata punktow 
-public class Sheep extends GameObject{
+// jest przeciwnikiem - moze zadawac graczowi obrazenia - utrata punktow zdrowia 
+public class BlackSheep extends GameObject{
 
     private int width = 70;
     private int height = 54;
     
-    private int health = 3; // po utracie tych punktow owca na pewien czas zostanie ogluszona
-    private final int max_health = 3;
+    private int health = 5; // po utracie tych punktow owca na pewien czas zostanie ogluszona
+    private final int max_health = 5;
     
     private boolean injured = false; // zaraz po uderzeniu pociskiem ta zmienna przyjmuje wartosc true
     private int injuredTimer = 0;
@@ -77,7 +77,7 @@ public class Sheep extends GameObject{
     private int stunned_changeAnimation = 8; // czas po ktorym zmieni sie animacja
     
 	// kosntruktor
-	public Sheep(int x, int y, ObjectId id, Handler handler, Game game) {
+	public BlackSheep(int x, int y, ObjectId id, Handler handler, Game game) {
 		super(x, y, id);
 		this.handler = handler;
 		this.game = game;
@@ -90,7 +90,7 @@ public class Sheep extends GameObject{
 	     try {
 	            
 	         level_map = loader.loadImage("/levels/Level_" + game.getGameLevel() + ".png");
-	         sheep_images = loader.loadImage("/objects/sheep_spritesheet.png");
+	         sheep_images = loader.loadImage("/objects/blackSheep_spritesheet.png");
 	         
 	         
 	     } catch (Exception e){
@@ -195,17 +195,17 @@ public class Sheep extends GameObject{
 			    
 				////////////////////////////////////////
 				// Poruszanie sie gdy w poblizu jest gracz
-				if(dist < 300 && dist > 60 && dy1 > 30 && dy1 < 50 && this.injured == false) // gracz znajduje sie w bliskiej odleglosci na tej samej wysokosci terenu
+				if(dist < 300 && dist > 60 && dy1 > 30 && dy1 < 50) // gracz znajduje sie w bliskiej odleglosci na tej samej wysokosci terenu
 				{
 					//System.out.println("Odleglosc od gracza:   dx1 = " + dx1 + "    dy1 = " + dy1 + "     dist = " + dist + "   opcja 1");
 								
 					this.chasing_player = true;
 					
 					
-					if(dx1 > 0) velX = -3;
-					else velX = 3;
+					if(dx1 > 0) velX = -5;
+					else velX = 5;
 				}
-				else if(dist <= 60 && dy1 > 30 && dy1 < 50 && this.injured == false) {
+				else if(dist <= 60 && dy1 > 30 && dy1 < 50) {
 					//System.out.println("Odleglosc od gracza:   dx1 = " + dx1 + "    dy1 = " + dy1 + "     dist = " + dist + "   opcja 2");
 					
 					this.chasing_player = true;
@@ -217,8 +217,8 @@ public class Sheep extends GameObject{
 					this.chasing_player = false;
 					
 					// zwolnienie po zakonczeniu poscigu gracza
-					if(velX > 1) velX = 0.8f;
-					if(velX < -1) velX = -0.8f;
+					if(velX > 1) velX = 0.5f;
+					if(velX < -1) velX = -0.5f;
 					
 					////////////////////////////////////////
 					// Poruszanie sie gdy w poblizu nie ma gracza
@@ -238,9 +238,9 @@ public class Sheep extends GameObject{
 						// jesli wczesniej owca stala w miejscu
 						if(this.velX == 0) {
 							if(this.choose_direction == 0)
-								velX = 0.8f;
+								velX = 0.5f;
 							else
-								velX = -0.8f;
+								velX = -0.5f;
 						}
 						
 						// jesli wczesniej owca poruszala sie
@@ -348,7 +348,7 @@ public class Sheep extends GameObject{
 						this.health--;
 						this.injured = true;
 						
-						//this.velX *= -1; // owca ucieka po otrzymaniu obrazen
+						
 					}
 					
 					handler.removeMissile(tempObject);
@@ -447,10 +447,10 @@ public class Sheep extends GameObject{
 			 
 			 if(velX == 0) {
 				 if(turned_right) {
-					 g.drawImage(sheepSpriteSheet.grabImage((int)(1), 1, 75, 60), (int)(x-2), (int)(y-3), null);    
+					 g.drawImage(sheepSpriteSheet.grabImage((int)(1), 1, 75, 65), (int)(x-2), (int)(y-8), null);    
 				 }
 				 if(turned_left) {
-					 g.drawImage(sheepSpriteSheet.grabImage((int)(1), 4, 75, 60), (int)(x-2), (int)(y-3), null);    
+					 g.drawImage(sheepSpriteSheet.grabImage((int)(1), 4, 75, 65), (int)(x-2), (int)(y-8), null);    
 				 }
 			 }
 			 
@@ -458,10 +458,10 @@ public class Sheep extends GameObject{
 				 
 				 
 				 if(turned_right) {
-					 g.drawImage(sheepSpriteSheet.grabImage((int)(sheep_anim_timer/sheep_changeAnimation + 1), 2, 75, 60), (int)(x-2), (int)(y-3), null);    
+					 g.drawImage(sheepSpriteSheet.grabImage((int)(sheep_anim_timer/sheep_changeAnimation + 1), 2, 75, 65), (int)(x-2), (int)(y-8), null);    
 				 }
 				 if(turned_left) {
-					 g.drawImage(sheepSpriteSheet.grabImage((int)(sheep_anim_timer/sheep_changeAnimation + 1), 5, 75, 60), (int)(x-2), (int)(y-3), null);    
+					 g.drawImage(sheepSpriteSheet.grabImage((int)(sheep_anim_timer/sheep_changeAnimation + 1), 5, 75, 65), (int)(x-2), (int)(y-8), null);    
 				 }
 			 }
 			 
@@ -477,10 +477,10 @@ public class Sheep extends GameObject{
 			 this.stunned_anim_timer++;
 			 
 			 if(turned_right) {
-				 g.drawImage(sheepSpriteSheet.grabImage((int)(stunned_anim_timer/stunned_changeAnimation + 1), 3, 75, 60), (int)(x-2), (int)(y-3), null);    
+				 g.drawImage(sheepSpriteSheet.grabImage((int)(stunned_anim_timer/stunned_changeAnimation + 1), 3, 75, 65), (int)(x-2), (int)(y-8), null);    
 			 }
 			 if(turned_left) {
-				 g.drawImage(sheepSpriteSheet.grabImage((int)(stunned_anim_timer/stunned_changeAnimation + 1), 6, 75, 60), (int)(x-2), (int)(y-3), null);    
+				 g.drawImage(sheepSpriteSheet.grabImage((int)(stunned_anim_timer/stunned_changeAnimation + 1), 6, 75, 65), (int)(x-2), (int)(y-8), null);    
 			 }
 			 
 			 if(this.stunned_anim_timer >= (stunned_changeAnimation * 3 - 1)) {
@@ -489,33 +489,7 @@ public class Sheep extends GameObject{
 		 }
 		 
 		 
-		 /*
-	        if(this.playerAsist) {
-	            
-		        this.owl_anim_timer++;
-		        direction();
-		        
-		        g.setColor(Color.white);
-		        
-		        if(turned_right) {
-		        	g.fillOval((int) (x + 15), (int) (y+5), 17, 17);
-		        	g.drawImage(owlSpriteSheet.grabImage((int)(owl_anim_timer/owl_changeAnimation + 1), 3, 100, 50), (int)(x - 37), (int)(y-7), null);
-		        }
-		        	
-		        if(turned_left) {
-		        	g.fillOval((int) (x), (int) (y+5), 17, 17);
-		        	g.drawImage(owlSpriteSheet.grabImage((int)(owl_anim_timer/owl_changeAnimation + 1), 1, 100, 50), (int)(x - 31), (int)(y-7), null);
-		            
-		        }
-		        
-		        if(this.owl_anim_timer >= (owl_changeAnimation * 4 - 1)) {
-		            this.owl_anim_timer = 0;
-		        }
-	        }
-		 */
-		 
-		 
-		 
+	 
 		    
 		 //g.setColor(Color.green);
 		 //g.fillOval((int)x, (int)y, 5, 5);
