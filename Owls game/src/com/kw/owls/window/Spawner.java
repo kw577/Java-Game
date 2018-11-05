@@ -14,6 +14,7 @@ import com.kw.owls.framework.ObjectId;
 import com.kw.owls.framework.STATE;
 import com.kw.owls.objects.Block;
 import com.kw.owls.objects.Ground;
+import com.kw.owls.objects.Missile;
 import com.kw.owls.objects.OwlDaisy;
 import com.kw.owls.objects.Player;
 import com.kw.owls.objects.RareFlower;
@@ -373,6 +374,13 @@ public class Spawner {
 				if(green == 255 && red == 255 && blue == 0) // kolor - zolty
 					bcg_handler.addObject(new TreeAutumn(xx*32, yy*32 - 565, ObjectId.Background, rand.nextInt(2) + 1)); // generowanie widoku drzewa - wybiera losowo jeden z 2 dostepnych rysunkow 
 				//// Uwaga !!! - wszystkie rysunki drzew powinny miec 600 px wysokosci - aby (yy*32 - 570) zawsze wyznaczylo poprawne polozenie drzewa nad poziomem terenu
+				
+				
+				
+				
+				// tylko do celow testowych !!! - dodawanie pociskow tylko w trakcie gry (Player lub OwlZiggy moga strzelac pociskami)
+				if(green == 128 && red == 128 && blue == 64)
+					handler.addMissile(new Missile(xx*32, yy*32, ObjectId.Missile, handler, game, 5, 0)); // (yy*32 - 38)  - -38 zeby narysowalo krzak na odpoweidniej wysokosci nad ziemia  
 				
 				
 			}

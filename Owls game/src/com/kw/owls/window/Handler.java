@@ -10,11 +10,14 @@ import com.kw.owls.framework.ObjectId;
 
 public class Handler {
 
-	public LinkedList<GameObject> object = new LinkedList<GameObject>();
+	public LinkedList<GameObject> object = new LinkedList<GameObject>(); // przechowuje wszystkie obiekty oprocz pociskow
+	public LinkedList<GameObject> missiles = new LinkedList<GameObject>(); // przechowuje tylko liste pociskow - dla zwiekszenia szybkosci obliczen
+	
 	
 	// ruch gracza - spr. KeyInput.java - implementacja w ten sposob zapobiega efektowi "sticky keys"
 	private boolean up = false, down = false, right = false, left = false;
-	
+	private boolean shooting = false;
+
 	// parametry gracza - przekazywane do klasy typu Owl.java
 	private float player_x;
 	private float player_y;
@@ -40,6 +43,15 @@ public class Handler {
 			
 			
 		}
+		
+		
+		
+		for(int i = 0; i < missiles.size(); i++) {
+			tempObject = missiles.get(i);
+			
+			tempObject.tick();
+		}
+		
 	}
 		
 	public float getPlayer_x() {
@@ -98,10 +110,27 @@ public class Handler {
 		this.left = left;
 	}
 
+	
+	public boolean isShooting() {
+		return shooting;
+	}
+
+	public void setShooting(boolean shooting) {
+		this.shooting = shooting;
+	}
+	
 
 	public void render(Graphics g) {
 		for(int i = 0; i < object.size(); i++) {
 			tempObject = object.get(i);
+			
+			tempObject.render(g);
+		}
+		
+		
+		// renderowanie pociskow
+		for(int i = 0; i < missiles.size(); i++) {
+			tempObject = missiles.get(i);
 			
 			tempObject.render(g);
 		}
@@ -119,7 +148,24 @@ public class Handler {
 	
 	public void clearHandler() {
 		this.object.clear();	
-	
+		this.missiles.clear();
 	}
+	
+	
+	// operacje na liscie pociskow
+	public void addMissile(GameObject object) {
+		this.missiles.add(object);
+	}
+	
+	
+	public void removeMissile(GameObject object) {
+		this.missiles.remove(object);
+	}
+	
+	
+	
+	
+	
+	
 	
 }

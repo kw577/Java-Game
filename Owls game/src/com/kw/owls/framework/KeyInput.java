@@ -32,6 +32,12 @@ public class KeyInput extends KeyAdapter{
 			game.setPlayer_click_y(-1);
 		}
 		
+		
+		// player throw a missile 
+		if(key == KeyEvent.VK_V) {
+			handler.setShooting(true);
+		}
+		
 		// implementacja sterowania klawiatura w ten sposob zapobiega efektowi "sticky keys"
 		for(int i = 0; i < handler.object.size(); i++) {
 			GameObject tempObject = handler.object.get(i);

@@ -74,6 +74,12 @@ public class Player extends GameObject{
 	private int render_timer = 0;
 	private int render_timer_start = 12;
 	
+	
+	// throwing a missile
+	private final int fireRate = 60; // jak  czesto gracz moze rzucic pocisk
+	private int fireRateTimer = 0;
+	private int missileSpeed = 9; // predkosc pocisku rzuconego przez gracza
+	
 	public Player(float x, float y, ObjectId id, Handler handler, Game game) {
 		super(x, y, id);
 		this.handler = handler;
@@ -237,6 +243,23 @@ public class Player extends GameObject{
 			
 
 		}
+		
+		
+		// throw a missile
+		if(this.fireRateTimer < this.fireRate) this.fireRateTimer++;
+		
+		if(this.fireRateTimer >= this.fireRate && handler.isShooting() == true) {
+			this.fireRateTimer = 0;
+			
+			if(turned_right)
+				handler.addMissile(new Missile((int)this.x + 30, (int) this.y + 50, ObjectId.Missile, handler, game, this.velX + missileSpeed, 0));   
+			
+			if(turned_left)
+				handler.addMissile(new Missile((int)this.x, (int) this.y + 50, ObjectId.Missile, handler, game, this.velX - missileSpeed, 0));   
+			
+		}
+		
+		handler.setShooting(false);
 		
 	}
 
@@ -413,6 +436,9 @@ public class Player extends GameObject{
 		//System.out.println("\n\n\nUnder water: " + this.underWater);
 		//System.out.println("\nDiving timer: " + this.divingTimer);
 		//System.out.println("\nInjured: " + this.injured);
+		
+		System.out.println("\nShooting: " + handler.isShooting());
+		System.out.println("\nfireRate timer: " + this.fireRateTimer);
 		/////
 		
 		
