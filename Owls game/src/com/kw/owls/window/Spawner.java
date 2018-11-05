@@ -377,11 +377,11 @@ public class Spawner {
 				
 				
 				
-				
+				/*
 				// tylko do celow testowych !!! - dodawanie pociskow tylko w trakcie gry (Player lub OwlZiggy moga strzelac pociskami)
 				if(green == 128 && red == 128 && blue == 64)
 					handler.addMissile(new Missile(xx*32, yy*32, ObjectId.Missile, handler, game, 5, 0)); // (yy*32 - 38)  - -38 zeby narysowalo krzak na odpoweidniej wysokosci nad ziemia  
-				
+				*/
 				
 			}
 			System.out.println("\n\nSpawner: Loading map in progress\n\n");

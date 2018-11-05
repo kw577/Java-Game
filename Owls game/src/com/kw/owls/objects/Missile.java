@@ -80,7 +80,7 @@ public class Missile extends GameObject{
 		
 		if(velY > max_fall_velocity) velY = max_fall_velocity;
 		
-		System.out.println("\nMissile velX: " + velX + "   velY: " + velY);
+		//System.out.println("\nMissile velX: " + velX + "   velY: " + velY);
 		//
 		
 		

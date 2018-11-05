@@ -22,9 +22,12 @@ public class Sheep extends GameObject{
     private int width = 70;
     private int height = 54;
     
-    private int health = 5000; // po utracie tych punktow owca na pewien czas zostanie ogluszona
-    private final int max_health = 5000;
+    private int health = 3; // po utracie tych punktow owca na pewien czas zostanie ogluszona
+    private final int max_health = 3;
     
+    private boolean injured = false; // zaraz po uderzeniu pociskiem ta zmienna przyjmuje wartosc true
+    private int injuredTimer = 0;
+    private final int injuredTimerStart = 100;
     
     private BufferedImage sheep_images = null;
     private SpriteSheet sheepSpriteSheet;
@@ -60,7 +63,7 @@ public class Sheep extends GameObject{
     
     private boolean stunned = false; // czy owca zostala ogluszona (przez pociski rzucane prze gracza lub OwlZiggy)
     private int stunned_timer = 0;
-    private int stunned_timer_start = 300; // timer unieruchomienia owcy
+    private int stunned_timer_start = 1000; // timer unieruchomienia owcy
     
     // renderowanie animacji
  	private boolean turned_left = false; // rysunki animacji gdy obiekt jest zwrocony w lewo
@@ -133,8 +136,9 @@ public class Sheep extends GameObject{
 		
 		// !!!! ta funkcja musi byc po funkcji collision() !!!!
 		// do testow - utrata punktow zdrowia - przejscie w stan stunned 
-		this.health--;
-		if(health < 100 && health > 0) System.out.println("\nHealth: " + this.health);
+		//this.health--; // DO TESTOW
+		
+		//if(health < 100 && health > 0) System.out.println("\nHealth: " + this.health);
 		if(this.health <= 0) {
 			this.stunned = true;
 			
@@ -142,13 +146,17 @@ public class Sheep extends GameObject{
 		
 		if(this.stunned) {
 			this.stunned_timer++;
-			System.out.println("\nstunned_timer: " + this.stunned_timer);
+			//System.out.println("\nstunned_timer: " + this.stunned_timer);
 			if(this.stunned_timer > this.stunned_timer_start) {
 				
 				
 				this.stunned_timer = 0;
 				this.stunned = false;
 				this.health = this.max_health;
+				
+				this.injuredTimer = 0;
+				this.injured = false;
+				
 				// zerowanie timerow animacji
 				this.sheep_anim_timer = 0;
 				this.stunned_anim_timer = 0;
@@ -157,7 +165,14 @@ public class Sheep extends GameObject{
 			
 		}
 		
-		
+		if(this.injured) {
+			this.injuredTimer++;
+			//System.out.println("\nSheep - injuredTimer: " + this.injuredTimer);
+			if(this.injuredTimer >= this.injuredTimerStart) {
+				this.injured = false;
+				this.injuredTimer = 0;
+			}
+		}
 	}
 
 
@@ -180,9 +195,9 @@ public class Sheep extends GameObject{
 			    
 				////////////////////////////////////////
 				// Poruszanie sie gdy w poblizu jest gracz
-				if(dist < 300 && dist > 60 && dy1 > 30 && dy1 < 50) // gracz znajduje sie w bliskiej odleglosci na tej samej wysokosci terenu
+				if(dist < 300 && dist > 60 && dy1 > 30 && dy1 < 50 && this.injured == false) // gracz znajduje sie w bliskiej odleglosci na tej samej wysokosci terenu
 				{
-					System.out.println("Odleglosc od gracza:   dx1 = " + dx1 + "    dy1 = " + dy1 + "     dist = " + dist + "   opcja 1");
+					//System.out.println("Odleglosc od gracza:   dx1 = " + dx1 + "    dy1 = " + dy1 + "     dist = " + dist + "   opcja 1");
 								
 					this.chasing_player = true;
 					
@@ -190,8 +205,8 @@ public class Sheep extends GameObject{
 					if(dx1 > 0) velX = -3;
 					else velX = 3;
 				}
-				else if(dist <= 60 && dy1 > 30 && dy1 < 50) {
-					System.out.println("Odleglosc od gracza:   dx1 = " + dx1 + "    dy1 = " + dy1 + "     dist = " + dist + "   opcja 2");
+				else if(dist <= 60 && dy1 > 30 && dy1 < 50 && this.injured == false) {
+					//System.out.println("Odleglosc od gracza:   dx1 = " + dx1 + "    dy1 = " + dy1 + "     dist = " + dist + "   opcja 2");
 					
 					this.chasing_player = true;
 					
@@ -313,6 +328,38 @@ public class Sheep extends GameObject{
 		}
 		// pozakonczeniu iteracji usuwamy zawartosc miniHandler
 		miniHandler.clear();
+		
+		
+		
+		
+		
+		
+		// Gdy pocisk uderzy owce
+		for(int i = 0; i < handler.missiles.size(); i++) {
+			GameObject tempObject = handler.missiles.get(i);
+			
+			
+			
+			if(tempObject.getId() == ObjectId.Missile) {		
+			
+				if(getBounds().intersects(tempObject.getBounds())) { // jesli pocisk uderzy owce
+					
+					if(this.injured == false) {
+						this.health--;
+						this.injured = true;
+						
+						//this.velX *= -1; // owca ucieka po otrzymaniu obrazen
+					}
+					
+					handler.removeMissile(tempObject);
+				} 
+		
+			}
+		
+		}
+		
+	
+		
 	}
 
 	

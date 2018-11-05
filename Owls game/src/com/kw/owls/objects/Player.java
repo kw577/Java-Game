@@ -437,8 +437,8 @@ public class Player extends GameObject{
 		//System.out.println("\nDiving timer: " + this.divingTimer);
 		//System.out.println("\nInjured: " + this.injured);
 		
-		System.out.println("\nShooting: " + handler.isShooting());
-		System.out.println("\nfireRate timer: " + this.fireRateTimer);
+		//System.out.println("\nShooting: " + handler.isShooting());
+		//System.out.println("\nfireRate timer: " + this.fireRateTimer);
 		/////
 		
 		
