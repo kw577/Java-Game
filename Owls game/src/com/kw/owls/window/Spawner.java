@@ -6,9 +6,12 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
+import com.kw.owls.background.BushSummer;
 import com.kw.owls.background.Cloud;
 import com.kw.owls.background.SignpostNextRound;
+import com.kw.owls.background.Stone;
 import com.kw.owls.background.TreeAutumn;
+import com.kw.owls.background.TreeSummer;
 import com.kw.owls.framework.GameObject;
 import com.kw.owls.framework.ObjectId;
 import com.kw.owls.framework.STATE;
@@ -377,8 +380,21 @@ public class Spawner {
 				
 				// generowanie elementow tla - drzewa jesienne
 				if(green == 255 && red == 255 && blue == 0) // kolor - zolty
-					bcg_handler.addObject(new TreeAutumn(xx*32, yy*32 - 565, ObjectId.Background, rand.nextInt(2) + 1)); // generowanie widoku drzewa - wybiera losowo jeden z 2 dostepnych rysunkow 
+					bcg_handler.addObject(new TreeAutumn(xx*32-230, yy*32 - 565, ObjectId.Background, rand.nextInt(2) + 1)); // generowanie widoku drzewa - wybiera losowo jeden z 2 dostepnych rysunkow 
 				//// Uwaga !!! - wszystkie rysunki drzew powinny miec 600 px wysokosci - aby (yy*32 - 570) zawsze wyznaczylo poprawne polozenie drzewa nad poziomem terenu
+				// TreeAutumn (-230)  - bo obrazek ma szer. 460 - odejmujemy ta wartosc aby srodek zostal wyrenderowany w zaznaczonym na mapce levelu punkcie
+				
+				
+				if(green == 128 && red == 0 && blue == 0) 
+					bcg_handler.addObject(new TreeSummer(xx*32-230, yy*32 - 565, ObjectId.Background, rand.nextInt(2) + 1)); // generowanie widoku drzewa - wybiera losowo jeden z 2 dostepnych rysunkow 
+				
+				
+				if(green == 255 && red == 200 && blue == 200) 
+					bcg_handler.addObject(new BushSummer(xx*32-80, yy*32 - 90, ObjectId.Background)); // generowanie widoku drzewa - wybiera losowo jeden z 2 dostepnych rysunkow 
+				
+				
+				if(green == 235 && red == 190 && blue == 64) 
+					bcg_handler.addObject(new Stone(xx*32-50, yy*32-28, ObjectId.Background, rand.nextInt(3) + 1)); // generowanie widoku drzewa - wybiera losowo jeden z 2 dostepnych rysunkow 
 				
 				
 				

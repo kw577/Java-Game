@@ -21,7 +21,7 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 	//Textury uzywane w menu gry
 	private BufferedImage buttons = null;
 	private SpriteSheet buttonsSpriteSheet = null;
-	private BufferedImage autumn_tree = null;
+	private BufferedImage summer_tree = null;
 	private BufferedImage clouds = null;
 	private BufferedImage flowers = null;	
 	private BufferedImage owl = null;	
@@ -156,7 +156,7 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 						
 			try {
 				buttons = loader.loadImage("/textures/buttons_spritesheet.png");
-				autumn_tree = loader.loadImage("/background/tree_autumn_2.png");
+				summer_tree = loader.loadImage("/background/tree_summer_2.png");
 				clouds = loader.loadImage("/background/cloud_1.png");
 				flowers = loader.loadImage("/background/flowers_1.png");
 				owl = loader.loadImage("/background/owl_1.png");
@@ -181,7 +181,7 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 		
 		if(game.gameState == STATE.Menu) {
 			
-			g.drawImage(autumn_tree, -70, -70, null);
+			g.drawImage(summer_tree, -80, -70, null);
 			g.drawImage(clouds, 550, 50, null);
 			g.drawImage(clouds, 200, 0, null);
 			g.drawImage(flowers, 500, 350, null);
