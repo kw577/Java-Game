@@ -47,7 +47,7 @@ public class WaterFlowers extends GameObject{
 	
 	public Rectangle getBounds() {
 
-		return new Rectangle((int)(x + width/4), (int)(y+height/2), 24, 24);
+		return new Rectangle((int)(x + width/4), (int)(y+height/2-5), 24, 30);
 	}
 
 }

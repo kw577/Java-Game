@@ -342,7 +342,7 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 				g.setFont(fnt2);	
 				g.drawString("Your task is to help this boy to find as many flowers as possible", 90, 100);
 				g.drawString("He would like to see his beloved girlfriend and he wants", 90, 130);
-				g.drawString("to give her a beautiful bouquet", 90, 160);
+				g.drawString("to give her a beautiful bouquet.", 90, 160);
 				
 				// Rysunek i opis kwiatkow
 				g.setFont(fnt3);
@@ -355,8 +355,8 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 				g.drawString("Common Flowers - You can find many varieties and colours", 90, 250);
 				g.drawString("It's easy to find them - this flower will give you 1 point.", 90, 275);
 				
-				g.drawString("Water Flowers - You can pick them from water surface", 90, 320);
-				g.drawString("Be carefull to not lose your other flowers while picking them", 90, 345);
+				g.drawString("Water Flowers - You can pick them from water surface.", 90, 320);
+				g.drawString("Be carefull to not lose your other flowers while picking them.", 90, 345);
 				g.drawString("Each Water Flower will give you 2 points.", 90, 370);
 				
 				g.drawString("Rare Flowers - they are very bautifull and unique.", 90, 420);
@@ -465,8 +465,8 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 				g.drawString("Nor your health neither your flowers will suffer it.", 110, 235);
 				
 				g.drawString(">   In medium water - you can breathe freely - so it's safe for you.", 75, 280);	
-				g.drawString("Unfortunately the same can not be said about your collected flowers", 110, 305);
-				g.drawString("In medium water you can easily lose are destroy some of your flowers.", 110, 330);
+				g.drawString("Unfortunately the same can not be said about your collected flowers.", 110, 305);
+				g.drawString("In medium water you can easily lose or destroy some of your flowers.", 110, 330);
 			
 				g.drawString(">   In deep water - you must sometimes jump and take a breath.", 75, 380);	
 				g.drawString("If not - you can run out of air. You will get some alert when", 110, 405);

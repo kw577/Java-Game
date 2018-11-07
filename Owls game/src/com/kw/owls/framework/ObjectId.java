@@ -16,6 +16,7 @@ public enum ObjectId {
 	RareFlower(),
 	SpikyBush(),
 	OwlDaisy(),
+	OwlBetsy(),
 	Sheep(),
 	BlackSheep(),
 	Missile(),

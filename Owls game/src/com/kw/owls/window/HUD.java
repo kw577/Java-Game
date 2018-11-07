@@ -25,7 +25,7 @@ public class HUD extends MouseAdapter implements MouseMotionListener {
 	private SpriteSheet buttonsSpriteSheet = null;
 	private BufferedImage textarea = null;	
 	private BufferedImage daisy_av = null;	
-	
+	private BufferedImage betsy_av = null;	
 	
 	//Do podswietlania przyciskow menu
 	private boolean userHooverYes = false;
@@ -62,6 +62,7 @@ public class HUD extends MouseAdapter implements MouseMotionListener {
 			window_buttons = loader.loadImage("/hud/window_buttons.png");
 			textarea = loader.loadImage("/hud/textarea.png");
 			daisy_av = loader.loadImage("/hud/daisy_av.png");
+			betsy_av = loader.loadImage("/hud/betsy_av.png");
 			
 		} catch (Exception e){
 			e.printStackTrace();
@@ -157,6 +158,9 @@ public class HUD extends MouseAdapter implements MouseMotionListener {
 				g.drawImage(daisy_av, 355, 140, null);
 			}
 			
+			if(game.getOwlName() == "Betsy") {
+				g.drawImage(betsy_av, 350, 140, null);
+			}
 	
 			
 			// stare okno - ZACHOWAC DO TESTOW !!

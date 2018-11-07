@@ -18,6 +18,7 @@ import com.kw.owls.framework.STATE;
 import com.kw.owls.objects.BlackSheep;
 import com.kw.owls.objects.Block;
 import com.kw.owls.objects.Ground;
+import com.kw.owls.objects.OwlBetsy;
 import com.kw.owls.objects.OwlDaisy;
 import com.kw.owls.objects.Player;
 import com.kw.owls.objects.RareFlower;
@@ -353,9 +354,11 @@ public class Spawner {
 					handler.addObject(new SpikyBush(xx*32, yy*32 - 38, ObjectId.SpikyBush, textures)); // (yy*32 - 38)  - -38 zeby narysowalo krzak na odpoweidniej wysokosci nad ziemia  
 				
 				if(green == 128 && red == 64 && blue == 128)
-					handler.addObject(new OwlDaisy(xx*32, yy*32 - 38, ObjectId.OwlDaisy, handler, game)); // (yy*32 - 38)  - -38 zeby narysowalo krzak na odpoweidniej wysokosci nad ziemia  
+					handler.addObject(new OwlDaisy(xx*32, yy*32, ObjectId.OwlDaisy, handler, game)); // (yy*32 - 38)  - -38 zeby narysowalo krzak na odpoweidniej wysokosci nad ziemia  
 				
-				
+				if(green == 170 && red == 170 && blue == 0)
+					handler.addObject(new OwlBetsy(xx*32, yy*32, ObjectId.OwlBetsy, handler, game)); // (yy*32 - 38)  - -38 zeby narysowalo krzak na odpoweidniej wysokosci nad ziemia  
+								
 				if(green == 200 && red == 255 && blue == 10)
 					handler.addObject(new Sheep(xx*32, yy*32 - 38, ObjectId.Sheep, handler, game)); // (yy*32 - 38)  - -38 zeby narysowalo krzak na odpoweidniej wysokosci nad ziemia  
 				

@@ -47,7 +47,7 @@ public class UsualFlower extends GameObject{
 	
 	public Rectangle getBounds() {
 
-		return new Rectangle((int)(x + width/4), (int)(y + height/3), (int)(width/2), (int)(height*2/3));
+		return new Rectangle((int)(x + width/4), (int)(y), (int)(width/2), (int)(height));
 	}
 
 }
