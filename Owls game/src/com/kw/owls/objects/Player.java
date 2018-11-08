@@ -460,7 +460,7 @@ public class Player extends GameObject{
 		//System.out.println("\nfireRate timer: " + this.fireRateTimer);
 		/////
 		
-		
+		game.setPlayer_supported(this.supported);
 	}
 
 	public void render(Graphics g) {

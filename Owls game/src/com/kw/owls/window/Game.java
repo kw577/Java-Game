@@ -47,8 +47,10 @@ public class Game extends Canvas implements Runnable{
     private int player_click_x = -1; // -1 to wartosc startowa - oznacza ze gracz nie wybral zadnego punktu
     private int player_click_y = -1;
     
+    private boolean player_supported = false;
        
-    // Wspolpraca z sowkami - ktaora sowka pomaga w danej rundzie
+
+	// Wspolpraca z sowkami - ktaora sowka pomaga w danej rundzie
     private boolean daisyHelping = false;
     private boolean betsyHelping = false;
     private boolean ziggyHelping = false;
@@ -357,6 +359,17 @@ public class Game extends Canvas implements Runnable{
 		this.playerReject = playerReject;
 	}
 
+	
+	
+    public boolean isPlayer_supported() {
+		return player_supported;
+	}
+
+
+	public void setPlayer_supported(boolean player_supported) {
+		this.player_supported = player_supported;
+	}
+	
 	
 	public static void main(String args[]) {
 		new Game();

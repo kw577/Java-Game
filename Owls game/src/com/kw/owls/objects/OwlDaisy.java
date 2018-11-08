@@ -95,6 +95,21 @@ public class OwlDaisy extends GameObject{
     private int owl_changeAnimation = 8; // czas po ktorym zmieni sie animacja
    
     
+    // do funkcji oceny terenu (niebezpieczenstwa podczas wspinaczki)
+    private int check_distance = 12; // taka odleglosc bedzie sprawdzona (tyle kafelkow terenu przed graczem)
+    int[] terrain_safety = new int[check_distance]; // przechowuje informacje o bezpieczenstwie terenu - 1 - oznacza ze jest punkt na ktory mozna skoczyc, 0 - oznacza dol
+    private int rowsAmount = 8; // ilosc skanowanych kafelkow terenu w kazdej kolumnie - (3 + 1 + 4) - gracz potrafi skoczyc na wys. 3 kafelkow 1 - kafelek na ktorym stoi, 4 - kafelki ponizej
+    private int check_safety_timer = 0; // czas co jaki bedzie sprawdzane bezpieczenstwo terenu
+    private final int check_safety_timerStart = 30;
+    int[] reference_levels = new int[check_distance]; // zapisuje poziomy odniesienia dla kazdej analizowanej kolumny mapy - poziom odniesienia -> wyjasnienie w opisie funcji check_terrain_safety()
+    private int helpFactor = 4; // zalezy od aktualnego poziomu zdrowia - okresla jak duza musi byc przepasc w terenie aby Daisy automatycznie pomogla graczowi
+    private boolean player_turned_right = true;
+    private boolean player_turned_left = false;
+    
+    // wspolrzedne punktu pomocy przy wspinaczce
+    private float help_point_x = -1;
+    private float help_point_y = -1;
+    
     
     public OwlDaisy(int x, int y, ObjectId id, Handler handler, Game game) {
         super(x, y, id);
@@ -123,6 +138,7 @@ public class OwlDaisy extends GameObject{
 
     public void tick() {
       
+    	    	
     	if(this.playerAsist) {
     		 //////////////////////////////////////////////////////////////////
             // W KAZDYM CYKLU GRY
@@ -144,6 +160,10 @@ public class OwlDaisy extends GameObject{
             if(game.getPlayer_click_x() > 0 && game.getPlayer_click_y() > 0) {
                 this.follow_point_x = game.getPlayer_click_x();
                 this.follow_point_y = game.getPlayer_click_y();
+            }
+            else if(this.help_point_x > 0 && this.help_point_y > 0) {
+            	this.follow_point_x = this.help_point_x;
+            	this.follow_point_y = this.help_point_y;
             }
             else {
                 this.follow_point_x = handler.getPlayer_x() - 50;
@@ -182,6 +202,31 @@ public class OwlDaisy extends GameObject{
              
           
             //System.out.println("");
+            
+            //System.out.println("\n\n\nPlayer turned_right: " + this.player_turned_right);
+            //System.out.println("\nPlayer turned_left: " + this.player_turned_left);
+            
+            // Ocena terenu przed graczem
+            this.playerDirection();
+            this.check_safety_timer++;
+            if(this.check_safety_timer >= this.check_safety_timerStart && game.isPlayer_supported()) { // game.isPlayer_supported()  - nie liczy nowego help_point gdy gracz skacze
+            	System.out.println("\nPlayer wsp. X: " + handler.getPlayer_x());
+            	
+            	if(player_turned_right && handler.getPlayer_y() < 1200 && handler.getPlayer_x() < 15500) {
+            		this.check_terrain_safety((int)((handler.getPlayer_x() + 16)/32), (int)((handler.getPlayer_y() + 16)/32 + 3), check_distance, rowsAmount);
+   
+            	}
+            	else if(player_turned_left && handler.getPlayer_y() < 1200 && handler.getPlayer_x() > 400) {
+            		this.check_terrain_safety2((int)((handler.getPlayer_x() + 16)/32), (int)((handler.getPlayer_y() + 16)/32 + 3), check_distance, rowsAmount);
+   
+            	}
+            	
+            	
+            	this.check_safety_timer = 0;
+            }
+            
+                    
+            
             
             
     	} 
@@ -310,7 +355,7 @@ public class OwlDaisy extends GameObject{
         }
       
       
-        System.out.println("Owl Daisy - velX: " + velX + "  velY: " + velY + " dist: " + dist);
+        //System.out.println("Owl Daisy - velX: " + velX + "  velY: " + velY + " dist: " + dist);
       
       
       
@@ -942,8 +987,6 @@ public class OwlDaisy extends GameObject{
       
       
       
-      
-      
    }
  
  
@@ -987,9 +1030,236 @@ public class OwlDaisy extends GameObject{
      
     }
  
- 
-
- 
+    
+    
+    
+    // !!!! uzywana gdy gracz jest zwrocony w prawo
+    // sprawdza czy przed graczem znajduje sie niebezpieczny teren 
+    // startowym kafelkiem powienien byc zawsze kafelek na ktorym aktualnie stoi gracz
+    private void check_terrain_safety(int start_x, int start_y, int amount_columns, int amount_rows) {
+        
+    	// poziom odniesienia - kafelek wzgledem ktorego szukamy terenu na ktorym mozna bezpiecznie stanac - Block, Ground, Rocks
+    	// dla kazdego poziomu odniesienia sprawdzamy max ilosc kafelkow = amount_rows - (przyjeto 8) 3 kafelki powyzej poziomu odniesienia oraz 4 ponizej (razem wraz z poziomem odniesienia daje to 8)
+    	// pierwszy od gory napotkany punkt bedacy obiektem klasy Block, Ground lub Rocks zostanie nowym poziomem odniesienia
+    	// jesli w danej kolumnie nie ma takiego kafelka przechodzimy do natepnej kolumny (zwiekszenie wspolrzednej x)
+    	// a poziom odniesienia zostaje bez zmian
+    	// (start_x, start_y) to kafelek na ktorym stoi gracz
+    	
+    	
+    	int prev_loop_refLevel = start_y; // zapamietuje poziom odiesienia z pooprzedniej kolumny
+    	int current_level_checked;
+        //System.out.println("\nPixel start: " + start_x + " " + start_y);
+     
+       
+        for(int xx = 0; xx < amount_columns; xx++) {
+        	
+            for(int yy = 0; yy < amount_rows; yy++) {
+            	current_level_checked = prev_loop_refLevel - 3 + yy;
+                int pixel = level_map.getRGB(start_x + xx, current_level_checked); // -3  - bo gracz moze skoczyc na wys 3 kafelkow terenu 
+                System.out.println("\nSprawdzono wspolrzedna: " + (start_x + xx) + "    " + (current_level_checked));
+                int red = (pixel >> 16) & 0xff;
+                int green = (pixel >> 8) & 0xff;
+                int blue = (pixel) & 0xff;
+             
+                                
+                
+                if(red == 0 && green == 255 && blue == 0) // Block
+                    terrain_safety[xx] = 1;
+                else if(red == 0 && green == 0 && blue == 0) // Ground
+                	terrain_safety[xx] = 1;
+                else if(red == 200 && green == 200 && blue == 200) // Rocks
+                	terrain_safety[xx] = 1;
+                else
+                	terrain_safety[xx] = 0;
+         
+                // jesli w sprawdzanym miejscu nie ma kafelka - sprawdza sie teren ponizej
+                if(terrain_safety[xx] == 1) {
+                	prev_loop_refLevel = current_level_checked;
+                	yy = amount_rows; // wyjscie z petli - jesli znaleziono kafelek terenu - sprawdzamy natepna kolumne - a poziomem odniesienia bedzie znaleziony kafelek z poprzedniej kolumny
+                }
+                
+                
+              
+                
+            }
+            
+            reference_levels[xx]=prev_loop_refLevel;
+            System.out.println("\nReference_level: " + reference_levels[xx] + "\n");
+        }
+     
+        System.out.println("\n\nTabela terrain_safety: ");
+        for(int xx = 0; xx < terrain_safety.length; xx++) {
+        	System.out.print(terrain_safety[xx] + " ");
+        	
+        }
+        
+        
+        // wyznaczenie help_point
+        
+         
+        int currentArrayLength = 0; // dlugosc ciagu 0 - obszaru bez terenu na ktorym mozna bezpiecznie stanac
+        // ciagiem tym bedzie pierwszy ciag zer o dlugosci wiekszej niz helpFactor napotkany w tabeli terrain_safety
+        
+        int maxArrayLength = 0; // maksymalny znaleziony ciag 0
+        int temp_position = 0; // pozycja maksymalnego znalezionego ciagu 0 w tabeli terrain_safety
+        
+        
+        for(int xx = 0; xx < terrain_safety.length; xx++) {
+        	if(terrain_safety[xx] == 0) {
+        		currentArrayLength++;
+        	}
+        	else if(terrain_safety[xx] == 1) { // (xx == terrain_safety.length - 1) - ostatni element w tabeli
+        		if(currentArrayLength > maxArrayLength) {
+        			maxArrayLength = currentArrayLength;
+        			temp_position = xx;
+        			
+        			if(maxArrayLength >= this.helpFactor) {
+        				System.out.println("\nZakonczono poszukiwania przed koncem tabeli !!");
+        				break;
+        			}
+        		}
+        		currentArrayLength = 0;
+        	}
+        	
+        	System.out.println("\n xx= " + xx + "   currentArrayLength: " + currentArrayLength + "   maxArrayLength: " + maxArrayLength + "     temp_position: " + temp_position);
+        }
+        // warunek sprawdzony ponownie po zakonczeniu petli - gdy tabela jest zkonczona 0
+        if(currentArrayLength > maxArrayLength) {
+			maxArrayLength = currentArrayLength;
+			temp_position = terrain_safety.length;
+			currentArrayLength = 0;
+		}
+        
+        System.out.println("\nMax ciag 0: " + maxArrayLength + "  na poz. " + temp_position);
+        
+        
+        if(maxArrayLength >= this.helpFactor) {
+        	this.help_point_x = handler.getPlayer_x() + (temp_position - maxArrayLength/2)*32;
+        	this.help_point_y = reference_levels[temp_position-1] * 32 + 50;
+        }
+        else {
+        	this.help_point_x = -1;
+        	this.help_point_y = -1;
+        }
+        
+        System.out.println("\nhelp_point_x: " + help_point_x + "  help_point_y: " + help_point_y);
+    }
+    
+    
+    
+    // !!!! uzywana gdy gracz jest zwrocony w lewo
+    private void check_terrain_safety2(int start_x, int start_y, int amount_columns, int amount_rows) {
+            	    	
+    	int prev_loop_refLevel = start_y; // zapamietuje poziom odiesienia z pooprzedniej kolumny
+    	int current_level_checked;
+        //System.out.println("\nPixel start: " + start_x + " " + start_y);
+            
+        for(int xx = 0; xx < amount_columns; xx++) {
+        	
+            for(int yy = 0; yy < amount_rows; yy++) {
+            	current_level_checked = prev_loop_refLevel - 3 + yy;
+                int pixel = level_map.getRGB(start_x - xx, current_level_checked); // -3  - bo gracz moze skoczyc na wys 3 kafelkow terenu 
+                System.out.println("\nSprawdzono wspolrzedna: " + (start_x - xx) + "    " + (current_level_checked));
+                int red = (pixel >> 16) & 0xff;
+                int green = (pixel >> 8) & 0xff;
+                int blue = (pixel) & 0xff;
+             
+                                
+                
+                if(red == 0 && green == 255 && blue == 0) // Block
+                    terrain_safety[xx] = 1;
+                else if(red == 0 && green == 0 && blue == 0) // Ground
+                	terrain_safety[xx] = 1;
+                else if(red == 200 && green == 200 && blue == 200) // Rocks
+                	terrain_safety[xx] = 1;
+                else
+                	terrain_safety[xx] = 0;
+         
+                // jesli w sprawdzanym miejscu nie ma kafelka - sprawdza sie teren ponizej
+                if(terrain_safety[xx] == 1) {
+                	prev_loop_refLevel = current_level_checked;
+                	yy = amount_rows; // wyjscie z petli - jesli znaleziono kafelek terenu - sprawdzamy natepna kolumne - a poziomem odniesienia bedzie znaleziony kafelek z poprzedniej kolumny
+                }
+                
+                
+              
+                
+            }
+            
+            reference_levels[xx]=prev_loop_refLevel;
+            System.out.println("\nReference_level: " + reference_levels[xx] + "\n");
+        }
+     
+        System.out.println("\n\nTabela terrain_safety: ");
+        for(int xx = 0; xx < amount_columns; xx++) {
+        	System.out.print(terrain_safety[terrain_safety.length - xx - 1] + " ");
+        	
+        }
+        
+        
+        // wyznaczenie help_point
+        
+        
+        int currentArrayLength = 0; // dlugosc ciagu 0 - obszaru bez terenu na ktorym mozna bezpiecznie stanac
+        // ciagiem tym bedzie pierwszy ciag zer o dlugosci wiekszej niz helpFactor napotkany w tabeli terrain_safety
+        
+        int maxArrayLength = 0; // maksymalny znaleziony ciag 0
+        int temp_position = 0; // pozycja maksymalnego znalezionego ciagu 0 w tabeli terrain_safety
+        
+        for(int xx = 0; xx < terrain_safety.length; xx++) {
+        	if(terrain_safety[xx] == 0) {
+        		currentArrayLength++;
+        	}
+        	else if(terrain_safety[xx] == 1) { // (xx == terrain_safety.length - 1) - ostatni element w tabeli
+        		if(currentArrayLength > maxArrayLength) {
+        			maxArrayLength = currentArrayLength;
+        			temp_position = xx;
+        			
+        			if(maxArrayLength >= this.helpFactor) {
+        				System.out.println("\nZakonczono poszukiwania przed koncem tabeli !!");
+        				break;
+        			}
+        		}
+        		currentArrayLength = 0;
+        	}
+        	
+        	System.out.println("\n xx= " + xx + "   currentArrayLength: " + currentArrayLength + "   maxArrayLength: " + maxArrayLength + "     temp_position: " + temp_position);
+        }
+        // warunek sprawdzony ponownie po zakonczeniu petli - gdy tabela jest zkonczona 0
+        if(currentArrayLength > maxArrayLength) {
+			maxArrayLength = currentArrayLength;
+			temp_position = terrain_safety.length;
+			currentArrayLength = 0;
+		}
+        
+        System.out.println("\nMax ciag 0: " + maxArrayLength + "  na poz. " + temp_position);
+        
+        
+        //System.out.println("\nPlayer: wsp X: " + handler.getPlayer_x());
+        //System.out.println("\nmaxArrayLength: " + maxArrayLength);
+        //System.out.println("\ntemp_position: " + temp_position);
+        
+        
+        if(maxArrayLength >= this.helpFactor) {
+        	this.help_point_x = handler.getPlayer_x() - (temp_position - maxArrayLength/2)*32;
+        	this.help_point_y = reference_levels[temp_position-1] * 32 + 50;
+        }
+        else {
+        	this.help_point_x = -1;
+        	this.help_point_y = -1;
+        }
+        
+        System.out.println("\nhelp_point_x: " + help_point_x + "  help_point_y: " + help_point_y);
+        
+        
+        
+        
+        
+        
+        
+    }  
+    
+       
     public double angle(float dx1, float dy1, float dx2, float dy2) {
      
      
@@ -1148,6 +1418,20 @@ public class OwlDaisy extends GameObject{
 		if(this.velX > 0) {
 			turned_right = true;
 			turned_left = false;
+		}
+	
+		
+	}
+    
+    private void playerDirection() {
+		// pomocniczo do renderowania animacji - sprawdza czy Daisy porusza sie w lewo czy w prawo
+		if(handler.getPlayer_velX() < 0) {
+			player_turned_right = false;
+			player_turned_left = true;
+		}
+		if(handler.getPlayer_velX() > 0) {
+			player_turned_right = true;
+			player_turned_left = false;
 		}
 	
 		
