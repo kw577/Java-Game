@@ -18,6 +18,7 @@ public class Player extends GameObject{
 	private BufferedImage player_images_all;
 	private BufferedImage diving_alert;
 	private boolean supported = false; //zmienna oznaczajaca czy player stoi na jakims bloku
+	private boolean supported_daisy = false; //zmienna oznaczajaca czy player wspiera sie na Daisy
 	private float gravity = 0.2f;
 	private final float MAX_SPEED = 15;  // maksymalna przyjeta szybkosc spadania  
 	private final float MAX_SPEED_Running = 10; // maksymalna szybkosc biegu
@@ -187,7 +188,7 @@ public class Player extends GameObject{
 		// granice planszy - dodatkowo nalezy w ustawic granice dzialania kamery
 		if(x < 0) x = 0; 
 		if(x > 15950) x = 15950; 
-		
+		//if(y < 150) y = 150; // granica gorna planszy
 		//////////////////
 		
 		collision();
@@ -267,6 +268,7 @@ public class Player extends GameObject{
 	private void collision() {
 		// TODO Auto-generated method stub
 		supported = false;
+		supported_daisy = false;
 		underWater = false; 
 		for(int i = 0; i < handler.object.size(); i++) {
 			GameObject tempObject = handler.object.get(i);
@@ -311,6 +313,23 @@ public class Player extends GameObject{
 				
 				
 			}
+			
+			
+			if(tempObject.getId() == ObjectId.OwlDaisy) {
+				if(getBounds().intersects(tempObject.getBounds())) { // jesli gracz wspiera sie na OwlDaisy
+					
+					y = tempObject.getY() - height;
+					supported_daisy = true;
+					supported = true;   
+					velY = 0;
+					jumping = false;
+					falling = false;
+
+				} 
+				
+				
+			}
+			
 			
 			// gracz wpada do wody sredniej glebokosci - gubi losowa ilosc kwiatkow (1 - 3)
 			if(lostFlowers == false && tempObject.getId() == ObjectId.WaterMid) {
@@ -461,6 +480,7 @@ public class Player extends GameObject{
 		/////
 		
 		game.setPlayer_supported(this.supported);
+		game.setPlayer_supported_daisy(this.supported_daisy);
 	}
 
 	public void render(Graphics g) {

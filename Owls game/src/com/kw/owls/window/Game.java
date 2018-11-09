@@ -48,7 +48,8 @@ public class Game extends Canvas implements Runnable{
     private int player_click_y = -1;
     
     private boolean player_supported = false;
-       
+    private boolean player_supported_daisy = false;   
+
 
 	// Wspolpraca z sowkami - ktaora sowka pomaga w danej rundzie
     private boolean daisyHelping = false;
@@ -370,6 +371,15 @@ public class Game extends Canvas implements Runnable{
 		this.player_supported = player_supported;
 	}
 	
+	
+	public boolean isPlayer_supported_daisy() {
+		return player_supported_daisy;
+	}
+
+
+	public void setPlayer_supported_daisy(boolean player_supported_daisy) {
+		this.player_supported_daisy = player_supported_daisy;
+	}
 	
 	public static void main(String args[]) {
 		new Game();

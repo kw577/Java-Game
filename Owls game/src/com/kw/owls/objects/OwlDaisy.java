@@ -105,6 +105,8 @@ public class OwlDaisy extends GameObject{
     private int helpFactor = 4; // zalezy od aktualnego poziomu zdrowia - okresla jak duza musi byc przepasc w terenie aby Daisy automatycznie pomogla graczowi
     private boolean player_turned_right = true;
     private boolean player_turned_left = false;
+    private boolean update_help_point = false;
+    
     
     // wspolrzedne punktu pomocy przy wspinaczce
     private float help_point_x = -1;
@@ -151,7 +153,7 @@ public class OwlDaisy extends GameObject{
             // zamiast ustalania granic w ponizszy sposob mozna by tez modyfikowac funkcje read map
              if(x < 32) x = 32;
              if(x > 15900) x = 15900;
-               
+             //if(y < 150) y = 150; // granica gorna planszy  
              //////////////////
                  
          
@@ -209,7 +211,21 @@ public class OwlDaisy extends GameObject{
             // Ocena terenu przed graczem
             this.playerDirection();
             this.check_safety_timer++;
-            if(this.check_safety_timer >= this.check_safety_timerStart && game.isPlayer_supported()) { // game.isPlayer_supported()  - nie liczy nowego help_point gdy gracz skacze
+            
+            
+            //if(game.isPlayer_supported()) this.update_help_point = true;
+            
+           // if(game.isPlayer_supported_daisy()) this.update_help_point = false;
+            
+            
+            if(game.isPlayer_supported() && !game.isPlayer_supported_daisy()) this.update_help_point = true;
+            else this.update_help_point = false;
+            
+            //System.out.println("\nPlayer supported: " + game.isPlayer_supported());
+            //System.out.println("\nPlayer supported on Daisy: " + game.isPlayer_supported_daisy());
+            //System.out.println("\nupdate_help_point: " + this.update_help_point);
+            
+            if(this.check_safety_timer >= this.check_safety_timerStart && this.update_help_point) { // game.isPlayer_supported()  - nie liczy nowego help_point gdy gracz skacze
             	System.out.println("\nPlayer wsp. X: " + handler.getPlayer_x());
             	
             	if(player_turned_right && handler.getPlayer_y() < 1200 && handler.getPlayer_x() < 15500) {
@@ -378,7 +394,7 @@ public class OwlDaisy extends GameObject{
             if(tempObject.getId() == ObjectId.Block || tempObject.getId() == ObjectId.Ground) {
                          
                          
-                if(getBounds().intersects(tempObject.getBounds())) {
+                if(getBounds1().intersects(tempObject.getBounds())) {
                     // jezeli wystapi kolizja zapamietuje na jakim kierunku i zeruje licznik czasu do nastepnej kolizji
                     //System.out.println("\n##############################################################");
                     //System.out.println("\nKolizja !!!! - od poprzedniej kolizji minelo: " + collision_timer);
@@ -686,10 +702,12 @@ public class OwlDaisy extends GameObject{
      
         // obrys do wykrywania kolizji z elementami otoczenia
         g.setColor(Color.green);
-        g2d.draw(getBounds());
+        g2d.draw(getBounds1());
         g.setColor(Color.cyan);
         g2d.draw(getBounds3());
 
+        g.setColor(Color.red);
+        g2d.draw(getBounds());
     }
 
 
@@ -1360,8 +1378,19 @@ public class OwlDaisy extends GameObject{
      
     }
  
-    // uzywana do wykrywania kolizji
+    // uzywana do pomocy graczowi we wspinaczce
     public Rectangle getBounds() {
+     
+    	if(this.playerAsist && (this.help_point_x > 0 || game.getPlayer_click_x() > 0) && dist < 100 ) {
+    		return new Rectangle((int)(x), (int)(y), (int)32, (int)32);
+    	}
+    	
+        return new Rectangle((int)(-100), (int)(-100), (int)10, (int)10); // poza obszarem gry
+    }
+    
+    
+    // uzywana do wykrywania kolizji
+    public Rectangle getBounds1() {
      
         return new Rectangle((int)(x+6), (int)(y+6), (int)20, (int)20);
     }
