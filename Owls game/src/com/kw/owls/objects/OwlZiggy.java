@@ -95,6 +95,18 @@ public class OwlZiggy extends GameObject{
     private int owl_changeAnimation = 8; // czas po ktorym zmieni sie animacja
    
     
+    // pomoc graczowi
+    private int timer_find_enemy = 0;
+    private final int timer_find_enemyStart = 15;
+    private int nearestEnemy_x = -1;
+    private int nearestEnemy_y = -1;
+    private int nearestEnemy_velX = 0;
+    private int distance_player_enemy = 99999999; // odleglosc od przeciwnika (polozonego najblizej gracza) do gracza - wartosc wyjsciowa do obliczen
+    private int attack_range = 400; 
+    private int missileSpeed = 8;
+    private int firerateTimer = 0;
+    private final int firerateTimerStart = 110;
+    
     
     public OwlZiggy(int x, int y, ObjectId id, Handler handler, Game game) {
         super(x, y, id);
@@ -175,13 +187,36 @@ public class OwlZiggy extends GameObject{
                 this.follow_point(follow_point_x, follow_point_y);
              
             }
-         
+            
+            
+            this.timer_find_enemy++;
+            //System.out.println("\ntimer_find_enemy: " + timer_find_enemy);
+            if(this.timer_find_enemy >= this.timer_find_enemyStart) {
+            	find_enemy();
+            	this.timer_find_enemy = 0;
+            	//System.out.println("\n\n******Szukam przeciwnikow*******");
+            }
+            
+            //System.out.println("Nearest enemy x= " + this.nearestEnemy_x + "       y= " + this.nearestEnemy_y + "      distance= " + this.distance_player_enemy);
+            
+            if(this.firerateTimer < this.firerateTimerStart) this.firerateTimer++;
+            //System.out.println("\nFirerate timer: " + this.firerateTimer);
+            if(this.nearestEnemy_x > 0 && this.nearestEnemy_y > 0 && this.firerateTimer == this.firerateTimerStart) { // jesli zlokalizowano przeciwnika te dwie zmiene sa dodatnie
+            	this.throw_missile();
+            	this.firerateTimer = 0;
+            	//System.out.println("\n\n****Throw a missile****");
+            }
+            
+            
           
             // Sprawdzana w kazdym cyklu gry
             collision();
              
           
             //System.out.println("");
+            
+            
+            
             
             
     	} 
@@ -196,9 +231,10 @@ public class OwlZiggy extends GameObject{
      
    
     
-    
-    
-    private void wait_for_player() {
+  
+
+
+	private void wait_for_player() {
 		// sprawdza czy player wybral Ziggy do pomocy 
 		//System.out.println("\naskedForHelpTimer: " + this.askedHelpTimer);
 		// w kazdej rundzie mozna wybrac tylko 1 sowke do pomocy i nie mozna juz zmienic wyboru az do zakonczenia rundy
@@ -374,6 +410,8 @@ public class OwlZiggy extends GameObject{
                          
             }
          
+                                   
+            
         } 
        
      if(this.collision_timer >= sequence_collision_timer) {
@@ -388,6 +426,125 @@ public class OwlZiggy extends GameObject{
     }
 
 
+    
+    
+    
+    
+    
+    
+    private void find_enemy() {
+  		
+    	
+    	this.distance_player_enemy = 9999999;
+    	this.nearestEnemy_x = -1;
+    	this.nearestEnemy_y = -1;
+    	this.nearestEnemy_velX = 0;
+    	
+    	int current_e_p_distance; // dystans gracz - przeciwnik dla aktualnie sprawdzanego przeciwnika
+    	
+    	Point player_localization = new Point((int)handler.getPlayer_x(), (int)handler.getPlayer_y());
+    	
+    	
+    	 for(int i = 0; i < handler.object.size(); i++) {
+             GameObject tempObject = handler.object.get(i);
+            
+             if(tempObject.getId() == ObjectId.Sheep || tempObject.getId() == ObjectId.BlackSheep) {
+            	 
+            	 current_e_p_distance = (int)player_localization.distance(new Point((int)tempObject.getX(), (int)tempObject.getY()));
+            	      	 
+            	             	 
+            	 
+            	 // jesli gracz ustawi polozenie Ziggy - zaatakuje najblizsza graczowi Owce ktora sie porusza 
+            	 if(game.getPlayer_click_x() > 0) {
+            		 
+            		 // jesli owca jest unieruchomiona (stunned) - metoda getBounds() zwroci prostokat poza obszarem gry i ponizszy warunek nie bedzie spelniony 
+            		 if(tempObject.getBounds().intersects(new Rectangle((int)tempObject.getX(), (int)tempObject.getY(), 70, 10))) { 
+            			 if(current_e_p_distance < this.distance_player_enemy) {
+                			 this.distance_player_enemy = current_e_p_distance;
+                			 this.nearestEnemy_x = (int)tempObject.getX();
+                			 this.nearestEnemy_y = (int)tempObject.getY();
+                			 this.nearestEnemy_velX = (int)tempObject.getVelX();
+            		 }
+            		
+            		 }
+            	 } else { // jesli gracz nie ustawi polozenia Ziggy - zaatakuje tylko wtedy gdy owca szarzuje na gracza
+            		 if(current_e_p_distance < this.distance_player_enemy && Math.abs(tempObject.getVelX()) > 1) {
+            			 this.distance_player_enemy = current_e_p_distance;
+            			 this.nearestEnemy_x = (int)tempObject.getX();
+            			 this.nearestEnemy_y = (int)tempObject.getY();
+            			 this.nearestEnemy_velX = (int)tempObject.getVelX();
+            		 }
+            		 
+            	 }
+            	 
+            	 
+            	 
+            	 
+            	 
+             }
+    	 }
+  	}
+    
+    
+    private void throw_missile() {
+    	// OwlZiggy rzuci kamieniem gdy przeciwnik jest wystarczajaco blisko
+    	int temp_factor = 0;
+    	
+    	if(this.nearestEnemy_velX > 0) temp_factor = 54;
+    	else temp_factor = 16;
+    	
+    	Point ziggy_localization = new Point((int)(this.x + 16), (int)(this.y + 16));
+    	Point enemy_localization = new Point((int)this.nearestEnemy_x + temp_factor, (int)(this.nearestEnemy_y)); // 35 - polowa dlugosc obiektow Sheep i BlackSheep
+    	    	
+    	
+    	if(ziggy_localization.distance(enemy_localization) < this.attack_range) {
+        	double approx_missile_flight_time = ziggy_localization.distance(enemy_localization)/(this.missileSpeed * 1.4);
+        	
+        	float attack_vector_dx = (float)(this.nearestEnemy_x + temp_factor + this.nearestEnemy_velX*approx_missile_flight_time) - (int)this.x;
+        	float attack_vector_dy = (float)this.nearestEnemy_y - (int)this.y;
+        	
+        	// zabezpieczenie przed dzieleniem przez 0
+        	if(attack_vector_dx == 0) attack_vector_dx = 1;
+        	if(attack_vector_dy == 0) attack_vector_dy = 1;
+        	
+        	
+        	float attack_angle = Math.abs(attack_vector_dx / attack_vector_dy);
+        	
+        	//System.out.println("\n\nattack_vector:   " + attack_vector_dx + "    " + attack_vector_dy);
+        	//System.out.println("\nattack_angle:   " + attack_angle);
+        	
+        	// ustalenie wektora kierunkowego predkosci 
+        	if(attack_angle < 1) {
+        		attack_vector_dy = this.missileSpeed*attack_vector_dy/(Math.abs(attack_vector_dy));
+        		attack_vector_dx = (int)(this.missileSpeed*attack_angle*attack_vector_dx/(Math.abs(attack_vector_dx)));
+        	}	
+        	else {
+        		attack_vector_dx = this.missileSpeed*attack_vector_dx/(Math.abs(attack_vector_dx));
+        		attack_vector_dy = (int)(this.missileSpeed*(Math.pow(attack_angle, (-1)))*attack_vector_dy/(Math.abs(attack_vector_dy)));
+            	
+        	}
+        	
+        	
+        	
+        	
+        	//System.out.println("\nattack_vector:   " + attack_vector_dx + "    " + attack_vector_dy);
+        	
+        	handler.addMissile(new Missile((int)(this.x + 16), (int) (this.y + 16), ObjectId.Missile, handler, game, attack_vector_dx, attack_vector_dy));   
+			
+    		
+    		
+    	}
+    	
+    	
+
+    
+    	
+    }
+    
+    
+    
+    
+    
     private void follow_point(float point_x, float point_y) {
      
         //info
@@ -644,7 +801,11 @@ public class OwlZiggy extends GameObject{
         g2d.draw(getBounds());
         g.setColor(Color.cyan);
         g2d.draw(getBounds3());
-
+        
+        
+        // wskazuje najblizszego przciwnika
+        g.setColor(Color.red);
+        g.fillOval(this.nearestEnemy_x, this.nearestEnemy_y, 10, 10);
     }
 
 
