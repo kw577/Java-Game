@@ -494,14 +494,15 @@ public class BlackSheep extends GameObject{
 		 //g.setColor(Color.green);
 		 //g.fillOval((int)x, (int)y, 5, 5);
 	     
-	     Graphics2D g2d = (Graphics2D) g;
-	     g.setColor(Color.RED);
+		 // pomocnicze - collision boxes
+	     //Graphics2D g2d = (Graphics2D) g;
+	     //g.setColor(Color.RED);
 		
-	     g2d.draw(getBoundsTop());
-	     g2d.draw(getBoundsBottom());
+	     //g2d.draw(getBoundsTop());
+	     //g2d.draw(getBoundsBottom());
 	     
-	     g.setColor(Color.yellow);
-	     g2d.draw(getBounds());
+	     //g.setColor(Color.yellow);
+	     //g2d.draw(getBounds());
 	     
 	     /*
 	     // rysowanie prostokatow z miniHandler - ktore odzwierciedlaja przylegly teren

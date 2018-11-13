@@ -226,7 +226,7 @@ public class OwlDaisy extends GameObject{
             //System.out.println("\nupdate_help_point: " + this.update_help_point);
             
             if(this.check_safety_timer >= this.check_safety_timerStart && this.update_help_point) { // game.isPlayer_supported()  - nie liczy nowego help_point gdy gracz skacze
-            	System.out.println("\nPlayer wsp. X: " + handler.getPlayer_x());
+            	//System.out.println("\nPlayer wsp. X: " + handler.getPlayer_x());
             	
             	if(player_turned_right && handler.getPlayer_y() < 1200 && handler.getPlayer_x() < 15500) {
             		this.check_terrain_safety((int)((handler.getPlayer_x() + 16)/32), (int)((handler.getPlayer_y() + 16)/32 + 3), check_distance, rowsAmount);
@@ -701,13 +701,13 @@ public class OwlDaisy extends GameObject{
         //g2d.draw(getBounds2(-6,-6));
      
         // obrys do wykrywania kolizji z elementami otoczenia
-        g.setColor(Color.green);
-        g2d.draw(getBounds1());
-        g.setColor(Color.cyan);
-        g2d.draw(getBounds3());
+        //g.setColor(Color.green);
+        //g2d.draw(getBounds1());
+        //g.setColor(Color.cyan);
+        //g2d.draw(getBounds3());
 
-        g.setColor(Color.red);
-        g2d.draw(getBounds());
+        //g.setColor(Color.red);
+        //g2d.draw(getBounds());
     }
 
 
@@ -1074,7 +1074,7 @@ public class OwlDaisy extends GameObject{
             for(int yy = 0; yy < amount_rows; yy++) {
             	current_level_checked = prev_loop_refLevel - 3 + yy;
                 int pixel = level_map.getRGB(start_x + xx, current_level_checked); // -3  - bo gracz moze skoczyc na wys 3 kafelkow terenu 
-                System.out.println("\nSprawdzono wspolrzedna: " + (start_x + xx) + "    " + (current_level_checked));
+                //System.out.println("\nSprawdzono wspolrzedna: " + (start_x + xx) + "    " + (current_level_checked));
                 int red = (pixel >> 16) & 0xff;
                 int green = (pixel >> 8) & 0xff;
                 int blue = (pixel) & 0xff;
@@ -1102,15 +1102,16 @@ public class OwlDaisy extends GameObject{
             }
             
             reference_levels[xx]=prev_loop_refLevel;
-            System.out.println("\nReference_level: " + reference_levels[xx] + "\n");
+            //System.out.println("\nReference_level: " + reference_levels[xx] + "\n");
         }
      
+        /*
         System.out.println("\n\nTabela terrain_safety: ");
         for(int xx = 0; xx < terrain_safety.length; xx++) {
         	System.out.print(terrain_safety[xx] + " ");
         	
         }
-        
+        */
         
         // wyznaczenie help_point
         
@@ -1132,14 +1133,14 @@ public class OwlDaisy extends GameObject{
         			temp_position = xx;
         			
         			if(maxArrayLength >= this.helpFactor) {
-        				System.out.println("\nZakonczono poszukiwania przed koncem tabeli !!");
+        				//System.out.println("\nZakonczono poszukiwania przed koncem tabeli !!");
         				break;
         			}
         		}
         		currentArrayLength = 0;
         	}
         	
-        	System.out.println("\n xx= " + xx + "   currentArrayLength: " + currentArrayLength + "   maxArrayLength: " + maxArrayLength + "     temp_position: " + temp_position);
+        	//System.out.println("\n xx= " + xx + "   currentArrayLength: " + currentArrayLength + "   maxArrayLength: " + maxArrayLength + "     temp_position: " + temp_position);
         }
         // warunek sprawdzony ponownie po zakonczeniu petli - gdy tabela jest zkonczona 0
         if(currentArrayLength > maxArrayLength) {
@@ -1148,7 +1149,7 @@ public class OwlDaisy extends GameObject{
 			currentArrayLength = 0;
 		}
         
-        System.out.println("\nMax ciag 0: " + maxArrayLength + "  na poz. " + temp_position);
+        //System.out.println("\nMax ciag 0: " + maxArrayLength + "  na poz. " + temp_position);
         
         
         if(maxArrayLength >= this.helpFactor) {
@@ -1160,7 +1161,7 @@ public class OwlDaisy extends GameObject{
         	this.help_point_y = -1;
         }
         
-        System.out.println("\nhelp_point_x: " + help_point_x + "  help_point_y: " + help_point_y);
+        //System.out.println("\nhelp_point_x: " + help_point_x + "  help_point_y: " + help_point_y);
     }
     
     
@@ -1177,7 +1178,7 @@ public class OwlDaisy extends GameObject{
             for(int yy = 0; yy < amount_rows; yy++) {
             	current_level_checked = prev_loop_refLevel - 3 + yy;
                 int pixel = level_map.getRGB(start_x - xx, current_level_checked); // -3  - bo gracz moze skoczyc na wys 3 kafelkow terenu 
-                System.out.println("\nSprawdzono wspolrzedna: " + (start_x - xx) + "    " + (current_level_checked));
+                //System.out.println("\nSprawdzono wspolrzedna: " + (start_x - xx) + "    " + (current_level_checked));
                 int red = (pixel >> 16) & 0xff;
                 int green = (pixel >> 8) & 0xff;
                 int blue = (pixel) & 0xff;
@@ -1205,15 +1206,17 @@ public class OwlDaisy extends GameObject{
             }
             
             reference_levels[xx]=prev_loop_refLevel;
-            System.out.println("\nReference_level: " + reference_levels[xx] + "\n");
+            //System.out.println("\nReference_level: " + reference_levels[xx] + "\n");
         }
      
+        /*
+        
         System.out.println("\n\nTabela terrain_safety: ");
         for(int xx = 0; xx < amount_columns; xx++) {
         	System.out.print(terrain_safety[terrain_safety.length - xx - 1] + " ");
         	
         }
-        
+        */
         
         // wyznaczenie help_point
         
@@ -1234,14 +1237,14 @@ public class OwlDaisy extends GameObject{
         			temp_position = xx;
         			
         			if(maxArrayLength >= this.helpFactor) {
-        				System.out.println("\nZakonczono poszukiwania przed koncem tabeli !!");
+        				//System.out.println("\nZakonczono poszukiwania przed koncem tabeli !!");
         				break;
         			}
         		}
         		currentArrayLength = 0;
         	}
         	
-        	System.out.println("\n xx= " + xx + "   currentArrayLength: " + currentArrayLength + "   maxArrayLength: " + maxArrayLength + "     temp_position: " + temp_position);
+        	//System.out.println("\n xx= " + xx + "   currentArrayLength: " + currentArrayLength + "   maxArrayLength: " + maxArrayLength + "     temp_position: " + temp_position);
         }
         // warunek sprawdzony ponownie po zakonczeniu petli - gdy tabela jest zkonczona 0
         if(currentArrayLength > maxArrayLength) {
@@ -1250,7 +1253,7 @@ public class OwlDaisy extends GameObject{
 			currentArrayLength = 0;
 		}
         
-        System.out.println("\nMax ciag 0: " + maxArrayLength + "  na poz. " + temp_position);
+        //System.out.println("\nMax ciag 0: " + maxArrayLength + "  na poz. " + temp_position);
         
         
         //System.out.println("\nPlayer: wsp X: " + handler.getPlayer_x());
@@ -1267,7 +1270,7 @@ public class OwlDaisy extends GameObject{
         	this.help_point_y = -1;
         }
         
-        System.out.println("\nhelp_point_x: " + help_point_x + "  help_point_y: " + help_point_y);
+        //System.out.println("\nhelp_point_x: " + help_point_x + "  help_point_y: " + help_point_y);
         
         
         

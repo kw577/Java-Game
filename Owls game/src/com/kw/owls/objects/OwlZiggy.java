@@ -797,15 +797,15 @@ public class OwlZiggy extends GameObject{
         //g2d.draw(getBounds2(-6,-6));
      
         // obrys do wykrywania kolizji z elementami otoczenia
-        g.setColor(Color.green);
-        g2d.draw(getBounds());
-        g.setColor(Color.cyan);
-        g2d.draw(getBounds3());
+        //g.setColor(Color.green);
+        //g2d.draw(getBounds());
+        //g.setColor(Color.cyan);
+        //g2d.draw(getBounds3());
         
         
         // wskazuje najblizszego przciwnika
-        g.setColor(Color.red);
-        g.fillOval(this.nearestEnemy_x, this.nearestEnemy_y, 10, 10);
+        //g.setColor(Color.red);
+        //g.fillOval(this.nearestEnemy_x, this.nearestEnemy_y, 10, 10);
     }
 
 

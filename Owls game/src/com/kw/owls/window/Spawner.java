@@ -427,7 +427,7 @@ public class Spawner {
 				*/
 				
 			}
-			System.out.println("\n\nSpawner: Loading map in progress\n\n");
+			//System.out.println("\n\nSpawner: Loading map in progress\n\n");
 		}
 		
 	//	handler.addObject(new HomingMissile(100, 100, 4, 0, ID.EnemyBullet, handler)); 
