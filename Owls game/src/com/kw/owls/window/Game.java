@@ -42,6 +42,8 @@ public class Game extends Canvas implements Runnable{
 	private int health = 7;  // poziom zdrowia gracza
 	private int flowers = 0; // ilosc zebranych kwiatkow 
 	private int lostFlowers = 0; //otrzymuje informacje z klasy Player ze nastapila utrata punktow i przekazuje ja do HUD.java	
+	private int maxFlowersAmount = 0; // zlicza wszystkie kwiatki jakie sa do zdobycia
+	
 	
 	// do sterowania sowkami - przechowuje wspolrzedne punktu wybranego przez gracza (przyciski myszy)
     private int player_click_x = -1; // -1 to wartosc startowa - oznacza ze gracz nie wybral zadnego punktu
@@ -380,6 +382,18 @@ public class Game extends Canvas implements Runnable{
 	public void setPlayer_supported_daisy(boolean player_supported_daisy) {
 		this.player_supported_daisy = player_supported_daisy;
 	}
+	
+	
+	
+	public int getMaxFlowersAmount() {
+		return maxFlowersAmount;
+	}
+
+
+	public void setMaxFlowersAmount(int maxFlowersAmount) {
+		this.maxFlowersAmount = maxFlowersAmount;
+	}
+	
 	
 	public static void main(String args[]) {
 		new Game();

@@ -462,7 +462,7 @@ public class Player extends GameObject{
 		//System.out.println("\njumping: " + jumping);
 		//System.out.println("\nClick: " + game.getPlayer_click_x() + "   " + game.getPlayer_click_y());
 		//System.out.println("\n\nPlayer: wsp X: " + this.x + " wspY: " + this.y);
-		
+		//System.out.println("\nMax amount of flowers to get: " + game.getMaxFlowersAmount());
 		//System.out.println("\nPlayer: velX: " + this.velX + " velY: " + this.velY);
 		//System.out.println("\n\nDaisy helping: " + game.isDaisyHelping());
 		//System.out.println("\nBetsy helping: " + game.isBetsyHelping());

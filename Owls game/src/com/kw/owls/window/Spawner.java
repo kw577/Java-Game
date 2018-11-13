@@ -2,6 +2,7 @@ package com.kw.owls.window;
 
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.Random;
@@ -64,8 +65,15 @@ public class Spawner {
 	
 	
 	public void render(Graphics g) {
-		g.setColor(Color.RED);
+		//g.setColor(new Color(190, 220, 235));
+		g.setColor(new Color(100, 135, 180));
 		g.fillRect(0, 0, game.getWidth(), game.getHeight());
+		
+		Font fnt = new Font("Garamond", Font.BOLD, 40);
+		
+		g.setFont(fnt);
+		g.setColor(Color.white);
+		g.drawString("Loading next round ...", 220, 275);
 	}
 
 
@@ -158,6 +166,7 @@ public class Spawner {
 			// Zerowanie stanu gry
 			game.setHealth(game.getMaxHealth());
 			game.setFlowers(0);
+			game.setMaxFlowersAmount(0);
 			game.setLostFlowers(0);
 			
 			
@@ -342,14 +351,20 @@ public class Spawner {
 				if(green == 90 && red == 50 && blue == 120)
 					handler.addObject(new WaterDeep(xx*32, yy*32, ObjectId.WaterDeep, textures));
 				
-				if(green == 0 && red == 128 && blue == 128)
+				if(green == 0 && red == 128 && blue == 128) {
 					handler.addObject(new WaterFlowers(xx*32, yy*32 - 10, ObjectId.WaterFlower, textures, rand.nextInt(4)));
+					game.setMaxFlowersAmount(game.getMaxFlowersAmount() + 2);
+				}
 				
-				if(green == 0 && red == 255 && blue == 0)
+				if(green == 0 && red == 255 && blue == 0) {
 					handler.addObject(new UsualFlower(xx*32, yy*32 - 15, ObjectId.UsualFlower, textures, rand.nextInt(7))); // rand.nextInt(7) - wybiera jeden z 7 losowych obrazkow 
+					game.setMaxFlowersAmount(game.getMaxFlowersAmount() + 1);
+				}
 				
-				if(green == 130 && red == 255 && blue == 255)
+				if(green == 130 && red == 255 && blue == 255) {
 					handler.addObject(new RareFlower(xx*32, yy*32 - 15, ObjectId.RareFlower, textures, rand.nextInt(4))); // rand.nextInt(4) - wybiera jeden z 4 losowych obrazkow 
+					game.setMaxFlowersAmount(game.getMaxFlowersAmount() + 3);
+				}
 								
 				if(green == 128 && red == 255 && blue == 0)
 					handler.addObject(new SpikyBush(xx*32, yy*32 - 38, ObjectId.SpikyBush, textures)); // (yy*32 - 38)  - -38 zeby narysowalo krzak na odpoweidniej wysokosci nad ziemia  

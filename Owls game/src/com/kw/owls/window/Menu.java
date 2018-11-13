@@ -41,6 +41,16 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 	
 	private BufferedImage spikyBush = null;
 	
+	// Grfiki do ekranu z informacja o przegranej
+	private BufferedImage player_defeated = null;
+	
+	// Grfiki do ekranu z informacja o zakonczeniu gry
+	private BufferedImage conversation = null;
+	
+	// Grfiki do ekranu z informacja przejsciu calej gry
+	private BufferedImage player_end_game = null;
+	private BufferedImage girl = null;
+	
 	// Przyciski panelu pomocy
 	private BufferedImage helpButtons = null;
 	private SpriteSheet helpButtonsSpriteSheet = null;
@@ -54,6 +64,13 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 	private boolean userHooverMenu = false;
 	private boolean userHooverLeft = false;
 	private boolean userHooverRight = false;
+	
+	// Do podswietlania przycikow menu ekranu z informacja o przegranej
+	private boolean userHooverBack = false;
+	
+	// Do podswietlania przycikow menu ekranu z informacja o wygranej
+	private boolean userHooverBackToMenu = false;
+	
 	
 	private boolean GraphicsLoaded = false; // zmienna z informacja czy zostaly zaladowane grafiki gry
 	
@@ -135,18 +152,21 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 		}  else if(game.gameState == STATE.End) {
 			
 			// Przycisk powrotu do menu gry 
-			if(mouseOver(mx, my, 300, 350, 200, 64)) {
+			if(mouseOver(mx, my, 300, 480, 200, 64)) {
 				game.gameState = STATE.Menu;
 				
+				this.userHooverBackToMenu = false;
 			} 
 
 		} else if(game.gameState == STATE.Defeat) {
 			
-			// Przycisk powrotu do menu gry 
-			if(mouseOver(mx, my, 300, 350, 200, 64)) {
+						
+			// Przycisk Back
+			if(mouseOver(mx, my, 300, 480, 200, 64)) {
 				game.gameState = STATE.Menu;
 				
-			} 
+				this.userHooverBack = false;
+			}
 
 		} 
 		
@@ -203,6 +223,27 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 			}
 		}
 		
+		
+		if(game.gameState == STATE.Defeat) {
+			if(mouseOver(mx, my, 300, 480, 200, 64)) {
+				userHooverBack = true;
+				
+			} else {
+				userHooverBack = false;
+			}
+			
+		}
+		
+		if(game.gameState == STATE.End) {
+			if(mouseOver(mx, my, 300, 480, 200, 64)) {
+				userHooverBackToMenu = true;
+				
+			} else {
+				userHooverBackToMenu = false;
+			}
+			
+		}
+		
 	}
 		
 	
@@ -253,6 +294,12 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 				sheep_av = loader.loadImage("/objects/sheep_av.png");
 				blackSheep_av = loader.loadImage("/objects/blackSheep_av.png");
 				spikyBush = loader.loadImage("/textures/spiky_bush.png");
+				
+				player_defeated = loader.loadImage("/others/player_defeated.png");
+				conversation = loader.loadImage("/others/conversation.png");
+				
+				player_end_game = loader.loadImage("/others/player_end_game.png");
+				girl = loader.loadImage("/others/girl.png");
 				
 			} catch (Exception e){
 				e.printStackTrace();
@@ -520,34 +567,120 @@ public class Menu extends MouseAdapter implements MouseMotionListener {
 						
 			
 		} else if(game.gameState == STATE.End) {
-			Font fnt = new Font("arial", 1, 50);
-			g.setFont(fnt);
-			Font fnt2 = new Font("arial", 1, 30);
-			Font fnt3 = new Font("arial", 1, 20);
-			g.setColor(Color.white);
-			g.drawString("VICTORY", 330, 70);
+			Font font = new Font("Serif", Font.BOLD, 35);
+			Font font2 = new Font("Garamond", Font.BOLD, 30);
+			Font font3 = new Font("Garamond", Font.BOLD, 25);
+			Font font4 = new Font("Garamond", Font.BOLD, 23);
 			
-			g.setFont(fnt3);
-			g.drawString("-> Your Score: " + game.getFlowers(), 50, 170);
-
-			g.setFont(fnt2);
-			g.drawRect(300, 350, 200, 64);
-			g.drawString("Menu", 360, 390);
+			
+			
+			g.setFont(font);
+			
+			g.setColor(Color.black);
+			g.drawString("Congratulations !!!", 270, 50);
+			g.drawString("________________", 270, 50);	
+						
+			
+			g.setFont(font2);
+			g.drawString("You have passed all levels.", 240, 130);
+			g.drawString("You have found: ", 220, 170);
+			//g.drawString("Play again to find more flowers", 180, 270);
+			
+			
+			g.setColor(Color.red);
+			g.drawString(game.getFlowers() + " flowers", 470, 170);			
+			
+			//g.drawString("Max: " + game.getMaxFlowersAmount(), 20, 530);
+			
+			// grafiki
+			g.drawImage(player_end_game, 30, 300, null);
+			g.drawImage(girl, 600, 305, null);
+			
+			// chmurka kowersacji
+			g.drawImage(conversation, 180, 205, null);
+			
+			g.setColor(Color.black);
+			
+			g.setFont(font4);
+			g.drawString("Were have you been so long ?!", 220, 270);
+			g.drawString("I've been so worried about you.", 220, 305);
+			
+			if(game.getFlowers() == 0) {
+			g.drawString("And you didn't bring me any flower?", 220, 340);
+			g.drawString("As a punishment you will wash", 220, 375);
+			g.drawString("all windows, floors and dishes.", 220, 410);
+			}
+			
+			
+			else if(game.getFlowers() > 0 && game.getFlowers() <= (int)(0.3*game.getMaxFlowersAmount())) {
+				g.drawString("This few flowers won't help you.", 220, 340);
+				g.drawString("As a punishment you will do", 220, 375);
+				g.drawString("the laundry and ironing.", 220, 410);
+			}
+			
+			else if(game.getFlowers() > (int)(0.3*game.getMaxFlowersAmount()) && game.getFlowers() <= (int)(0.6*game.getMaxFlowersAmount())) {
+				g.drawString("At least you've bring me some", 220, 340);
+				g.drawString("flowers. Prepare good dinner", 220, 375);
+				g.drawString("for me and we'll forget about it.", 220, 410);
+			}
+			else if(game.getFlowers() > (int)(0.6*game.getMaxFlowersAmount()) && game.getFlowers() <= (int)(0.9*game.getMaxFlowersAmount())) {
+				g.drawString("Ohh what a beautifull bouquet.", 220, 340);
+				g.drawString("Please help me with cooking", 220, 375);
+				g.drawString("dinner and we will watch a film.", 220, 410);
+			}
+			
+			else if(game.getFlowers() > (int)(0.9*game.getMaxFlowersAmount())) {
+				g.drawString("Ohh what a amazing bouquet !!!", 220, 340);
+				g.drawString("Please sit down in the room I'll", 220, 375);
+				g.drawString("give you hot tea and dinner :)", 220, 410);
+			}
+			
+			if(!userHooverBackToMenu)
+				g.drawImage(helpButtonsSpriteSheet.grabImage(1, 1, 220, 85), 291, 470, null);
+			else
+				g.drawImage(helpButtonsSpriteSheet.grabImage(2, 1, 220, 85), 290, 470, null);
+			
+			
+			
 						
 		} else if(game.gameState == STATE.Defeat) {
-			Font fnt = new Font("arial", 1, 50);
-			g.setFont(fnt);
-			Font fnt2 = new Font("arial", 1, 30);
-			Font fnt3 = new Font("arial", 1, 20);
-			g.setColor(Color.white);
-			g.drawString("You lose", 330, 70);
+						
+			//g.setColor(new Color(100, 135, 180));
+			//g.fillRect(0, 0, game.getWidth(), game.getHeight());
 			
-			g.setFont(fnt3);
-			g.drawString("-> Your Score: " + game.getFlowers(), 50, 170);
-
-			g.setFont(fnt2);
-			g.drawRect(300, 350, 200, 64);
-			g.drawString("Menu", 360, 390);
+			Font font = new Font("Serif", Font.BOLD, 35);
+			Font font2 = new Font("Garamond", Font.BOLD, 30);
+			Font font3 = new Font("Garamond", Font.BOLD, 30);
+			Font font4 = new Font("Garamond", Font.BOLD, 22);
+			
+			
+			
+			g.setFont(font);
+			
+			g.setColor(Color.black);
+			g.drawString("THE END", 322, 70);
+			g.drawString("_________", 322, 70);	
+			
+			
+			g.drawImage(player_defeated, 300, 130, null);
+			
+			g.setFont(font2);
+			
+			g.drawString("You have found: ", 210, 320);
+			g.drawString("Play again to find more flowers", 195, 370);
+			
+			
+			g.setColor(Color.red);
+			g.drawString(game.getFlowers() + " flowers", 460, 320);			
+			
+			
+			
+			if(!userHooverBack)
+				g.drawImage(helpButtonsSpriteSheet.grabImage(1, 1, 220, 85), 291, 470, null);
+			else
+				g.drawImage(helpButtonsSpriteSheet.grabImage(2, 1, 220, 85), 290, 470, null);
+			
+			
 						
 		} 
 		
